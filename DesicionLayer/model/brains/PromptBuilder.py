@@ -1,5 +1,4 @@
 ﻿from __future__ import annotations
-
 import json
 import os
 from dataclasses import asdict, dataclass
@@ -16,7 +15,7 @@ class PromptSection:
 @dataclass
 class PromptPacket:
     prompt_type: str
-    actor_id: int
+    actor_id: str
     created_at: str
     sections: List[PromptSection]
     meta: Dict[str, Any]
@@ -47,8 +46,8 @@ class PromptBuilder:
     def _sec(self, title: str, content: str, kind: str = "info") -> PromptSection:
         return PromptSection(title=title, content=(content or "").rstrip(), kind=kind)
 
-    def _obs_actor_id(self, obs: Any) -> int:
-        return int(getattr(obs, "act_id", getattr(obs, "actor_id", 0)))
+    def _obs_actor_id(self, obs: Any) -> str:
+        return str(getattr(obs, "act_id", getattr(obs, "actor_id", "")))
 
     def _packet(self, prompt_type: str, obs: Any, sections: List[PromptSection]) -> PromptPacket:
         actor_snapshot = getattr(obs, "actor_snapshot", {}) or {}
@@ -108,8 +107,8 @@ class PromptBuilder:
             ]
         )
 
-        identity = f"角色：{actor.get('name', '未知角色')}"
-        location = f"当前位置：{actor.get('cur_location', '未知')}"
+        identity = f"角色：{actor.get('identity', '')}"
+        location = f"当前位置：{actor.get('cur_location', '')}"
         money = f"金钱：{actor.get('money', 0)}"
         attrs = (
             f"属性：饥饿 {round(float(actor.get('hunger', 0.0)), 2)}，"
@@ -203,7 +202,7 @@ class PromptBuilder:
         move_targets = sorted(set([str(loc_id) for loc_id in catalog_locations.keys()]))
         move_targets_text = "，".join(move_targets) if move_targets else "无"
 
-        available_actions = ["move", "consume", "cook", "sleep", "trade", "wait", "finish"]
+        available_actions = ["move", "consume", "cook", "sleep", "trade", "finish"]
 
         lines = [
             "## 动作输出要求",
@@ -217,9 +216,9 @@ class PromptBuilder:
             "## 示例",
             '{"type":"move","target":"market"}',
             '{"type":"consume","item":"bread","qty":1}',
-            '{"type":"sleep","minutes":30}',
-            '{"type":"trade","mode":"buy","item":"bread","qty":2}',
-            '{"type":"wait","seconds":10}',
+            '{"type":"sleep"}',
+            '{"type":"buy","item":"bread","qty":2}',
+            '{"type":"sell","item":"apple","qty":5}',
             '{"type":"finish"}',
         ]
         return "\n".join(lines)

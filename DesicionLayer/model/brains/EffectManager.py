@@ -9,13 +9,14 @@ class EffectManager:
         self.effects = {}
 
     def add_effect(self, effect:Effect):
-        self.effects.get(effect.scope,[]).append(effect)
+        self.effects.setdefault(effect.scope, []).append(effect)
 
     def remove_effect(self, effect:Effect):
-        self.effects.get(effect.scope,[]).remove(effect)
+        if effect.scope in self.effects and effect in self.effects[effect.scope]:
+            self.effects[effect.scope].remove(effect)
 
     def extend_effects(self,scope:str,effects:List[Effect]):
-        self.effects.get(scope,[]).extend(effects)
+        self.effects.setdefault(scope, []).extend(effects)
 
     def get_effects(self, scope:str) -> List[Effect]:
         return self.effects.get(scope,[])
@@ -30,5 +31,5 @@ class EffectManager:
             elif m.op == "OVERRIDE":x /= m.value
             elif m.op == "CLAMP":x = clamp(x,m.min,m.max)
 
-def clamp(x,min,max):
-    return max(min,x)
+def clamp(x, low, high):
+    return max(low, min(x, high))

@@ -1,16 +1,18 @@
 from dataclasses import dataclass
-from typing import Dict,Any 
+from typing import Dict, Any,Optional,List
 
 LocationId = str
 
-@dataclass(forzen=True,slots=True)
+@dataclass(frozen=True, slots=True)
 class LocationDef: 
     id: LocationId
     name: str
     description: str
+    components: List[str] = []
 
-    def snapshot(self):
+    def snapshot(self) -> Dict[str, Any]:
         return {
             "name": self.name,
             "description": self.description
         }
+    

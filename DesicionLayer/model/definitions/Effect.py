@@ -7,8 +7,8 @@ class Effect:
     source:str 
     hooks:list[str]
     mods:List[Dict[str,Any]]
-    duration_hours:Optional[float] = None
     scope:str
+    duration_hours:Optional[float] = None
     location_id:Optional[str] = None
     item_id:Optional[str] = None
     priority:int = 0

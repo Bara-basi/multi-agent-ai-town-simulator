@@ -1,5 +1,5 @@
-from dataclasses import dataclass 
-from typing import Dict,Any
+from dataclasses import dataclass, field
+from typing import Dict, Any
 
 ItemId = str 
 
@@ -7,20 +7,19 @@ ItemId = str
 class ItemDef:
     id: ItemId
     name: str
-    description: str = ""
-    effects: Dict[str, str] = None  
-    base_price: float = 0.0
+    category:str
+    description: str
+    base_price: float
+    sell_ratio: float
+    effects: Dict[str, float] = field(default_factory=dict)
+    
     
 
     def snapshot(self) -> Dict[str, Any]:
         snapshot = {
             "name": self.name,
-            "description":self.description,
-            "base_price":self.base_price,
+            "description": self.description,
         }
-        for effect,value in self.effects.items():
+        for effect, value in (self.effects or {}).items():
             snapshot[effect] = value
-
-
-
-
+        return snapshot

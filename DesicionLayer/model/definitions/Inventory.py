@@ -1,7 +1,6 @@
-from dataclasses import dataclass,field
-from ItemDef import ItemId
-from ItemDef import ItemId
+from dataclasses import dataclass, field
 from typing import Dict
+from model.definitions.ItemDef import ItemId
 
 @dataclass(slots=True)
 class Inventory:
