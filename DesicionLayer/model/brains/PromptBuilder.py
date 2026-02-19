@@ -202,7 +202,7 @@ class PromptBuilder:
         move_targets = sorted(set([str(loc_id) for loc_id in catalog_locations.keys()]))
         move_targets_text = "，".join(move_targets) if move_targets else "无"
 
-        available_actions = ["move", "consume", "cook", "sleep", "trade", "finish"]
+        available_actions = ["move", "consume", "sleep", "buy", "sell", "wait", "finish"]
 
         lines = [
             "## 动作输出要求",
@@ -214,7 +214,7 @@ class PromptBuilder:
             "- trade 仅在市场地点执行，item 必须来自市场商品列表。",
             "- consume/cook 仅可使用背包已有物品。",
             "## 示例",
-            '{"type":"move","target":"market"}',
+            '{"type":"move","target":"location:market"}',
             '{"type":"consume","item":"bread","qty":1}',
             '{"type":"sleep"}',
             '{"type":"buy","item":"bread","qty":2}',

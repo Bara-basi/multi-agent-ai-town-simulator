@@ -4,11 +4,7 @@ from typing import Any, Dict, Optional
 
 
 class ActionResult:
-    """
-    Compatibility wrapper:
-    supports both legacy names (success/message) and current names (ok/msg).
-    """
-
+ 
     def __init__(
         self,
         status: Optional[bool] = None,
@@ -19,7 +15,7 @@ class ActionResult:
         message: Optional[str] = None,
         delta: Optional[Dict[str, Any]] = None,
         event: Optional[str] = None,
-        finish:Optional[bool]=None,
+        finish: Optional[bool]=None,
     ) -> None:
         if status is None:
             status = bool(success) if success is not None else False
@@ -28,7 +24,7 @@ class ActionResult:
         self.msg = message if message is not None else msg
         self.delta = delta or {}
         self.event = event
-        self.finish=finish
+        self._finish = bool(finish) if finish is not None else False
 
     @property
     def success(self) -> bool:
@@ -41,4 +37,4 @@ class ActionResult:
 
     @property
     def finish(self) -> bool:
-        return bool(self.finish)
+        return self._finish

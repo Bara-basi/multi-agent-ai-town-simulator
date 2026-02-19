@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import logging
 from typing import Any, Optional
 
 try:
@@ -15,12 +16,27 @@ class LLM:
         model_name: str = "gpt-4.1-mini-2025-04-14",
         api_key: Optional[str] = None,
     ):
-        if OpenAI is None:
-            raise ImportError("openai package is not installed")
+        self._logger = logging.getLogger(__name__)
         self.model_name = model_name
-        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.client = None
+
+        if OpenAI is not None and self.api_key:
+            self.client = OpenAI(api_key=self.api_key)
+        else:
+            self._logger.warning(
+                "LLM fallback mode enabled (openai package or OPENAI_API_KEY is missing)."
+            )
+
+    def _fallback_generate(self, restrict: Optional[str] = None) -> Any:
+        if restrict == "json":
+            return {"type": "wait"}
+        return "fallback response"
 
     def generate(self, prompt: str, restrict: Optional[str] = None) -> Any:
+        if self.client is None:
+            return self._fallback_generate(restrict=restrict)
+
         kwargs = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
@@ -36,4 +52,3 @@ class LLM:
 
             return json.loads(content)
         return content
-

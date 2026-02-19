@@ -56,7 +56,10 @@ class ActionExecutor:
         if not name:
             return ActionResult(status=False, code="INVALID", message="Action has no name")
 
-        entry = get_entry(name)
+        try:
+            entry = get_entry(name)
+        except Exception:
+            return ActionResult(status=False, code="INVALID_ACTION", message=f"Unknown action: {name}")
         for validator in entry.validators:
             maybe = validator(self.ctx, act)
             if maybe is not None:

@@ -42,26 +42,38 @@ def load_items(csv_path: str = "data/item.csv") -> Dict[str, ItemDef]:
                 id=item_id,
                 name=row["name"].strip(),
                 category=row["category"].strip(),
-                base_price=row["basePrice"],
-                sell_ratio=row["sellRatio"],
-                quantity=int(row["quantity"]),
+                base_price=float(row["basePrice"]),
+                sell_ratio=float(row["sellRatio"]),
                 description=row["description"].strip(),
                 effects=effects
             )
+    return items
 
 def load_locations(csv_path: str = "data/location.csv") -> Dict[str, LocationDef]:
     location :Dict[str, LocationDef] = {}
+    alias_map = {
+        "marketcomponent": "market",
+        "market": "market",
+    }
     with open(csv_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             location_id = row["locationId"].strip()
             if not location_id:
                 continue
+            components_raw = (row.get("components") or row.get("component") or "").strip()
+            components = []
+            for raw in components_raw.split("/"):
+                comp = raw.strip()
+                if not comp:
+                    continue
+                key = alias_map.get(comp.lower(), comp.lower())
+                components.append(key)
             location[location_id] = LocationDef(
                 id=location_id,
                 name=row["name"].strip(),
                 description=row["description"].strip(),
-                components=row["components"].strip().split("/")
+                components=components
             )
     return location
 
@@ -70,4 +82,4 @@ def load_catalog() -> Catalog:
     actors = load_actors()
     items = load_items()
     locations = load_locations()
-    return Catalog(actors, items, locations)
+    return Catalog(items=items, locations=locations, actors=actors)

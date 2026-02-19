@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Any,Optional,List
 
 LocationId = str
@@ -8,7 +8,7 @@ class LocationDef:
     id: LocationId
     name: str
     description: str
-    components: List[str] = []
+    components: List[str] = field(default_factory=list)
 
     def snapshot(self) -> Dict[str, Any]:
         return {

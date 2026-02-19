@@ -34,3 +34,4 @@ class ActorState:
 
     def can_go(self, loc: LocationId) -> bool:
         return loc in self.unlocked_locations
+

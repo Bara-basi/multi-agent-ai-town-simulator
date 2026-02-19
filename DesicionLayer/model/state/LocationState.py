@@ -1,58 +1,67 @@
 from __future__ import annotations
-from dataclasses import dataclass,field
-from typing import Optional,Dict,Any
-from model.definitions.LocationDef import LocationId
-from model.definitions.ItemDef import ItemId
+
+from dataclasses import dataclass, field
+from typing import Any, Dict
+
 from model.definitions.Catalog import Catalog
-
-
+from model.definitions.ItemDef import ItemId
+from model.definitions.LocationDef import LocationId
 
 
 @dataclass(slots=True)
 class MarketComponent:
-    stock:Dict[ItemId,int]
-    price:Dict[ItemId,float]
+    _stock: Dict[ItemId, int] = field(default_factory=dict)
+    _price: Dict[ItemId, float] = field(default_factory=dict)
 
-    def init_stock(self, catalog:Catalog):
-        self.stock = {item_id:0 for item_id in catalog.item_ids}
-        self.price = {item_id:catalog.item(item_id).price for item_id in catalog.item_ids}
+    def init_stock(self, catalog: Catalog) -> None:
+        self._stock = {item_id: 0 for item_id in catalog.items.keys()}
+        self._price = {
+            item_id: float(catalog.item(item_id).base_price)
+            for item_id in catalog.items.keys()
+        }
 
-    def observe(self) -> Dict[str,Any]:
-        return {"stock":self.stock, "price":self.price}
-    
-    @property
-    def stock(self,ItemId) -> int:
-        return self.stock.get(ItemId,0)
-    @property
-    def price(self,ItemId) -> float:
-        return self.price.get(ItemId,0.0)
-    def add_stock(self,ItemId,qty):
-        self.stock[ItemId] = self.stock.get(ItemId,0) + qty
+    def observe(self) -> Dict[str, Any]:
+        return {"stock": dict(self._stock), "price": dict(self._price)}
 
-    def remove_stock(self,ItemId,qty):
-        self.stock[ItemId] = self.stock.get(ItemId,0) - qty
+    def stock(self, item_id: ItemId) -> int:
+        return int(self._stock.get(item_id, 0))
+
+    def price(self, item_id: ItemId) -> float:
+        return float(self._price.get(item_id, 0.0))
+
+    def add_stock(self, item_id: ItemId, qty: int) -> None:
+        q = max(int(qty), 0)
+        self._stock[item_id] = self.stock(item_id) + q
+
+    def remove_stock(self, item_id: ItemId, qty: int) -> None:
+        q = max(int(qty), 0)
+        left = self.stock(item_id) - q
+        self._stock[item_id] = max(left, 0)
+
     @classmethod
-    def get_instance(cls)->MarketComponent:
-        market_component = MarketComponent()
-        return market_component
+    def get_instance(cls) -> "MarketComponent":
+        return cls()
 
 
-component_mapping = {
-    "market":MarketComponent
-}
+component_mapping = {"market": MarketComponent}
+
+
 @dataclass(slots=True)
 class LocationState:
-    id:LocationId
+    id: LocationId
+    description: str = ""
+    component: Dict[str, Any] = field(default_factory=dict)
 
-    component:Dict[str,Any] = field(default_factory=dict)
-
-    
     def market(self) -> MarketComponent:
         return self.component["market"]
-    
-    
-    def observe(self) -> Dict[str,Any]:
-        obs = {"id":self.id, "desp":self.desp}
-        for name,c in self.component.items():
-            obs[name] = c.observe()
+
+    def observe(self) -> Dict[str, Any]:
+        obs: Dict[str, Any] = {
+            "id": self.id,
+            "description": self.description,
+            "desp": self.description,
+        }
+        for name, comp in self.component.items():
+            if hasattr(comp, "observe"):
+                obs[name] = comp.observe()
         return obs

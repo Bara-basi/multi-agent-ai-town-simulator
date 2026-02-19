@@ -1,14 +1,12 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict,Any
-from model.state.ActorState import ActorState
+from model.state.ActorState import ActorState,ActorId
 from model.brains.PromptBuilder import PromptBuilder
 from model.definitions.OpenAIModel import LLM
 
-AgentId = str
-
 @dataclass
 class Agent:
-    id: int
+    id: ActorId 
     model: LLM
     actor: ActorState
     prompt_builder:PromptBuilder
