@@ -1,3 +1,5 @@
+"""角色静态定义。"""
+
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional, Union
 
@@ -14,6 +16,7 @@ class ActorDef:
     info: Optional[str] = None
 
     def snapshot(self) -> Dict[str, Any]:
+        # skill 仅在是字符串时透出，避免把可调用对象塞进 prompt。
         return {
             "id": self.id,
             "name": self.name,

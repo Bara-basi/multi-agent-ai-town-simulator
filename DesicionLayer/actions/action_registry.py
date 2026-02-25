@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+"""动作注册中心：管理 handler、validator 和动作别名。"""
+
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
+
 from model.state.actionResult import ActionResult
 
 ActionValidator = Callable[["ActionContext", Any], Optional[ActionResult]]
@@ -10,6 +13,7 @@ ActionHandler = Callable[["ActionContext", Any], ActionResult]
 
 @dataclass
 class ActionContext:
+    # 运行时上下文：把执行动作所需对象集中传给 handler/validator。
     world: Any
     dispatch: Any
     config: Any
@@ -33,9 +37,11 @@ def register(
     aliases: Optional[List[str]] = None,
     validators: Optional[List[ActionValidator]] = None,
 ):
-    def deco(fn: ActionHandler) -> ActionHandler:  # 定义一个装饰器函数deco，接受一个ActionHandler类型的参数fn，并返回一个ActionHandler类型的函数
-        if action_name in _REGISTRY:  # 检查action_name是否已经在注册表中
-            raise ValueError(f"Action {action_name} already registered")
+    """注册动作处理函数。"""
+
+    def deco(fn: ActionHandler) -> ActionHandler:
+        if action_name in _REGISTRY:
+            raise ValueError(f"动作 `{action_name}` 已被注册")
         _REGISTRY[action_name] = Entry(handler=fn, validators=validators or [])
         for alias in aliases or []:
             _ALIASES[alias] = action_name
@@ -45,12 +51,12 @@ def register(
 
 
 def resolve_name(name: str) -> str:
+    # 将别名归一到主动作名。
     return _ALIASES.get(name, name)
 
 
 def get_entry(name: str) -> Entry:
     name = resolve_name(name)
     if name not in _REGISTRY:
-        raise ValueError(f"Action {name} is not registered")
+        raise ValueError(f"动作 `{name}` 未注册")
     return _REGISTRY[name]
-

@@ -1,3 +1,5 @@
+"""物品静态定义。"""
+
 from dataclasses import dataclass, field
 from typing import Dict, Any
 
@@ -16,6 +18,7 @@ class ItemDef:
     
 
     def snapshot(self) -> Dict[str, Any]:
+        # prompt 视图：基础信息 + 可读效果字段。
         snapshot = {
             "name": self.name,
             "description": self.description,

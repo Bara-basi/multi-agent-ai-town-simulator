@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+"""动作执行结果对象。兼容 status/success、msg/message 两套命名。"""
+
 from typing import Any, Dict, Optional
 
 
 class ActionResult:
- 
+    # 该类是执行层与 runtime/监控层之间的统一返回结构。
     def __init__(
         self,
         status: Optional[bool] = None,
@@ -28,10 +30,12 @@ class ActionResult:
 
     @property
     def success(self) -> bool:
+        # 与 status 同义，保留兼容旧调用。
         return self.status
 
     @property
     def message(self) -> str:
+        # 与 msg 同义，便于上层统一读取。
         return self.msg
 
 

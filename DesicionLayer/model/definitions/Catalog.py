@@ -1,3 +1,5 @@
+"""静态定义索引：统一访问 Actor/Item/Location 的定义信息。"""
+
 from dataclasses import dataclass
 from model.definitions.ItemDef import ItemId, ItemDef
 from model.definitions.ActorDef import ActorId, ActorDef
@@ -20,6 +22,7 @@ class Catalog:
     def actor(self,actor_id:ActorId) -> ActorDef:
         return self.actors[actor_id]    
     def snapshot(self) -> Dict[str, Any]:
+        # 提供给 PromptBuilder 的轻量序列化视图。
         return {
             "items": {k: v.snapshot() for k, v in self.items.items()},
             "locations": {k: v.snapshot() for k, v in self.locations.items()},

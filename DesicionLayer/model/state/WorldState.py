@@ -1,5 +1,7 @@
-﻿from typing import Dict, Any
+﻿"""世界级动态状态容器：负责观察快照和日期推进。"""
+
 from dataclasses import dataclass, field
+from typing import Any, Dict
 
 from actions.hooks import ON_DAILY_SETTLE
 from model.definitions.ActorDef import ActorId
@@ -12,7 +14,7 @@ from model.state.LocationState import LocationState
 @dataclass(slots=True)
 class WorldState:
     catalog: Catalog
-    day: int = 0
+    day: int = 1
     actors: Dict[ActorId, ActorState] = field(default_factory=dict)
     locations: Dict[LocationId, LocationState] = field(default_factory=dict)
 
@@ -23,14 +25,18 @@ class WorldState:
         return self.locations[loc_id]
 
     def update_day(self) -> None:
+        # 顺序：day+1 -> 地点刷新 -> 角色刷新 -> 日结算 hook。
         self.day += 1
         for location in self.locations.values():
             update_fn = getattr(location, "update_day", None)
             if callable(update_fn):
                 update_fn()
+        for actor in self.actors.values():
+            actor.update_day()
         ON_DAILY_SETTLE(self)
 
     def observe(self, actor_id: ActorId) -> Dict[str, Any]:
+        # 输出统一观察视图，供 PromptBuilder 构造提示词。
         actor = self.actor(actor_id)
 
         actor_def = None
@@ -72,4 +78,5 @@ class WorldState:
             "location_snapshot": location_snapshot,
             "catalog_snapshot": catalog_snapshot,
             "working_events": working_events,
+            "memory": actor.memory.get_recent(),
         }

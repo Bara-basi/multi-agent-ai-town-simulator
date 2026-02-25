@@ -1,6 +1,7 @@
 from typing import Dict,List,Optional,Any
 from model.definitions.Effect import Effect
 
+"""效果管理器（预留系统）。当前仅提供增删查与简单计算骨架。"""
 
 class EffectManager:
     effects:Dict[str,List[Effect]]
@@ -9,6 +10,7 @@ class EffectManager:
         self.effects = {}
 
     def add_effect(self, effect:Effect):
+        # 按 scope 分组存放效果，便于按上下文查询。
         self.effects.setdefault(effect.scope, []).append(effect)
 
     def remove_effect(self, effect:Effect):
@@ -22,6 +24,7 @@ class EffectManager:
         return self.effects.get(scope,[])
     
     def query(self,stat,base,ctx):
+        # 约定：同一 scope 下按 priority 顺序叠加。
         mods = self.get_effects(stat.scope)
         mods = sorted(mods,key=lambda m:m.priority)
         x = base 

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+"""地点运行时状态及动态组件（当前重点是 market）。"""
+
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
 from model.definitions.Catalog import Catalog
 from model.definitions.ItemDef import ItemId
 from model.definitions.LocationDef import LocationId
-
+from config.config import MARKET_STOCK
 
 @dataclass(slots=True)
 class MarketComponent:
@@ -14,6 +16,7 @@ class MarketComponent:
     _price: Dict[ItemId, float] = field(default_factory=dict)
 
     def init_stock(self, catalog: Catalog) -> None:
+        # 初始化为“全品类可交易”，价格先使用物品基准价。
         self._stock = {item_id: 0 for item_id in catalog.items.keys()}
         self._price = {
             item_id: float(catalog.item(item_id).base_price)
@@ -38,6 +41,10 @@ class MarketComponent:
         left = self.stock(item_id) - q
         self._stock[item_id] = max(left, 0)
 
+    def update_day(self):
+        # 每日补货到固定库存。
+        for item_id in self._stock.keys():
+            self._stock[item_id] = MARKET_STOCK
     @classmethod
     def get_instance(cls) -> "MarketComponent":
         return cls()
@@ -56,6 +63,7 @@ class LocationState:
         return self.component["market"]
 
     def observe(self) -> Dict[str, Any]:
+        # 将地点自身字段和各组件 observe() 聚合成统一快照。
         obs: Dict[str, Any] = {
             "id": self.id,
             "description": self.description,
@@ -65,3 +73,7 @@ class LocationState:
             if hasattr(comp, "observe"):
                 obs[name] = comp.observe()
         return obs
+    def update_day(self, day: int) -> None:
+        for name, comp in self.component.items():
+            if hasattr(comp, "update_day"):
+                comp.update_day(day)
