@@ -9,7 +9,8 @@ from model.definitions.Catalog import Catalog
 from model.definitions.LocationDef import LocationId
 from model.state.ActorState import ActorState
 from model.state.LocationState import LocationState
-
+import logging
+logger = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class WorldState:
@@ -25,6 +26,12 @@ class WorldState:
         return self.locations[loc_id]
 
     def update_day(self) -> None:
+        """
+        尝试进入下一回合，如果有任何Actor仍在执行，则不推进。
+        """
+        for actor in self.actors.values():
+            if actor.running:
+                return
         # 顺序：day+1 -> 地点刷新 -> 角色刷新 -> 日结算 hook。
         self.day += 1
         for location in self.locations.values():
@@ -34,6 +41,7 @@ class WorldState:
         for actor in self.actors.values():
             actor.update_day()
         ON_DAILY_SETTLE(self)
+        logger.info(f"回合结算成功,进入回合{self.day}")
 
     def observe(self, actor_id: ActorId) -> Dict[str, Any]:
         # 输出统一观察视图，供 PromptBuilder 构造提示词。
@@ -59,7 +67,7 @@ class WorldState:
             "thirst": actor.attrs.get("thirst").current if actor.attrs.get("thirst") else 0.0,
             "hunger": actor.attrs.get("hunger").current if actor.attrs.get("hunger") else 0.0,
             "fatigue": actor.attrs.get("fatigue").current if actor.attrs.get("fatigue") else 0.0,
-            "inventory": actor.inventory.snapshot(),
+            "inventory": actor.inventory.snapshot(self.catalog),
             "identity": f"你叫{name}，{gender}，{age}岁。{info}",
             "skill": getattr(actor_def, "skill", None),
         }

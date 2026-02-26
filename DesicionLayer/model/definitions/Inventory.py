@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Dict
 from model.definitions.ItemDef import ItemId
-
+from model.definitions.Catalog import Catalog
 @dataclass(slots=True)
 class Inventory:
     qty: Dict[ItemId, int] = field(default_factory=dict)
@@ -26,6 +26,7 @@ class Inventory:
             self.qty[item_id] = left
 
     
-    def snapshot(self) -> str:
+    def snapshot(self,catalog:Catalog) -> str:
         # 输出紧凑字符串，便于直接写进 prompt。
-        return ",".join(f"{k}x{v}" for k, v in self.qty.items())
+
+        return ", ".join([f"{catalog.item_name(k)} x {v}" for k,v in self.qty.items()])

@@ -5,13 +5,14 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 from actions.executor import ActionExecutor
 from config.runtime_config import AgentRuntimeConfig
 from model.brains.AgentBrain import Agent
 from model.state.WorldState import WorldState
 from model.state.actionResult import ActionResult
+from model.definitions.ActorDef import ActorId
 
 logger = logging.getLogger(__name__)
 
@@ -43,17 +44,28 @@ class AgentRuntime:
         self,
         *,
         world: WorldState,
-        agent: Agent,
+        agents: Dict[ActorId, Agent],
         executor: ActionExecutor,
         config: Optional[AgentRuntimeConfig] = None,
         logger: Optional[Any] = None,
     ):
         self.world = world
-        self.agent = agent
+        self.agents = agents
         self.executor = executor
         self.config = config or AgentRuntimeConfig()
         self.logger = logger
         self._states: Dict[Any, RuntimeActorState] = {}
+
+    def _agent(self, actor_id: Any) -> Agent:
+        if actor_id not in self.agents:
+            raise KeyError(f"unknown actor_id: {actor_id}")
+        return self.agents[actor_id]
+
+    def plan_text(self, actor_id: Any) -> str:
+        return self._agent(actor_id).prompt_builder.plan_txt or ""
+
+    def reflect_text(self, actor_id: Any) -> str:
+        return self._agent(actor_id).prompt_builder.reflect_txt or ""
 
     def _st(self, actor_id: Any) -> RuntimeActorState:
         if actor_id not in self._states:
@@ -90,13 +102,14 @@ class AgentRuntime:
 
     async def tick_actor(self, actor_id: Any) -> ActionResult:
         st = self._st(actor_id)
+        agent = self._agent(actor_id)
         st.step += 1
         obs = self._obs(actor_id)
 
         if self._should_plan(st):
             try:
-                await self.agent.plan(obs)
-                st.plan = self.agent.prompt_builder.plan_txt
+                await agent.plan(obs)
+                st.plan = agent.prompt_builder.plan_txt
                 st.last_plan_step = st.step
             except Exception as e:
                 logger.exception("plan failed for actor %s: %s", actor_id, e)
@@ -106,7 +119,7 @@ class AgentRuntime:
         # act 支持重试，避免偶发 LLM/网络错误直接打断回合。
         for _ in range(self.config.max_action_retries + 1):
             try:
-                proposal = await self.agent.act(obs)
+                proposal = await agent.act(obs)
             except Exception as e:
                 last_err = ActionResult(status=False, code="CRASH", message=f"动作生成失败: {e}")
                 proposal = None
@@ -130,17 +143,42 @@ class AgentRuntime:
 
         if self._should_reflect(st):
             try:
-                await self.agent.reflect(obs)
+                await agent.reflect(obs)
                 st.last_reflect_step = st.step
             except Exception as e:
                 logger.exception("reflect failed for actor %s: %s", actor_id, e)
 
         return res
 
-    async def run_tick(self, *, dt: float = 1.0) -> None:
-        _ = dt
-        # status=True 的 actor 参与本轮决策；无人可行动时推进 day。
-        actor_ids = [aid for aid, actor in self.world.actors.items() if actor.status]
-        if len(actor_ids) == 0:
-            self.world.update_day()
-        await asyncio.gather(*(self.tick_actor(aid) for aid in actor_ids))
+    async def _run_actor_loop(
+        self,
+        actor_id: Any,
+        interval_seconds: float,
+        on_tick: Optional[Callable[[Any, ActionResult], None]] = None,
+    ) -> None:
+        # 单角色无限 tick 循环；异常只记录日志，不中断整体仿真。
+        while True:
+            try:
+                res = await self.tick_actor(actor_id)
+                if on_tick:
+                    on_tick(actor_id, res)
+            except Exception:
+                logger.exception("actor loop crashed: %s", actor_id)
+            await asyncio.sleep(interval_seconds)
+
+    async def run(
+        self,
+        *,
+        interval_seconds: float,
+        actor_ids: Optional[Iterable[Any]] = None,
+        on_tick: Optional[Callable[[Any, ActionResult], None]] = None,
+    ) -> None:
+        target_ids = list(actor_ids) if actor_ids is not None else list(self.agents.keys())
+        tasks = [
+            asyncio.create_task(
+                self._run_actor_loop(actor_id, interval_seconds, on_tick=on_tick),
+                name=f"actor-{actor_id}",
+            )
+            for actor_id in target_ids
+        ]
+        await asyncio.gather(*tasks)

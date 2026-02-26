@@ -1,4 +1,4 @@
-"""程序入口：组装世界状态、动作执行器和每个 Agent 的 runtime 循环。"""
+"""程序入口：组装世界状态、动作执行器，并启动单一 runtime 管理全部 Agent 循环。"""
 
 import asyncio
 import logging
@@ -71,10 +71,10 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
         "thirst": round(float(thirst), 2),
         "fatigue": round(float(fatigue), 2),
         "inventory_text": _format_inventory_text(actor),
-        "plan": runtime.agent.prompt_builder.plan_txt or "",
+        "plan": runtime.plan_text(actor_id),
         "action": action_txt,
         "history_entry": history_entry,
-        "reflect": runtime.agent.prompt_builder.reflect_txt or "",
+        "reflect": runtime.reflect_text(actor_id),
         "memory": "",
     }
 
@@ -129,21 +129,8 @@ def _bootstrap_world_state(world: WorldState) -> None:
                 logging.exception("market init failed for location: %s", getattr(location, "id", "<unknown>"))
 
 
-async def _run_actor_loop(actor_id: ActorId, runtime: AgentRuntime, interval_seconds: float, on_update=None) -> None:
-    # 单角色无限 tick 循环；异常只记录日志，不中断整体仿真。
-    while True:
-        try:
-            res = await runtime.tick_actor(actor_id)
-            if on_update:
-                payload = _build_monitor_payload(runtime.world, runtime, actor_id, res)
-                on_update(payload)
-        except Exception:
-            logging.exception("actor loop crashed: %s", actor_id)
-        await asyncio.sleep(interval_seconds)
-
-
 async def run(on_update=None) -> None:
-    # 1) 读静态定义 2) 构建动态状态 3) 启动每个 actor 的 runtime。
+    # 1) 读静态定义 2) 构建动态状态 3) 启动单一 runtime 管理全部 actor。
     catalog = load_catalog()
     actor_states, location_states = build_state(catalog)
     world = WorldState(
@@ -162,34 +149,35 @@ async def run(on_update=None) -> None:
         logger=logging.getLogger("action"),
     )
 
-    runtimes: Dict[ActorId, AgentRuntime] = {}
+    agents: Dict[ActorId, Agent] = {}
     for actor_id, actor in actor_states.items():
-        agent = Agent(
+        agents[actor_id] = Agent(
             id=actor_id,
             model=LLM(model_name=MODEL_NAME),
             actor=actor,
             prompt_builder=PromptBuilder(),
         )
-        runtimes[actor_id] = AgentRuntime(
-            world=world,
-            agent=agent,
-            executor=executor,
-            config=runtime_config,
-            logger=logging.getLogger(f"runtime.{actor_id}"),
-        )
+    runtime = AgentRuntime(
+        world=world,
+        agents=agents,
+        executor=executor,
+        config=runtime_config,
+        logger=logging.getLogger("runtime"),
+    )
 
     if on_update:
-        for actor_id, runtime in runtimes.items():
+        for actor_id in agents.keys():
             on_update(_build_monitor_payload(world, runtime, actor_id, result=None))
 
-    tasks = [
-        asyncio.create_task(
-            _run_actor_loop(actor_id, runtime, TICK_INTERVAL_SECONDS, on_update=on_update),
-            name=f"actor-{actor_id}",
-        )
-        for actor_id, runtime in runtimes.items()
-    ]
-    await asyncio.gather(*tasks)
+    def _on_tick(actor_id: ActorId, result) -> None:
+        if on_update:
+            on_update(_build_monitor_payload(world, runtime, actor_id, result))
+
+    await runtime.run(
+        interval_seconds=TICK_INTERVAL_SECONDS,
+        actor_ids=agents.keys(),
+        on_tick=_on_tick,
+    )
 
 
 if __name__ == "__main__":

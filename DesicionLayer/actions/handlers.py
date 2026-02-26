@@ -89,8 +89,8 @@ def handle_finish(ctx, act) -> ActionResult:
 @register("wait")
 def handle_wait(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
-    # status=False 表示本日不再行动，等待 day 切换。
-    actor.status = False
+    actor.running = False
+    ctx.world.update_day()
     return ActionResult(status=True, message="wait for next turn")
 
 
@@ -98,10 +98,7 @@ def handle_wait(ctx, act) -> ActionResult:
 def handle_buy(ctx, act) -> ActionResult:
     # 买入：角色加货并扣钱，市场减库存。
     actor = ctx.world.actor(act.actor_id)
-    item_id = getattr(act, "item", None)
-    if not item_id:
-        return ActionResult(status=False, code="INVALID", message="buy requires item")
-
+    item_id = "item:"+act.item
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id)
@@ -117,7 +114,7 @@ def handle_buy(ctx, act) -> ActionResult:
 def handle_sell(ctx, act) -> ActionResult:
     # 卖出：角色减货并加钱，市场增库存。
     actor = ctx.world.actor(act.actor_id)
-    item_id = getattr(act, "item", None)
+    item_id = "item:"+act.item
     if not item_id:
         return ActionResult(status=False, code="INVALID", message="sell requires item")
 

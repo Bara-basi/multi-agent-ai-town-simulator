@@ -49,6 +49,7 @@ def load_items(csv_path: str = "data/item.csv") -> Dict[str, ItemDef]:
                 base_price=float(row["basePrice"]),
                 sell_ratio=float(row["sellRatio"]),
                 description=row["description"],
+                default_quantity=int(row["quantity"]),
                 effects=effects
             )
     return items

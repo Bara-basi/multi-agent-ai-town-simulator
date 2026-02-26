@@ -15,7 +15,8 @@ class Catalog:
 
     def item(self, item_id: ItemId) -> ItemDef:
         return self.items[item_id]
-
+    def item_name(self,item_id: ItemId) -> str:
+        return self.items[item_id].name
     def loc(self, loc_id: LocationId) -> LocationDef:
         return self.locations[loc_id]
     

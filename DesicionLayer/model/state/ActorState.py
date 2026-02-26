@@ -32,12 +32,11 @@ class ActorState:
     unlocked_locations: set[LocationId] = field(default_factory=set)
     # 预留：人物特性修正（buff/debuff 或技能加成）。
     mods: List[Dict[str, Any]] = field(default_factory=list)
-    status: bool = True
-
+    running: bool = True
     def can_go(self, loc: LocationId) -> bool:
         return loc in self.unlocked_locations
 
     def update_day(self):
         # 新的一天：恢复可行动，并新开一条当日行为记录。
-        self.status = True
+        self.running = True
         self.memory.act_records.append([])

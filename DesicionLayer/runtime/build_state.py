@@ -8,17 +8,21 @@ from model.state.ActorState import ActorState
 from model.definitions.Catalog import Catalog
 from model.definitions.MemoryStore import MemoryStore
 from typing import Dict,Tuple
-def build_location_state(locations:Dict[LocationId,LocationDef]) -> Dict[LocationId,LocationState]:
-    # 每个地点根据 components 声明实例化动态组件（如 market）。
+import logging
+logger = logging.getLogger(__name__)
+def build_location_state(catalog:Catalog) -> Dict[LocationId,LocationState]:
+    locations:Dict[LocationId,LocationDef] = catalog.locations 
+    # 每个地点根据 component 声明实例化动态组件（如 market）。
     location_states:Dict[LocationId,LocationState] = {}
     for location_id, location_def in locations.items():
         locationstate = LocationState(
             id=location_id,
             description=location_def.description,
         )
-        if location_def.type=="market":
-            locationstate.components["market"] = MarketComponent()
-            locationstate.market().init_stock()
+        if location_def.type == "Market":
+            locationstate.component["market"] = MarketComponent()
+            locationstate.market().init_stock(catalog=catalog)
+            logger.info(f"商店初始化完成")
         
         location_states[location_id] = locationstate
     return location_states
@@ -37,7 +41,6 @@ def build_actor_state(actors:Dict[ActorId,ActorDef]) -> Dict[ActorId,ActorState]
             unlocked_locations=["location:market"],
             memory= MemoryStore(),
             mods= [],
-            status= "busy"
         )
         actor_states[actor_id] = actor_state
     return actor_states
@@ -45,5 +48,7 @@ def build_actor_state(actors:Dict[ActorId,ActorDef]) -> Dict[ActorId,ActorState]
 def build_state(catalog:Catalog) -> Tuple[Dict[ActorId,ActorState],Dict[LocationId,LocationState]]:
     # 主入口：同时构建 actor/location 两类动态状态。
     actor_states = build_actor_state(catalog.actors)
-    location_states = build_location_state(catalog.locations)
+    logger.info(f"所有NPC状态初始化完成")
+    location_states = build_location_state(catalog)
+    logger.info(f"所有地点初始化完成")
     return actor_states,location_states

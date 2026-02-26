@@ -94,7 +94,7 @@ class PromptBuilder:
         if isinstance(inventory_snapshot, dict):
             if not inventory_snapshot:
                 return "空"
-            return "，".join(f"{k}x{v}" for k, v in inventory_snapshot.items())
+            return "，".join(f"{k} x {v}" for k, v in inventory_snapshot.items())
         return str(inventory_snapshot)
 
     def _build_base_sections(self, obs: Any) -> List[PromptSection]:
@@ -103,8 +103,7 @@ class PromptBuilder:
         day = getattr(obs, "day", -1)
 
         background = (
-            "你在一个小镇生存经营环境中行动。"
-            "目标是保持生存属性安全，并逐步提升资金与资源。"
+            "你受邀参加了一个神秘游戏，目标在限定的小镇场景中生存和贸易，和其它玩家博弈，你需要抢在其它玩家前赚取10000现金以获得胜利。"
         )
 
         rules = "\n".join(
@@ -115,17 +114,17 @@ class PromptBuilder:
             ]
         )
 
-        identity = f"角色：{actor.get('identity', '')}"
-        location = f"当前位置：{actor.get('cur_location', '')}"
-        money = f"金钱：{actor.get('money', 0)}"
+        identity = f"角色：{actor['identity']}"
+        location = f"当前位置：{actor['cur_location']}"
+        money = f"金钱：{actor['money']}"
         attrs = (
             f"属性：饱食度 {round(float(actor.get('hunger', 0.0)), 2)}，"
             f"水分值 {round(float(actor.get('thirst', 0.0)), 2)}，"
             f"精神值 {round(float(actor.get('fatigue', 0.0)), 2)}"
             " 三项属性越高约安全,最高为100,每回合结束时会扣减一定比例的属性"
         )
-        inv = f"背包：{self._format_inventory(actor.get('inventory'))}"
-        state = "\n".join([f"日期：{day}", identity, location, money, attrs, inv])
+        inv = f"背包：{obs.actor_snapshot["inventory"]}"
+        state = "\n".join([f"日期：第{day}天", identity, location, money, attrs, inv])
 
         return [
             self._sec("## 背景", background, "info"),
@@ -145,50 +144,29 @@ class PromptBuilder:
             lines.append(f"- {loc_name} ({loc_id})：{loc_desc}")
         return "\n".join(lines) if lines else "- 暂无地点信息"
 
-    def _find_market_location_id(self, obs: Any) -> str | None:
-        # 优先看 runtime 快照中的 market 组件，找不到再用名称猜测。
-        location_snapshot = getattr(obs, "location_snapshot", {}) or {}
-        catalog_locations = (getattr(obs, "catalog_snapshot", {}) or {}).get("locations", {}) or {}
-
-        for loc_id, loc_obs in location_snapshot.items():
-            if isinstance(loc_obs, dict) and "market" in loc_obs:
-                return loc_id
-        for loc_id, loc_def in catalog_locations.items():
-            name = str(loc_def.get("name", "")).lower()
-            if "market" in name or "集市" in name:
-                return loc_id
-        return None
 
     def format_market_item_list(self, obs: Any) -> str:
         title = "### 市场商品"
-        market_loc_id = self._find_market_location_id(obs)
-        if not market_loc_id:
-            return f"{title}\n- 当前未发现市场地点"
-
-        location_snapshot = getattr(obs, "location_snapshot", {}) or {}
-        market_obs = location_snapshot.get(market_loc_id, {}) or {}
-        market_comp = market_obs.get("market", {}) or {}
-        stock = market_comp.get("stock", {}) or {}
-        prices = market_comp.get("price", {}) or {}
-
-        items = (getattr(obs, "catalog_snapshot", {}) or {}).get("items", {}) or {}
+        location_snapshot = obs.location_snapshot
+        market = location_snapshot["location:market"]["market"]
+        stock = market["stock"]
+        prices = market["price"]
+        items = obs.catalog_snapshot["items"]
         lines: List[str] = [title]
-
         for item_id, qty in stock.items():
             if qty is None or int(qty) <= 0:
                 continue
             item = items.get(item_id, {})
             name = item.get("name", item_id)
             desc = item.get("description", "")
-            base_price = float(item.get("base_price", 0) or 0)
-            price = float(prices.get(item_id, base_price) or 0)
-
+            base_price = item['base_price']
+            price = prices[item_id]
             if base_price > 0:
                 ratio = price / base_price
                 if ratio >= 1.3:
-                    price_info = "显著偏贵"
+                    price_info = "显著偏贵,非生存所需不建议入手"
                 elif ratio <= 0.7:
-                    price_info = "显著偏低"
+                    price_info = "显著偏低，适合理财"
                 else:
                     price_info = "接近常规价格"
             else:
@@ -197,7 +175,6 @@ class PromptBuilder:
             lines.append(
                 f"- {name}({item_id}) | 库存 {qty} | 价格 {price:.2f} | {price_info} | {desc}"
             )
-
         if len(lines) == 1:
             lines.append("- 当前无可交易商品")
         return "\n".join(lines)
@@ -220,17 +197,18 @@ class PromptBuilder:
             "- 只输出 JSON 对象或 JSON 数组，不要输出额外文本。",
             "- 数组最多 3 步；若包含 move，建议只输出 move。",
             f"- 允许动作类型：{', '.join(available_actions)}。",
-            "- 无安全动作时输出 {\"type\":\"finish\"}。",
-            f"- 当前位置：{cur_loc}；家：{home}；可移动目标：{move_targets_text}。",
+            "- 计划完成时输出 {\"type\":\"finish\"}。",
+            f"- 当前位置：{cur_loc}；可移动目标：{move_targets_text}。",
             "- trade 仅在市场地点执行，item 必须来自市场商品列表。",
-            "- consume/cook 仅可使用背包已有物品。",
+            "- consume 仅可使用背包已有物品。",
             "## 示例",
-            '{"type":"move","target":"location:market"}',
-            '{"type":"consume","item":"bread","qty":1}',
-            '{"type":"sleep"}',
-            '{"type":"buy","item":"bread","qty":2}',
-            '{"type":"sell","item":"apple","qty":5}',
-            '{"type":"finish"}',
+            '{"type":"move","target":"location:market"},前往某个地点',
+            '{"type":"consume","item":"bread","qty":1},消耗物品',
+            '{"type":"sleep"},睡觉，消耗水分和饱食度回复精神',
+            '{"type":"buy","item":"bread","qty":2},购买物品',
+            '{"type":"sell","item":"apple","qty":5},出售物品',
+            '{"type":"wait"},结束回合并等待'
+            '{"type":"finish"},完成了当前计划，等待下一次计划',
         ]
         return "\n".join(lines)
 
@@ -246,7 +224,7 @@ class PromptBuilder:
                 "请制定接下来几个小时的计划。",
                 "- 优先保障生存属性，再考虑收益。属性值越高代表越健康，最高为100",
                 "- 仅依据已知信息，信息不足时写明先去哪里确认。",
-                "- 输出 3-6 条可执行计划。",
+                "- 输出至少1条可执行计划。",
             ]
         )
         sections.append(self._sec("## 任务", task, "task"))
@@ -271,8 +249,7 @@ class PromptBuilder:
         loc_desc = loc_def.get("description") or loc_obs.get("desp", "")
 
         location_info = f"你当前在：{loc_name} ({cur_loc})\n地点描述：{loc_desc}"
-        market_loc_id = self._find_market_location_id(obs)
-        if cur_loc == market_loc_id:
+        if cur_loc == "location:market":
             location_info = f"{location_info}\n\n{self.format_market_item_list(obs)}"
         sections.append(self._sec("## 当前地点信息", location_info, "state"))
 

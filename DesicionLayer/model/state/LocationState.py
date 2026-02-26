@@ -17,14 +17,14 @@ class MarketComponent:
 
     def init_stock(self, catalog: Catalog) -> None:
         # 初始化为“全品类可交易”，价格先使用物品基准价。
-        self._stock = {item_id: 0 for item_id in catalog.items.keys()}
+        self._stock = {item_id: item_def.default_quantity for item_id,item_def in catalog.items.items()}
         self._price = {
             item_id: float(catalog.item(item_id).base_price)
             for item_id in catalog.items.keys()
         }
 
     def observe(self) -> Dict[str, Any]:
-        return {"stock": dict(self._stock), "price": dict(self._price)}
+        return {"stock": self._stock, "price": self._price}
 
     def stock(self, item_id: ItemId) -> int:
         return int(self._stock.get(item_id, 0))
@@ -73,7 +73,7 @@ class LocationState:
             if hasattr(comp, "observe"):
                 obs[name] = comp.observe()
         return obs
-    def update_day(self, day: int) -> None:
+    def update_day(self) -> None:
         for name, comp in self.component.items():
             if hasattr(comp, "update_day"):
-                comp.update_day(day)
+                comp.update_day()

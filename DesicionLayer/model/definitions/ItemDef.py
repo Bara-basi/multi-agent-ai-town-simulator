@@ -14,7 +14,7 @@ class ItemDef:
     base_price: float
     sell_ratio: float
     effects: Dict[str, float] = field(default_factory=dict)
-    
+    default_quantity: int = 0
     
 
     def snapshot(self) -> Dict[str, Any]:
@@ -22,6 +22,7 @@ class ItemDef:
         snapshot = {
             "name": self.name,
             "description": self.description,
+            "base_price": self.base_price,
         }
         for effect, value in (self.effects or {}).items():
             snapshot[effect] = value
