@@ -175,10 +175,24 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
                 
             }else if(pair.cmd == "sleeping")
             {
+                print("sleeping");
+                res_time = pair.cost;
+                //播放睡觉动画
+                ani.SetInteger("sleep", 1);
 
-            }else if (pair.cmd == "fishing")
+
+
+            }
+            else if (pair.cmd == "pick_up")
             {
+                print("pick up something");
+                ani.SetTrigger("pick_up");
+                res_time = pair.cost;
 
+            }
+            else if (pair.cmd == "fishing")
+            {
+                
             }
             else
             {
@@ -278,6 +292,27 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
                 CompleteCurrent();
             }
 
+        }else if (curCmd == "sleeping")
+        {
+            //睡觉动画
+            res_time -= Time.deltaTime;
+            print(res_time);
+            if (res_time <= 0)
+            {
+                print("stop");
+                ani.SetInteger("sleep", 0);
+                CompleteCurrent();
+            }
+        }else if (curCmd == "pick_up")
+        {
+            //捡东西
+            res_time -= Time.deltaTime;
+            print(res_time);
+            if (res_time <= 0)
+            {
+                print("stop");
+                CompleteCurrent();
+            }
         }
 
 
@@ -300,8 +335,6 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         {
             actionList.Enqueue(new ActionPair { cost = cost_time, cmd = cmd, target = Vector2.zero, actionCallBack = onArrived });
         }
-
-
     }
     public void Suspend(float seconds)
     {

@@ -112,4 +112,5 @@ public class PlayerHUD : MonoBehaviour
         }
         canvasGroup.alpha = target;
     }
+
 }

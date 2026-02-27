@@ -12,7 +12,10 @@ public interface IAutoNavigator
 {
     void AddCommand(float cost_time,string cmd,List<Vector2> target, Action onArrived);
 }
-
+public interface IAutoHUDAnimation
+{
+    void AddAnimation(string type,float duration,int value);
+}
 [Serializable]
 public class LocationPair
 {
@@ -90,15 +93,23 @@ public class WsAgentClient : MonoBehaviour
            // 构建从家到收银台的移动JSON命令字符串
            string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}";
            // 构建从集市到河流的移动JSON命令字符串
-           string json2 = "{\"type\":\"command\",\"cur_location\":\"集市\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"河流\",\"value\":\"0\"}";
-           // 如果agentId为"agent-2"，则发送移动命令
-           if(agentId == "agent-2")
+           string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}";
+
+           string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}";
+           
+           
+            // // 如果agentId为"agent-2"，则发送移动命令
+            if (agentId == "agent-4")
             {
-                HandleMessage(json1); // 处理第一个移动命令
-                HandleMessage(json2); // 处理第二个移动命令
-            }
-           // 等待3秒后继续下一次循环
-           yield return new WaitForSeconds(3);
+                // HandleMessage(json1); // 处理第一个移动命令
+                HandleMessage(animation_json1);
+            
+                // HandleMessage(animation_json1); // 处理动画命令
+            } 
+       
+
+            // 等待3秒后继续下一次循环
+            yield return new WaitForSeconds(3);
 
         }
     }
@@ -154,7 +165,7 @@ public class WsAgentClient : MonoBehaviour
         }
     }
 
-    void HandleMessage(string json)
+    async Task HandleMessage(string json)
     {
         var msg = JsonUtility.FromJson<WSMsg>(WSMsg.Fix(json));
         
@@ -208,7 +219,7 @@ public class WsAgentClient : MonoBehaviour
                     });
                 });
             });
-        }else if (msg.type == "command" && msg.cmd == "waiting")
+        }else if (msg.type == "command" && (msg.cmd !="go_to"))
         {
             mainThreadQueue.Enqueue(() =>
             {
@@ -225,9 +236,27 @@ public class WsAgentClient : MonoBehaviour
                     });
                 });
             });
-        }else if (msg.type == "command" && msg.cmd == "update_state")
+        }else if (msg.type == "animation")
         {
-            playerHUD.PopStatus(msg.target, (int)msg.value);
+            var target = msg.target;
+            var delta = (int)msg.value;
+            var agent = msg.agent_id;
+            mainThreadQueue.Enqueue(() =>
+            {
+                print(agent);
+                print(delta);
+                print(target);
+                if (playerHUD != null)
+                    playerHUD.PopStatus(target, delta);
+            });
+            
+            _ = SendJson(new OutMsg{
+                type = "complete",
+                cmd = msg.cmd,
+                agent_id = agentId,
+                action_id = msg.action_id,
+                status = "ok"
+            });
         }
         else
         {
@@ -237,7 +266,8 @@ public class WsAgentClient : MonoBehaviour
                 cmd = msg.cmd,
                 agent_id = agentId,
                 action_id = msg.action_id,
-                status = "ok"
+                status = "error",
+                error = "unknown command"
             });
         }
     }

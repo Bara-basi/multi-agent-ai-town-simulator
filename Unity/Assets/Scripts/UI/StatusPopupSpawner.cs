@@ -74,10 +74,13 @@ public class StatusPopupSpawner : MonoBehaviour
     public void PopStatus(string key, int delta, string overrideText = null)
     {
         var icon = iconSet ? iconSet.Get(key) : null;
+   
         string sign = delta >= 0 ? "+" : "";
+   
         string text = overrideText ?? $"{sign}{delta}";
+       
         var color = delta >= 0 ? positiveColor : negativeColor;
-
+     
         var item = Get();
         item.gameObject.SetActive(true);
 
@@ -87,6 +90,7 @@ public class StatusPopupSpawner : MonoBehaviour
         item.SetLane(lane ,snap: true);
 
         _active.Add(item);
+        print("before_play");
         item.Play(icon, text, color, OnItemComplete);
     }
 

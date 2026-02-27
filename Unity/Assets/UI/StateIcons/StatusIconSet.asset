@@ -19,9 +19,9 @@ MonoBehaviour:
     icon: {fileID: 7675826601332790545, guid: e079580562817d140b67b96bda8b516a, type: 3}
   - key: item
     icon: {fileID: 1729840402284382006, guid: 2ea4fb1700e6fe24685881de4f8ea838, type: 3}
-  - key: water
+  - key: thirst
     icon: {fileID: 8509550459451208454, guid: 391c5e7254b7d244f9460b0e2222cad2, type: 3}
-  - key: food
+  - key: hunger
     icon: {fileID: -1951656256530496896, guid: 250ac80e43d72144f93d8312d7602906, type: 3}
-  - key: sanity
+  - key: fatigue
     icon: {fileID: 5606786551959019901, guid: 1c13f6be11513504fb91dc36d4405d3e, type: 3}
