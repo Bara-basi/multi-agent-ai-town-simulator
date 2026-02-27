@@ -17,7 +17,7 @@ class ActionResult:
         message: Optional[str] = None,
         delta: Optional[Dict[str, Any]] = None,
         event: Optional[str] = None,
-        finish: Optional[bool]=None,
+        finish: Optional[bool]=False,
     ) -> None:
         if status is None:
             status = bool(success) if success is not None else False

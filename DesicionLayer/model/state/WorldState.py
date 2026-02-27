@@ -33,11 +33,12 @@ class WorldState:
             if actor.running:
                 return
         # 顺序：day+1 -> 地点刷新 -> 角色刷新 -> 日结算 hook。
+        
         self.day += 1
         for location in self.locations.values():
             update_fn = getattr(location, "update_day", None)
             if callable(update_fn):
-                update_fn()
+                update_fn(self.catalog)
         for actor in self.actors.values():
             actor.update_day()
         ON_DAILY_SETTLE(self)
@@ -86,5 +87,5 @@ class WorldState:
             "location_snapshot": location_snapshot,
             "catalog_snapshot": catalog_snapshot,
             "working_events": working_events,
-            "memory": actor.memory.get_recent(),
+            "memory": actor.memory.observe(),
         }

@@ -23,6 +23,7 @@ class ItemDef:
             "name": self.name,
             "description": self.description,
             "base_price": self.base_price,
+            "effects": self.effects,
         }
         for effect, value in (self.effects or {}).items():
             snapshot[effect] = value

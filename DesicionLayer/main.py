@@ -75,7 +75,7 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
         "action": action_txt,
         "history_entry": history_entry,
         "reflect": runtime.reflect_text(actor_id),
-        "memory": "",
+        "memory": runtime.memory_text(actor_id),
     }
 
 
@@ -108,9 +108,9 @@ def _bootstrap_world_state(world: WorldState) -> None:
             actor.inventory = normalized
 
         attrs = actor.attrs or {}
-        attrs.setdefault("hunger", Attribute(name="hunger", current=100.0, decay_per_day=8.0, max_value=100.0))
-        attrs.setdefault("thirst", Attribute(name="thirst", current=100.0, decay_per_day=10.0, max_value=100.0))
-        attrs.setdefault("fatigue", Attribute(name="fatigue", current=100.0, decay_per_day=6.0, max_value=100.0))
+        attrs.setdefault("hunger", Attribute(name="hunger", current=50.0, decay_per_day=8.0, max_value=100.0))
+        attrs.setdefault("thirst", Attribute(name="thirst", current=50.0, decay_per_day=10.0, max_value=100.0))
+        attrs.setdefault("fatigue", Attribute(name="fatigue", current=50.0, decay_per_day=20.0, max_value=100.0))
         actor.attrs = attrs
 
     for location in world.locations.values():

@@ -1,4 +1,4 @@
 itemId,name,category,basePrice,sellRatio,quantity,description,hunger,thirst,energy
 item:water,瓶装水,comsumable,3,0.8,40,最基础的补水来源,0,20,0
-item:bread,面包,comsumable,5,0.85,60,最基础的食物来源,0,15,0
-item:meat,烤肉,comsumable,9,0.85,30,更具性价比的食物,0,35,0
+item:bread,面包,comsumable,5,0.85,60,最基础的食物来源,15,0,0
+item:meat,烤肉,comsumable,9,0.85,30,更具性价比的食物,35,0,0

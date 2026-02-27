@@ -3,7 +3,7 @@ from __future__ import annotations
 """Agent 单步调度器：负责 plan -> act -> execute -> reflect 的循环。"""
 
 import asyncio
-import logging
+import logging,random
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
@@ -26,7 +26,7 @@ class Observation:
     location_snapshot: Dict[str, Any]
     catalog_snapshot: Dict[str, Any]
     working_events: List[str] = field(default_factory=list)
-    memory: List[Dict[str, Any]] = field(default_factory=list)
+    memory: str = field(default_factory=list)
 
 
 @dataclass
@@ -34,6 +34,8 @@ class RuntimeActorState:
     # runtime 内部的“每个 actor 私有状态”，用于控制触发节奏。
     step: int = 0
     plan: Optional[str] = None
+    reflect: Optional[str] = None
+    last_day = 1
     last_result: Optional[ActionResult] = None
     last_plan_step: int = 0
     last_reflect_step: int = 0
@@ -56,16 +58,14 @@ class AgentRuntime:
         self.logger = logger
         self._states: Dict[Any, RuntimeActorState] = {}
 
-    def _agent(self, actor_id: Any) -> Agent:
-        if actor_id not in self.agents:
-            raise KeyError(f"unknown actor_id: {actor_id}")
-        return self.agents[actor_id]
 
     def plan_text(self, actor_id: Any) -> str:
-        return self._agent(actor_id).prompt_builder.plan_txt or ""
+        return self.agents[actor_id].prompt_builder.plan_txt or ""
 
     def reflect_text(self, actor_id: Any) -> str:
-        return self._agent(actor_id).prompt_builder.reflect_txt or ""
+        return self.agents[actor_id].prompt_builder.reflect_txt or ""
+    def memory_text(self, actor_id: Any) -> str:
+        return self.world.actor(actor_id).memory.get_recent()
 
     def _st(self, actor_id: Any) -> RuntimeActorState:
         if actor_id not in self._states:
@@ -83,12 +83,16 @@ class AgentRuntime:
             working_events=s["working_events"],
             memory=s["memory"],
         )
-
     def _should_plan(self, st: RuntimeActorState) -> bool:
         # 初次运行、上次 finish、或超过最小间隔时重做 plan。
         if not st.plan:
             return True
-        if st.last_result and st.last_result.finish:
+        if st.last_result is None:
+            return True
+        if st.last_result.finish or st.last_result.status is False:
+            return True
+        if st.last_day != self.world.day:
+            st.last_day = self.world.day
             return True
         return (st.step - st.last_plan_step) >= self.config.plan_min_interval_steps
 
@@ -96,13 +100,15 @@ class AgentRuntime:
         # 反思比计划更偏“总结行为结果”，触发规则类似。
         if st.last_result is None:
             return True
-        if st.last_result.finish:
+        if st.last_result.status is False :
+            return True
+        if st.last_day != self.world.day:
             return True
         return (st.step - st.last_reflect_step) >= self.config.reflect_min_interval_steps
 
     async def tick_actor(self, actor_id: Any) -> ActionResult:
         st = self._st(actor_id)
-        agent = self._agent(actor_id)
+        agent = self.agents[actor_id]
         st.step += 1
         obs = self._obs(actor_id)
 
@@ -130,14 +136,15 @@ class AgentRuntime:
             res = last_err or ActionResult(status=False, code="NO_ACTION", message="无合法动作输出")
             st.last_result = res
             return res
-
+        logger.info("proposal: %s", proposal)
         try:
             res = self.executor.execute(proposal, actor_id=actor_id)
             actor = self.world.actor(actor_id)
-            if actor.memory.act_records:
-                actor.memory.act_records[-1].append({"event": res.message or ""})
         except Exception as e:
             res = ActionResult(status=False, code="CRASH", message=f"动作执行失败: {e}")
+        actor.memory.act_records[-1].append(res.message)
+        
+            
 
         st.last_result = res
 
@@ -174,6 +181,8 @@ class AgentRuntime:
         on_tick: Optional[Callable[[Any, ActionResult], None]] = None,
     ) -> None:
         target_ids = list(actor_ids) if actor_ids is not None else list(self.agents.keys())
+        # 洗牌，避免先发优势
+        random.shuffle(target_ids)
         tasks = [
             asyncio.create_task(
                 self._run_actor_loop(actor_id, interval_seconds, on_tick=on_tick),

@@ -22,9 +22,9 @@ def must_have_item(item_field: str = "item", qty_field: str = "qty", item_id: Op
     # 校验背包物品数量，可从动作里读 item/qty，或固定 item_id。
     def v(ctx, act):
         actor = ctx.world.actor(act.actor_id)
-        target_item_id = item_id or getattr(act, item_field, None)
+        target_item_id = item_id or "item:"+ getattr(act, item_field, "")
         if not target_item_id:
-            return ActionResult(False, code="INVALID", message="missing item id")
+            return ActionResult(False, code="INVALID", message="非法动作，动作中不包含物品ID")
 
         qty = int(getattr(act, qty_field, 1) or 1)
         if not actor.inventory.has(target_item_id, qty):
@@ -39,7 +39,7 @@ def must_have_stock(item_field: str = "item", qty_field: str = "qty"):
     def v(ctx, act):
         actor = ctx.world.actor(act.actor_id)
         location = ctx.world.loc(actor.location)
-        item_id = 'item:'+getattr(act, item_field, "")
+        item_id = 'item:'+ getattr(act, item_field, "")
         if not item_id:
             return ActionResult(False, code="INVALID", message="购买动作未提供物品ID")
 
@@ -56,9 +56,9 @@ def must_have_enough_money(item_field: str = "item", qty_field: str = "qty"):
     # 校验现金余额。
     def v(ctx, act):
         actor = ctx.world.actor(act.actor_id)
-        item_id = getattr(act, item_field, None)
+        item_id = "item:"+getattr(act, item_field, None)
         if not item_id:
-            return ActionResult(False, code="INVALID", message="missing item id")
+            return ActionResult(False, code="INVALID", message="非法动作，动作中不包含物品ID")
 
         qty = int(getattr(act, qty_field, 1) or 1)
         location = ctx.world.loc(actor.location)

@@ -39,12 +39,12 @@ def handle_consume(ctx, act) -> ActionResult:
     # consume 会直接扣背包并把 item effects 加到 attrs。
     actor = ctx.world.actor(act.actor_id)
     item_id = getattr(act, "item", None) or getattr(act, "item_id", None) or getattr(act, "target", None)
-    if not item_id:
-        return ActionResult(status=False, code="INVALID", message="consume requires item")
-
+    if ":" not in item_id:
+        item_id = "item:" + item_id
     qty = int(getattr(act, "qty", 1) or 1)
     actor.inventory.remove(item_id, qty)
-
+    fatigue = actor.attrs.get("fatigue")
+    fatigue.current -= 5.0
     item_def = ctx.catalog.item(item_id)
     for k, v in (item_def.effects or {}).items():
         if k in actor.attrs:
@@ -52,7 +52,7 @@ def handle_consume(ctx, act) -> ActionResult:
                 actor.attrs[k].max_value,
                 actor.attrs[k].current + float(v) * qty,
             )
-    return ActionResult(status=True, message=f"consume {item_id} x {qty}")
+    return ActionResult(status=True, message=f"你使用了{qty}个{ctx.world.catalog.item(item_id).name}")
 
 
 @register("move")
@@ -61,13 +61,15 @@ def handle_move(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     target = getattr(act, "target", None)
     if not target:
-        return ActionResult(status=False, code="INVALID", message="move requires target")
+        return ActionResult(status=False, code="INVALID", message="非法动作，未提供移动目标")
 
     if target == actor.location:
-        return ActionResult(status=True, message=f"already at {target}")
+        return ActionResult(status=False, code="INVALID", message=f"非法动作，你已经在 {target}")
 
     actor.location = target
-    return ActionResult(status=True, message=f"move to {target}")
+    fatigue = actor.attrs.get("fatigue")
+    fatigue.current -= 5.0
+    return ActionResult(status=True, message=f"你移动到了{ctx.catalog.loc(target).name}")
 
 
 @register("sleep", validators=[must_be_at(loc_id="location:home")])
@@ -75,15 +77,19 @@ def handle_sleep(ctx, act) -> ActionResult:
     # sleep 通过固定恢复值处理 fatigue。
     actor = ctx.world.actor(act.actor_id)
     fatigue = actor.attrs.get("fatigue")
-    if fatigue is not None:
-        fatigue.current = min(fatigue.max_value, fatigue.current + 20.0)
+    fatigue.current = min(fatigue.max_value, fatigue.current + 20.0)
+    hunger = actor.attrs.get("hunger")
+    thirst = actor.attrs.get("thirst")
+    hunger.current = min(hunger.max_value, hunger.current - 8.0)
+    thirst.current = min(thirst.max_value, thirst.current - 10.0)
+    
     return ActionResult(status=True, message="sleep")
 
 
 @register("finish")
 def handle_finish(ctx, act) -> ActionResult:
     _ = act
-    return ActionResult(status=True, message="finish all actions", finish=True)
+    return ActionResult(status=True, message="计划中的所有动作已完成，等待下一次计划", finish=True)
 
 
 @register("wait")
@@ -91,7 +97,8 @@ def handle_wait(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     actor.running = False
     ctx.world.update_day()
-    return ActionResult(status=True, message="wait for next turn")
+    
+    return ActionResult(status=True, message="你结束了上个回合")
 
 
 @register("buy", validators=[must_be_at(loc_id="location:market"), must_have_stock(), must_have_enough_money()])
@@ -107,7 +114,9 @@ def handle_buy(ctx, act) -> ActionResult:
     actor.inventory.add(item_id, qty)
     actor.money -= total
     market.remove_stock(item_id, qty)
-    return ActionResult(status=True, message=f"buy {item_id} x {qty}")
+    fatigue = actor.attrs.get("fatigue")
+    fatigue.current -= 5.0
+    return ActionResult(status=True, message=f"你购买了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
 
 
 @register("sell", validators=[must_be_at(loc_id="location:market"), must_have_item(item_field="item", qty_field="qty")])
@@ -125,7 +134,9 @@ def handle_sell(ctx, act) -> ActionResult:
     actor.inventory.remove(item_id, qty)
     actor.money += unit_price * qty
     market.add_stock(item_id, qty)
-    return ActionResult(status=True, message=f"sell {item_id} x {qty}")
+    fatigue = actor.attrs.get("fatigue")
+    fatigue.current -= 5.0
+    return ActionResult(status=True, message=f"你出售了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
 
 
 @register_skill("example")

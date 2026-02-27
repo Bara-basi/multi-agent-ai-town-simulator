@@ -25,7 +25,7 @@ class ActorState:
     money: float
     location: LocationId
     home: LocationId
-    memory: MemoryStore
+    memory: MemoryStore = field(default_factory=MemoryStore(act_records=[]))
     attrs: Dict[str, Attribute] = field(default_factory=dict)
     inventory: Inventory = field(default_factory=Inventory)
     known_locations: set[LocationId] = field(default_factory=set)
@@ -40,3 +40,6 @@ class ActorState:
         # 新的一天：恢复可行动，并新开一条当日行为记录。
         self.running = True
         self.memory.act_records.append([])
+        for attr in self.attrs.values():
+            attr.current -= attr.decay_per_day
+            

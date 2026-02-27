@@ -28,5 +28,6 @@ class Inventory:
     
     def snapshot(self,catalog:Catalog) -> str:
         # 输出紧凑字符串，便于直接写进 prompt。
-
-        return ", ".join([f"{catalog.item_name(k)} x {v}" for k,v in self.qty.items()])
+        if len(self.qty) == 0:
+            return "空"
+        return ", ".join([f"{catalog.item_name(k)}({k}) x {v}" for k,v in self.qty.items()])
