@@ -8,7 +8,9 @@ import numpy as np
 from model.definitions.Catalog import Catalog
 from model.definitions.ItemDef import ItemId
 from model.definitions.LocationDef import LocationId
-from config.config import DEFAULT_MARKET_STOCK,DEFAULT_MARKET_STOCK_INCREASE
+from config.config import DEFAULT_MARKET_STOCK,DEFAULT_MARKET_STOCK_INCREASE,KAPPA,SIGMA
+
+rng = np.random.default_rng(42)
 
 @dataclass(slots=True)
 class MarketComponent:
@@ -44,16 +46,44 @@ class MarketComponent:
         self._stock[item_id] = max(left, 0)
 
     def generate_price(self,catalog: Catalog) -> None:
-        for item_id in self._stock.keys():
-            # 以base_price为期望价格，正态分布规律随机浮动，涨跌幅度控制在+-50%以内。
-            base_price = catalog.item(item_id).base_price
-            self._next_price[item_id] = base_price + np.random.normal(0, base_price * 0.5)
+        item_ids = np.array(list(self._stock.keys()), dtype=object)
+        if item_ids.size == 0:
+            self._next_price = {}
+            return
+
+        current_prices = np.fromiter(
+            (self._price[item_id] for item_id in item_ids),
+            dtype=float,
+            count=item_ids.size,
+        )
+        base_prices = np.fromiter(
+            (catalog.item(item_id).base_price for item_id in item_ids),
+            dtype=float,
+            count=item_ids.size,
+        )
+        kappa = np.fromiter(
+            (KAPPA[catalog.item(item_id).category] for item_id in item_ids),
+            dtype=float,
+            count=item_ids.size,
+        )
+        sigma = np.fromiter(
+            (SIGMA[catalog.item(item_id).category] for item_id in item_ids),
+            dtype=float,
+            count=item_ids.size,
+        )
+
+        
+        lnP = np.log(current_prices)
+        lnbase = np.log(base_prices)
+        lnP = lnP + kappa * (lnbase - lnP) + rng.normal(0.0, sigma, size=lnP.shape)
+        self._next_price = dict(zip(item_ids.tolist(), np.exp(lnP).tolist()))
+            
 
 
     def update_day(self,catalog: Catalog):
         # 每日补货到固定库存。
         for item_id in self._stock.keys():
-            self._stock[item_id] = min(DEFAULT_MARKET_STOCK, self.stock(item_id)+DEFAULT_MARKET_STOCK_INCREASE)
+            self._stock[item_id] = min(catalog.item(item_id).default_quantity, self.stock(item_id)+DEFAULT_MARKET_STOCK_INCREASE)
             self._price = self._next_price
         self.generate_price(catalog)
     @classmethod

@@ -47,7 +47,7 @@ class LLM:
 
     @staticmethod
     def _is_gpt5(model: str) -> bool:
-        return bool(model) and model.startswith("gpt-5")
+        return bool(model) and model.startswith("gpt-5") 
 
     def generate(self, prompt: str, restrict: Optional[str] = None) -> Any:
         if self.client is None:
@@ -89,7 +89,7 @@ class LLM:
             return json.loads(content)
         return content
 
-    async def agenerate(self, model: str, prompt: str, restrict: Optional[str] = None) -> Any:
+    async def agenerate(self, model: str, prompt: str, restrict: Optional[str] = None,resoning: Optional[str] = None) -> Any:
         if self.async_client is None:
             return self.generate(prompt, restrict=restrict)
 
@@ -100,7 +100,7 @@ class LLM:
             kwargs = {
                 "model": use_model,
                 "input": [{"role": "user", "content": prompt}],
-                "reasoning": {"effort": self.reasoning_effort},
+                "reasoning": {"effort": resoning or self.reasoning_effort},
             }
             if restrict == "json":
                 kwargs["text"] = {"format": {"type": "json_object"}}

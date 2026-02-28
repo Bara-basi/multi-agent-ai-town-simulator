@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict
 from actions.action_registry import register
 from actions.validators import must_be_at, must_have_enough_money, must_have_item, must_have_stock
 from model.state.actionResult import ActionResult
+from config.config import FATIGUE_DECAY_PER_ACTION
 
 SkillHandler = Callable[[Any, Any], ActionResult]
 _SKILL_REGISTRY: Dict[str, SkillHandler] = {}
@@ -44,7 +45,7 @@ def handle_consume(ctx, act) -> ActionResult:
     qty = int(getattr(act, "qty", 1) or 1)
     actor.inventory.remove(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= 5.0
+    fatigue.current -= FATIGUE_DECAY_PER_ACTION
     item_def = ctx.catalog.item(item_id)
     for k, v in (item_def.effects or {}).items():
         if k in actor.attrs:
@@ -68,7 +69,7 @@ def handle_move(ctx, act) -> ActionResult:
 
     actor.location = target
     fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= 5.0
+    fatigue.current -= FATIGUE_DECAY_PER_ACTION
     return ActionResult(status=True, message=f"你移动到了{ctx.catalog.loc(target).name}")
 
 
@@ -83,7 +84,7 @@ def handle_sleep(ctx, act) -> ActionResult:
     hunger.current = min(hunger.max_value, hunger.current - 8.0)
     thirst.current = min(thirst.max_value, thirst.current - 10.0)
     
-    return ActionResult(status=True, message="sleep")
+    return ActionResult(status=True, message="你睡了一觉，感觉精力充沛")
 
 
 @register("finish")
@@ -115,7 +116,7 @@ def handle_buy(ctx, act) -> ActionResult:
     actor.money -= total
     market.remove_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= 5.0
+    fatigue.current -= FATIGUE_DECAY_PER_ACTION
     return ActionResult(status=True, message=f"你购买了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
 
 
@@ -124,18 +125,15 @@ def handle_sell(ctx, act) -> ActionResult:
     # 卖出：角色减货并加钱，市场增库存。
     actor = ctx.world.actor(act.actor_id)
     item_id = "item:"+act.item
-    if not item_id:
-        return ActionResult(status=False, code="INVALID", message="sell requires item")
-
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
-    unit_price = market.price(item_id)
+    unit_price = market.price(item_id)*ctx.world.catalog.item(item_id).sell_ratio
 
     actor.inventory.remove(item_id, qty)
     actor.money += unit_price * qty
     market.add_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= 5.0
+    fatigue.current -= FATIGUE_DECAY_PER_ACTION
     return ActionResult(status=True, message=f"你出售了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
 
 

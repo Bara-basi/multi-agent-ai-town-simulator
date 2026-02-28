@@ -40,7 +40,7 @@ def load_items(csv_path: str = "data/item.csv") -> Dict[str, ItemDef]:
             effects = {
                 "hunger": int(row["hunger"]),
                 "thirst": int(row["thirst"]),
-                "energy": int(row["energy"]),
+                "fatigue": int(row["fatigue"]),
             }
             items[item_id] = ItemDef(
                 id=item_id,

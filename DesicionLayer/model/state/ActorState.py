@@ -25,7 +25,7 @@ class ActorState:
     money: float
     location: LocationId
     home: LocationId
-    memory: MemoryStore = field(default_factory=MemoryStore(act_records=[]))
+    memory: MemoryStore = field(default_factory=MemoryStore)
     attrs: Dict[str, Attribute] = field(default_factory=dict)
     inventory: Inventory = field(default_factory=Inventory)
     known_locations: set[LocationId] = field(default_factory=set)
@@ -41,5 +41,5 @@ class ActorState:
         self.running = True
         self.memory.act_records.append([])
         for attr in self.attrs.values():
-            attr.current -= attr.decay_per_day
+            attr.current = min(attr.current-attr.decay_per_day,100)
             

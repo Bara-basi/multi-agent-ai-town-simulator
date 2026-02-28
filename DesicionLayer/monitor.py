@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import queue
 import sys
-from typing import Any, Callable, Dict, Iterable, List
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import (
@@ -34,6 +34,7 @@ class AgentCard(QGroupBox):
         self._hunger = QLabel("0")
         self._thirst = QLabel("0")
         self._fatigue = QLabel("0")
+        self._money = QLabel("0")
         self._step = QLabel("0")
 
         self._inventory = QPlainTextEdit()
@@ -53,25 +54,28 @@ class AgentCard(QGroupBox):
         self._memory.setMaximumBlockCount(200)
         text_areas = [self._inventory, self._plan, self._action, self._reflect, self._memory]
         for text in text_areas:
-            text.setMinimumHeight(160)
+            text.setMinimumHeight(210)
             text.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         attrs_row = QWidget()
-        attrs_layout = QHBoxLayout(attrs_row)
+        attrs_layout = QGridLayout(attrs_row)
         attrs_layout.setContentsMargins(0, 0, 0, 0)
-        attrs_layout.setSpacing(10)
-        attrs_layout.addWidget(QLabel("饱食度"))
-        attrs_layout.addWidget(self._hunger)
-        attrs_layout.addWidget(QLabel("口渴度"))
-        attrs_layout.addWidget(self._thirst)
-        attrs_layout.addWidget(QLabel("疲劳度"))
-        attrs_layout.addWidget(self._fatigue)
-        attrs_layout.addWidget(QLabel("步数"))
-        attrs_layout.addWidget(self._step)
-        attrs_layout.addStretch(1)
+        attrs_layout.setHorizontalSpacing(16)
+        attrs_layout.setVerticalSpacing(6)
+        attrs_layout.addWidget(QLabel("现金"), 0, 0)
+        attrs_layout.addWidget(self._money, 0, 1)
+        attrs_layout.addWidget(QLabel("饱食度"), 0, 2)
+        attrs_layout.addWidget(self._hunger, 0, 3)
+        attrs_layout.addWidget(QLabel("水分值"), 0, 4)
+        attrs_layout.addWidget(self._thirst, 0, 5)
+        attrs_layout.addWidget(QLabel("精神值"), 0, 6)
+        attrs_layout.addWidget(self._fatigue, 0, 7)
+        attrs_layout.addWidget(QLabel("步数"), 0, 8)
+        attrs_layout.addWidget(self._step, 0, 9)
+        attrs_layout.setColumnStretch(10, 1)
 
         root_layout = QVBoxLayout(self)
-        root_layout.setSpacing(8)
+        root_layout.setSpacing(12)
 
         header_layout = QFormLayout()
         header_layout.setSpacing(8)
@@ -80,8 +84,8 @@ class AgentCard(QGroupBox):
         root_layout.addLayout(header_layout)
 
         text_grid = QGridLayout()
-        text_grid.setHorizontalSpacing(10)
-        text_grid.setVerticalSpacing(8)
+        text_grid.setHorizontalSpacing(14)
+        text_grid.setVerticalSpacing(10)
         text_grid.addWidget(QLabel("背包"), 0, 0)
         text_grid.addWidget(QLabel("计划"), 0, 1)
         text_grid.addWidget(self._inventory, 1, 0)
@@ -92,13 +96,20 @@ class AgentCard(QGroupBox):
         text_grid.addWidget(self._reflect, 3, 1)
         text_grid.addWidget(QLabel("记忆"), 4, 0, 1, 2)
         text_grid.addWidget(self._memory, 5, 0, 1, 2)
+        text_grid.setRowStretch(1, 1)
+        text_grid.setRowStretch(3, 1)
+        text_grid.setRowStretch(5, 1)
+        text_grid.setColumnStretch(0, 1)
+        text_grid.setColumnStretch(1, 1)
         root_layout.addLayout(text_grid)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def update_view(self, payload: Dict[str, Any]) -> None:
         # payload 由 main._build_monitor_payload 构造，字段为扁平结构。
-        self.setTitle(f"智能体 | {payload.get('actor_id', self._actor_id)}")
+        actor_name = payload.get("actor_name", payload.get("actor_id", self._actor_id))
+        self.setTitle(f"智能体 | {actor_name}")
         self._location.setText(str(payload.get("location", "-")))
+        self._money.setText(str(payload.get("money", 0)))
         self._hunger.setText(str(payload.get("hunger", 0)))
         self._thirst.setText(str(payload.get("thirst", 0)))
         self._fatigue.setText(str(payload.get("fatigue", 0)))
@@ -120,14 +131,15 @@ class AgentCard(QGroupBox):
 
 
 class MonitorWindow(QMainWindow):
-    def __init__(self, actor_ids: Iterable[str]):
+    def __init__(self, actor_ids: Iterable[str], actor_name_map: Optional[Dict[str, str]] = None):
         super().__init__()
         self.setWindowTitle("AITown 智能体监控面板")
-        self.resize(980, 680)
-        self.setMinimumSize(900, 620)
+        self.resize(1520, 960)
+        self.setMinimumSize(1260, 820)
 
         self._queue: queue.Queue[Dict[str, Any]] = queue.Queue()
         self._cards: Dict[str, AgentCard] = {}
+        self._actor_name_map: Dict[str, str] = actor_name_map or {}
         self._ordered_ids: List[str] = list(actor_ids)
         while len(self._ordered_ids) < 4:
             self._ordered_ids.append(f"角色-{len(self._ordered_ids) + 1}")
@@ -135,8 +147,8 @@ class MonitorWindow(QMainWindow):
 
         center = QWidget()
         root = QVBoxLayout(center)
-        root.setContentsMargins(12, 12, 12, 12)
-        root.setSpacing(10)
+        root.setContentsMargins(16, 16, 16, 16)
+        root.setSpacing(14)
 
         title = QLabel("智能体控制台")
         title.setObjectName("pageTitle")
@@ -154,7 +166,8 @@ class MonitorWindow(QMainWindow):
 
         self._stack = QStackedWidget()
         for idx, actor_id in enumerate(self._ordered_ids):
-            btn = QPushButton(f"角色{idx + 1}：{actor_id}")
+            actor_name = self._actor_name_map.get(actor_id, actor_id)
+            btn = QPushButton(f"角色{idx + 1}：{actor_name}")
             btn.setCheckable(True)
             btn.setCursor(Qt.PointingHandCursor)
             btn.clicked.connect(lambda checked, i=idx: self._switch_agent(i, checked))
@@ -180,54 +193,62 @@ class MonitorWindow(QMainWindow):
         self.setStyleSheet(
             """
             QMainWindow {
-                background: #f4f6f8;
+                background: #0f1114;
             }
             QLabel#pageTitle {
-                font-size: 18px;
+                font-size: 26px;
                 font-weight: 700;
-                color: #1f2933;
-                padding: 2px 4px;
+                color: #f0f2f5;
+                padding: 4px 2px 8px 2px;
+                letter-spacing: 1px;
             }
             QPushButton {
-                border: 1px solid #c8d0d8;
-                border-radius: 10px;
-                background: #ffffff;
-                color: #24323f;
-                padding: 8px 12px;
+                border: 1px solid #39414a;
+                border-radius: 8px;
+                background: #1a1e24;
+                color: #dbe2ea;
+                padding: 10px 14px;
                 font-weight: 600;
+                font-size: 15px;
             }
             QPushButton:hover {
-                background: #eef3f7;
+                background: #242a33;
             }
             QPushButton:checked {
-                background: #0f7b6c;
-                color: #ffffff;
-                border: 1px solid #0f7b6c;
+                background: #2a313a;
+                color: #ffe3b1;
+                border: 1px solid #d08a2f;
             }
             QGroupBox {
-                border: 1px solid #d5dee6;
-                border-radius: 12px;
-                margin-top: 8px;
-                background: #ffffff;
+                border: 1px solid #2f363f;
+                border-radius: 10px;
+                margin-top: 10px;
+                background: #15191f;
                 font-weight: 700;
-                color: #1f2933;
+                color: #e5e9ef;
+                font-size: 16px;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 4px;
+                left: 12px;
+                padding: 0 6px;
+                color: #f8d9a6;
             }
             QLabel {
-                color: #24323f;
+                color: #c7d0da;
+                font-size: 15px;
+                font-weight: 500;
             }
             QPlainTextEdit {
-                background: #fbfcfd;
-                border: 1px solid #dce4eb;
-                border-radius: 8px;
-                color: #1f2933;
-                padding: 6px 8px;
+                background: #0f1318;
+                border: 1px solid #2d353f;
+                border-radius: 6px;
+                color: #e7ecf2;
+                padding: 10px 10px;
                 font-family: Consolas, 'Microsoft YaHei UI', 'Courier New', monospace;
-                font-size: 12px;
+                font-size: 15px;
+                line-height: 1.45;
+                selection-background-color: #2f5f7a;
             }
             """
         )
@@ -255,10 +276,11 @@ class MonitorWindow(QMainWindow):
 def run_monitor(
     start_simulation: Callable[[Callable[[Dict[str, Any]], None]], None],
     actor_ids: Iterable[str],
+    actor_name_map: Optional[Dict[str, str]] = None,
 ) -> None:
     # 入口：启动 GUI，再让外部注入仿真启动函数。
     app = QApplication(sys.argv)
-    win = MonitorWindow(actor_ids=actor_ids)
+    win = MonitorWindow(actor_ids=actor_ids, actor_name_map=actor_name_map)
     win.show()
     start_simulation(win.push_update)
     app.exec_()

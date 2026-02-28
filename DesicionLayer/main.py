@@ -20,6 +20,7 @@ from model.state.WorldState import WorldState
 from runtime.build_state import build_state
 from runtime.load_data import load_catalog
 from runtime.runtime import AgentRuntime
+from config.config import HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY,FATIGUE_DECAY_PER_DAY
 
 MODEL_NAME = "gpt-4.1-mini-2025-04-14"
 TICK_INTERVAL_SECONDS = 1.0
@@ -51,6 +52,10 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
     # 将运行时内部状态整理成 UI 可直接渲染的扁平结构。
     actor = world.actor(actor_id)
     st = runtime._st(actor_id)
+    try:
+        actor_name = str(world.catalog.actor(actor_id).name)
+    except Exception:
+        actor_name = str(actor_id)
 
     hunger = actor.attrs.get("hunger").current if actor.attrs.get("hunger") else 0.0
     thirst = actor.attrs.get("thirst").current if actor.attrs.get("thirst") else 0.0
@@ -65,7 +70,9 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
 
     return {
         "actor_id": str(actor_id),
+        "actor_name": actor_name,
         "location": str(actor.location),
+        "money": round(float(getattr(actor, "money", 0.0) or 0.0), 2),
         "step": st.step,
         "hunger": round(float(hunger), 2),
         "thirst": round(float(thirst), 2),
@@ -108,9 +115,9 @@ def _bootstrap_world_state(world: WorldState) -> None:
             actor.inventory = normalized
 
         attrs = actor.attrs or {}
-        attrs.setdefault("hunger", Attribute(name="hunger", current=50.0, decay_per_day=8.0, max_value=100.0))
-        attrs.setdefault("thirst", Attribute(name="thirst", current=50.0, decay_per_day=10.0, max_value=100.0))
-        attrs.setdefault("fatigue", Attribute(name="fatigue", current=50.0, decay_per_day=20.0, max_value=100.0))
+        attrs.setdefault("hunger", Attribute(name="饱食度", current=50.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0))
+        attrs.setdefault("thirst", Attribute(name="水分值", current=50.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0))
+        attrs.setdefault("fatigue", Attribute(name="精神值", current=50.0, decay_per_day=FATIGUE_DECAY_PER_DAY, max_value=100.0))
         actor.attrs = attrs
 
     for location in world.locations.values():
@@ -191,7 +198,9 @@ if __name__ == "__main__":
         logging.warning("PyQt monitor unavailable, fallback to CLI mode: %s", e)
         asyncio.run(run())
     else:
-        actor_ids = list(load_catalog().actors.keys())
+        catalog = load_catalog()
+        actor_ids = list(catalog.actors.keys())
+        actor_name_map = {str(actor_id): str(actor_def.name) for actor_id, actor_def in catalog.actors.items()}
 
         def _start_simulation(push_update):
             # 仿真逻辑跑在后台线程，避免阻塞 Qt UI 事件循环。
@@ -200,4 +209,4 @@ if __name__ == "__main__":
 
             threading.Thread(target=_target, name="simulation-thread", daemon=True).start()
 
-        run_monitor(_start_simulation, actor_ids=actor_ids)
+        run_monitor(_start_simulation, actor_ids=actor_ids, actor_name_map=actor_name_map)

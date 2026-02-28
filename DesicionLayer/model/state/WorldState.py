@@ -69,6 +69,8 @@ class WorldState:
             "hunger": actor.attrs.get("hunger").current if actor.attrs.get("hunger") else 0.0,
             "fatigue": actor.attrs.get("fatigue").current if actor.attrs.get("fatigue") else 0.0,
             "inventory": actor.inventory.snapshot(self.catalog),
+            # 结构化库存，便于提示词构造可执行性边界检查。
+            "inventory_map": dict(getattr(actor.inventory, "qty", {}) or {}),
             "identity": f"你叫{name}，{gender}，{age}岁。{info}",
             "skill": getattr(actor_def, "skill", None),
         }
@@ -80,6 +82,14 @@ class WorldState:
         catalog_snapshot = self.catalog.snapshot()
         raw_events = getattr(actor, "working_events", [])
         working_events = [getattr(e, "name", str(e)) for e in raw_events]
+        memory_obj = actor.memory
+        memory_text = memory_obj.observe() if hasattr(memory_obj, "observe") else ""
+        memory_current_plan = (
+            memory_obj.observe_current_plan() if hasattr(memory_obj, "observe_current_plan") else memory_text
+        )
+        memory_previous_plans = (
+            memory_obj.observe_previous_plans() if hasattr(memory_obj, "observe_previous_plans") else ""
+        )
 
         return {
             "actor_snapshot": actor_snapshot,
@@ -87,5 +97,7 @@ class WorldState:
             "location_snapshot": location_snapshot,
             "catalog_snapshot": catalog_snapshot,
             "working_events": working_events,
-            "memory": actor.memory.observe(),
+            "memory": memory_text,
+            "memory_current_plan": memory_current_plan,
+            "memory_previous_plans": memory_previous_plans,
         }

@@ -7,6 +7,9 @@ from model.definitions.Catalog import Catalog
 @dataclass(slots=True)
 class Inventory:
     qty: Dict[ItemId, int] = field(default_factory=dict)
+    buy_price: Dict[ItemId, int] = field(default_factory=dict)
+    keep_days: Dict[ItemId, int] = field(default_factory=dict)
+    
 
     def has(self, item_id: ItemId, n: int = 1) -> bool:
         return self.qty.get(item_id, 0) >= n
