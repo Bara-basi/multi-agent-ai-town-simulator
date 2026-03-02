@@ -18,3 +18,5 @@ KAPPA = {"comsumable": 0.11,
 
 SIGMA = {"comsumable":0.15,
          "valuable":0.4}
+
+RANDOM_EVENT_PORB = 0.1

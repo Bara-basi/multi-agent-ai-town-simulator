@@ -31,7 +31,7 @@ class ActorState:
     known_locations: set[LocationId] = field(default_factory=set)
     unlocked_locations: set[LocationId] = field(default_factory=set)
     # 预留：人物特性修正（buff/debuff 或技能加成）。
-    mods: List[Dict[str, Any]] = field(default_factory=list)
+    events: Dict[str,List[Dict[str,Any]]] = field(default_factory=dict)
     running: bool = True
     def can_go(self, loc: LocationId) -> bool:
         return loc in self.unlocked_locations

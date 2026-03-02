@@ -1,2 +1,2 @@
 actorId,name,gender,age,info,skill,
-actor:jiangfan,江凡,男,28,你是一个平民,""
+actor:jiangfan,江凡,男,28,你是一个平民,event:compound_interest

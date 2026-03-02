@@ -12,6 +12,8 @@ class Catalog:
     items: Dict[ItemId, ItemDef]
     locations: Dict[LocationId, LocationDef]
     actors: Dict[ActorId, ActorDef]
+    random_events: Dict[str, Any]
+    skill_events: Dict[str,Any]
 
     def item(self, item_id: ItemId) -> ItemDef:
         return self.items[item_id]

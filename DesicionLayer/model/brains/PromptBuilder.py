@@ -380,6 +380,18 @@ class PromptBuilder:
             self._sec("## 决策协议", self.STABLE_DECISION_PROTOCOL, "rules"),
         ]
 
+    def _build_events_and_buffs_block(self, obs: Any) -> str:
+        world_events = obs.world_events
+        actor_buffs = obs.actor_buffs
+        world_text = "；".join(world_events) if world_events else "无"
+        buff_text = "；".join(actor_buffs) if actor_buffs else "无"
+        return "\n".join(
+            [
+                f"- 当前世界随机事件：{world_text}",
+                f"- 当前人物Buff：{buff_text}",
+            ]
+        )
+
     def _build_base_sections(self, obs: Any) -> List[PromptSection]:
         actor = getattr(obs, "actor_snapshot", {}) or {}
         day = getattr(obs, "day", -1)
@@ -412,6 +424,7 @@ class PromptBuilder:
             self._sec("## 背景", background, "info"),
             self._sec("## 规则", rules, "rules"),
             self._sec("## 角色状态", state, "state"),
+            self._sec("## 当前事件与Buff", self._build_events_and_buffs_block(obs), "state"),
         ]
 
     def _format_locations_info(self, obs: Any) -> str:
@@ -646,9 +659,10 @@ class PromptBuilder:
 
         task = "\n".join(
             [
-                "请做简短反思，用于下一回合决策优化。",
+                "请做简短反思，用于下一回合决策优化/指导建议。",
                 "- 仅总结已发生事实，不得虚构。",
                 "- 重点写可复用策略，不要重复罗列状态数字。",
+                "- 优先写对下回合有价值的建议或总结",
                 "- 输出 3 条以内，每条一句。",
             ]
         )

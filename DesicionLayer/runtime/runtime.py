@@ -26,6 +26,8 @@ class Observation:
     location_snapshot: Dict[str, Any]
     catalog_snapshot: Dict[str, Any]
     working_events: List[str] = field(default_factory=list)
+    world_events: List[str] = field(default_factory=list)
+    actor_buffs: List[str] = field(default_factory=list)
     memory: str = field(default_factory=list)
     memory_current_plan: str = ""
     memory_previous_plans: str = ""
@@ -295,6 +297,8 @@ class AgentRuntime:
             location_snapshot=s["location_snapshot"],
             catalog_snapshot=s["catalog_snapshot"],
             working_events=s["working_events"],
+            world_events=s["world_events"],
+            actor_buffs=s["actor_buffs"],
             memory=s["memory"],
             memory_current_plan=s.get("memory_current_plan", ""),
             memory_previous_plans=s.get("memory_previous_plans", ""),

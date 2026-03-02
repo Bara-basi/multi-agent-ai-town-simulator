@@ -40,7 +40,7 @@ def build_actor_state(actors:Dict[ActorId,ActorDef]) -> Dict[ActorId,ActorState]
             known_locations= ["location:home"],
             unlocked_locations=["location:market"],
             memory= MemoryStore(),
-            mods= [],
+            
         )
         actor_states[actor_id] = actor_state
     return actor_states

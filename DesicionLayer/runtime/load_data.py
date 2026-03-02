@@ -1,7 +1,7 @@
 """从 CSV 读取静态定义，并组装 Catalog。"""
 
-import csv
-from typing import Dict
+import csv,json
+from typing import Dict,Tuple
 from model.definitions.Catalog import Catalog 
 from model.definitions.ActorDef import ActorDef
 from model.definitions.ItemDef import ItemDef
@@ -72,9 +72,30 @@ def load_locations(csv_path: str = "data/location.csv") -> Dict[str, LocationDef
             )
     return location
 
+
+
+def load_events(json_path:str="data/event.json") -> Tuple:
+    """读取事件定义。"""
+    random_events = {}
+    skill_events = {}
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        for event in data:
+            if event["source"] == "random_event":
+                random_events[event["id"]] = event
+            elif event["source"] == "skill":
+                skill_events[event["id"]] = event
+    return random_events, skill_events
+
+
+
+
+
+
 def load_catalog() -> Catalog:
     """聚合三个 CSV 的读取结果。"""
     actors = load_actors()
     items = load_items()
     locations = load_locations()
-    return Catalog(items=items, locations=locations, actors=actors)
+    random_events, skill_events = load_events()
+    return Catalog(items=items, locations=locations, actors=actors, random_events=random_events, skill_events=skill_events)

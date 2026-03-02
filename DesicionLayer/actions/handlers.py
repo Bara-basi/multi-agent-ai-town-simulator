@@ -8,6 +8,7 @@ from actions.action_registry import register
 from actions.validators import must_be_at, must_have_enough_money, must_have_item, must_have_stock
 from model.state.actionResult import ActionResult
 from config.config import FATIGUE_DECAY_PER_ACTION
+from actions.hooks import ON_ACTION_RESOLVE
 
 SkillHandler = Callable[[Any, Any], ActionResult]
 _SKILL_REGISTRY: Dict[str, SkillHandler] = {}
@@ -70,6 +71,7 @@ def handle_move(ctx, act) -> ActionResult:
     actor.location = target
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
+    ON_ACTION_RESOLVE("on_move", ctx, act)
     return ActionResult(status=True, message=f"你移动到了{ctx.catalog.loc(target).name}")
 
 
@@ -117,7 +119,7 @@ def handle_buy(ctx, act) -> ActionResult:
     market.remove_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
-    return ActionResult(status=True, message=f"你购买了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
+    return ActionResult(status=True, message=f"你购买了 `{ctx.world.catalog.item(item_id).name}` x {qty},单价{unit_price:.2f}元/个")
 
 
 @register("sell", validators=[must_be_at(loc_id="location:market"), must_have_item(item_field="item", qty_field="qty")])
@@ -134,7 +136,7 @@ def handle_sell(ctx, act) -> ActionResult:
     market.add_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
-    return ActionResult(status=True, message=f"你出售了 `{ctx.world.catalog.item(item_id).name}` x {qty}")
+    return ActionResult(status=True, message=f"你出售了 `{ctx.world.catalog.item(item_id).name}` x {qty},单价{unit_price:.2f}元/个")
 
 
 @register_skill("example")
