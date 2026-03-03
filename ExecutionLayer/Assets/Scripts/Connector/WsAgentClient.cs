@@ -83,36 +83,35 @@ public class WsAgentClient : MonoBehaviour
     /// 测试调用的协程方法，用于定期发送JSON格式的命令消息
     /// </summary>
     /// <returns>返回一个WaitForSeconds枚举器，用于协程的等待操作</returns>
-    private IEnumerator<UnityEngine.WaitForSeconds> test_call()
-    {
-        // 无限循环，持续发送测试消息
-        while (true)
-        {
-           // 构建更新状态的JSON命令字符串
-           string json = "{\"type\":\"command\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"update_state\",\"target\":\"item\",\"value\":\"10\"}";
-           // 构建从家到收银台的移动JSON命令字符串
-           string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}";
-           // 构建从集市到河流的移动JSON命令字符串
-           string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}";
-
-           string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}";
+    // private async Task<IEnumerator<UnityEngine.WaitForSeconds>> Testcall()
+    // {
+    //     // 无限循环，持续发送测试消息
+    //     while (true)
+    //     {
+    //        // 构建更新状态的JSON命令字符串
+    //        string json = "{\"type\":\"command\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"update_state\",\"target\":\"item\",\"value\":\"10\"}";
+    //        // 构建从家到收银台的移动JSON命令字符串
+    //        string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
+    //        // 构建从集市到河流的移动JSON命令字符串
+    //        string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}";
+    //        string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}";
            
            
-            // // 如果agentId为"agent-2"，则发送移动命令
-            if (agentId == "agent-4")
-            {
-                // HandleMessage(json1); // 处理第一个移动命令
-                HandleMessage(animation_json1);
+    //         // // 如果agentId为"agent-2"，则发送移动命令
+    //         if (agentId == "agent-4")
+    //         {
+    //             // HandleMessage(json1); // 处理第一个移动命令
+    //             await HandleMessage(animation_json1);
             
-                // HandleMessage(animation_json1); // 处理动画命令
-            } 
+    //             // HandleMessage(animation_json1); // 处理动画命令
+    //         } 
        
 
-            // 等待3秒后继续下一次循环
-            yield return new WaitForSeconds(3);
+    //         // 等待3秒后继续下一次循环
+    //         yield return new WaitForSeconds(3);
 
-        }
-    }
+    //     }
+    // }
 
     async Task ConnectAndRun()
     {
@@ -121,8 +120,9 @@ public class WsAgentClient : MonoBehaviour
 
         try
         {
-            await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
-
+            while (ws.State != WebSocketState.Open)
+                await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
+            
             // 发送 hello（使用可序列化 DTO，而非匿名对象）
             await SendJson(new OutMsgHello
             {
@@ -161,7 +161,7 @@ public class WsAgentClient : MonoBehaviour
             } while (!result.EndOfMessage);
 
             var json = sb.ToString();
-            HandleMessage(json);
+            await HandleMessage(json);
         }
     }
 
@@ -243,9 +243,7 @@ public class WsAgentClient : MonoBehaviour
             var agent = msg.agent_id;
             mainThreadQueue.Enqueue(() =>
             {
-                print(agent);
-                print(delta);
-                print(target);
+    
                 if (playerHUD != null)
                     playerHUD.PopStatus(target, delta);
             });
