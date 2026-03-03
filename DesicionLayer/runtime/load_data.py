@@ -13,7 +13,7 @@ def load_actors(csv_path: str = "data/actor.csv") -> Dict[str, ActorDef]:
     actors: Dict[str, ActorDef] = {}
     with open(csv_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
-        for row in reader:
+        for i,row in enumerate(reader):
             actor_id = row["actorId"]
             if not actor_id:
                 continue

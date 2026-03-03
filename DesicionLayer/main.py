@@ -7,7 +7,6 @@ import shutil
 import threading
 from datetime import datetime
 from typing import Dict
-import actions.handlers
 from actions.executor import ActionExecutor
 from config.runtime_config import AgentRuntimeConfig
 from model.brains.AgentBrain import Agent
@@ -17,14 +16,16 @@ from model.definitions.Inventory import Inventory
 from model.definitions.OpenAIModel import LLM
 from model.state.ActorState import Attribute
 from model.state.WorldState import WorldState
+from model.brains.WebSocketServer import WebSocketServer
 from runtime.build_state import build_state
 from runtime.load_data import load_catalog
 from runtime.runtime import AgentRuntime
+import logging
 from config.config import HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY,FATIGUE_DECAY_PER_DAY
 
 MODEL_NAME = "gpt-4.1-mini-2025-04-14"
 TICK_INTERVAL_SECONDS = 1.0
-
+logger = logging.getLogger(__name__)
 
 def _dispatch(_event_name: str, **_payload: object) -> None:
     # 事件分发预留点：当前版本未接入总线，仅保持接口形状。
@@ -138,12 +139,24 @@ def _bootstrap_world_state(world: WorldState) -> None:
 
 async def run(on_update=None) -> None:
     # 1) 读静态定义 2) 构建动态状态 3) 启动单一 runtime 管理全部 actor。
+
     catalog = load_catalog()
     actor_states, location_states = build_state(catalog)
+    actor2agent = {actor_id:f"agent-{i}" for i,actor_id in enumerate(catalog.actors.keys(),start=1)}
+    client = WebSocketServer(actor2agent=actor2agent)
+    await client.start()
+    while not all(client.is_connected(k) for k in actor2agent.values()):
+        print(client.connections.keys())
+        print(actor2agent.values())
+        
+        await asyncio.sleep(1)
+    logger.info("全部客户端已连接")
+    
     world = WorldState(
         catalog=catalog,
         actors=actor_states,
         locations=location_states,
+        client=client,
     )
     _bootstrap_world_state(world)
 
@@ -171,7 +184,6 @@ async def run(on_update=None) -> None:
         config=runtime_config,
         logger=logging.getLogger("runtime"),
     )
-
     if on_update:
         for actor_id in agents.keys():
             on_update(_build_monitor_payload(world, runtime, actor_id, result=None))

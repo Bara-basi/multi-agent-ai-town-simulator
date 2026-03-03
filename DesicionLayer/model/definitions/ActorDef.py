@@ -14,6 +14,7 @@ class ActorDef:
     description: str = ""
     skill: Optional[Union[str, Callable[..., Any],Dict[str,Any]]] = None
     info: Optional[str] = None
+    
 
     def snapshot(self) -> Dict[str, Any]:
         # skill 仅在是字符串时透出，避免把可调用对象塞进 prompt。

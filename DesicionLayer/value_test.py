@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def simulate_with_trace(
     kappa=0.11,
-    sigma=0.4,
+    sigma=0.2,
     buy_limit=1,
     buy_th=0.7,
     sell_th=1.3,

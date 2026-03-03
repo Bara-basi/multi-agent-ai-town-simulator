@@ -25,6 +25,7 @@ class WorldState:
     events: Dict[str, List[Any]] = field(default_factory=dict)
     actors: Dict[ActorId, ActorState] = field(default_factory=dict)
     locations: Dict[LocationId, LocationState] = field(default_factory=dict)
+    client: Any = None
 
     def actor(self, actor_id: ActorId) -> ActorState:
         return self.actors[actor_id]
