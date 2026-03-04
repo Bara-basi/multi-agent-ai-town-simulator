@@ -17,11 +17,12 @@ from model.definitions.OpenAIModel import LLM
 from model.state.ActorState import Attribute
 from model.state.WorldState import WorldState
 from model.brains.WebSocketServer import WebSocketServer
+from model.brains.NoopActionLayerClient import NoopActionLayerClient
 from runtime.build_state import build_state
 from runtime.load_data import load_catalog
 from runtime.runtime import AgentRuntime
 import logging
-from config.config import HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY,FATIGUE_DECAY_PER_DAY
+from config.config import HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY,FATIGUE_DECAY_PER_DAY,USE_ACION_LAYER
 
 MODEL_NAME = "gpt-4.1-mini-2025-04-14"
 TICK_INTERVAL_SECONDS = 1.0
@@ -143,14 +144,17 @@ async def run(on_update=None) -> None:
     catalog = load_catalog()
     actor_states, location_states = build_state(catalog)
     actor2agent = {actor_id:f"agent-{i}" for i,actor_id in enumerate(catalog.actors.keys(),start=1)}
-    client = WebSocketServer(actor2agent=actor2agent)
-    await client.start()
-    while not all(client.is_connected(k) for k in actor2agent.values()):
-        print(client.connections.keys())
-        print(actor2agent.values())
-        
-        await asyncio.sleep(1)
-    logger.info("全部客户端已连接")
+    if USE_ACION_LAYER:
+        client = WebSocketServer(actor2agent=actor2agent)
+        await client.start()
+        while not all(client.is_connected(k) for k in actor2agent.values()):
+            print(client.connections.keys())
+            print(actor2agent.values())
+            await asyncio.sleep(1)
+        logger.info("全部客户端已连接")
+    else:
+        client = NoopActionLayerClient()
+        logger.info("USE_ACION_LAYER=False，已禁用 Unity 执行层。")
     
     world = WorldState(
         catalog=catalog,

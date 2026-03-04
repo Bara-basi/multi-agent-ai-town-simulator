@@ -1,6 +1,7 @@
 ﻿"""世界级动态状态容器：负责观察快照和日期推进。"""
 
 import copy
+import inspect
 import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
@@ -33,7 +34,7 @@ class WorldState:
     def loc(self, loc_id: LocationId) -> LocationState:
         return self.locations[loc_id]
 
-    def update_day(self) -> None:
+    async def update_day(self) -> None:
         """尝试进入下一回合，如果有任何 Actor 仍在执行，则不推进。"""
         for actor in self.actors.values():
             if actor.running:
@@ -47,6 +48,20 @@ class WorldState:
                 update_fn(self.catalog)
         for actor in self.actors.values():
             actor.update_day()
+            if self.client is not None:
+                maybe_task = await self.client.move(
+                    actor.id,
+                    self.catalog.loc(actor.location).name,
+                    self.catalog.loc(actor.home).name,
+                )
+                if inspect.isawaitable(maybe_task):
+                    try:
+                        import asyncio
+
+                        loop = asyncio.get_running_loop()
+                        loop.create_task(maybe_task)
+                    except Exception:
+                        pass
 
         self.determine_random_event()
 

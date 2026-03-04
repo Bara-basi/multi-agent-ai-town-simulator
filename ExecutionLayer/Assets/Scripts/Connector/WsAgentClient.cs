@@ -61,7 +61,7 @@ public class WsAgentClient : MonoBehaviour
     public float animationDelaySeconds = 0.5f;
 
     private readonly List<string> inner_home_place = new() { "床","冰箱","储物柜","锅","茶桌"};
-    private readonly List<string> inner_market_place = new() { "集市冰箱", "收银台", "货架" };
+    private readonly List<string> inner_market_place = new() { "集市冰箱", "货架" };
     private readonly ConcurrentQueue<AnimationRequest> animationQueue = new();
     private Coroutine animationPumpCoroutine;
     private float lastAnimationPlayTime = float.NegativeInfinity;

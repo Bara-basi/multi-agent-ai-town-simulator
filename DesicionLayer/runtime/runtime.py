@@ -420,7 +420,7 @@ class AgentRuntime:
 
             logger.info("proposal: %s", proposal)
             try:
-                res = self.executor.execute(proposal, actor_id=actor_id)
+                res = await self.executor.execute(proposal, actor_id=actor_id)
             except Exception as e:
                 res = ActionResult(status=False, code="CRASH", message=f"动作执行失败: {e}")
 

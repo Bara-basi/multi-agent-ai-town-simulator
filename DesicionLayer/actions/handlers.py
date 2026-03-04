@@ -7,7 +7,12 @@ from typing import Any, Callable, Dict
 from actions.action_registry import register
 from actions.hooks import ON_ACTION_RESOLVE
 from actions.validators import must_be_at, must_have_enough_money, must_have_item, must_have_stock
-from config.config import FATIGUE_DECAY_PER_ACTION
+from config.config import (
+    FATIGUE_DECAY_PER_ACTION,
+    FATIGUE_DECAY_PER_DAY,
+    HUNGER_DECAY_PER_DAY,
+    THIRST_DECAY_PER_DAY,
+)
 from model.state.actionResult import ActionResult
 
 SkillHandler = Callable[[Any, Any], ActionResult]
@@ -36,23 +41,29 @@ def _invoke_skill(skill_name: str, ctx: Any, act: Any) -> ActionResult:
 
 
 @register("consume", validators=[must_have_item(item_field="item")])
-def handle_consume(ctx, act) -> ActionResult:
+async def handle_consume(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     item_id = getattr(act, "item", None) or getattr(act, "item_id", None) or getattr(act, "target", None)
     if ":" not in item_id:
         item_id = "item:" + item_id
 
+    item = ctx.catalog.item(item_id)
     qty = int(getattr(act, "qty", 1) or 1)
+    result = await ctx.world.client.consume(actor.id, item, qty)
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 消耗 {item.name}")
+
     actor.inventory.remove(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
-    item_def = ctx.catalog.item(item_id)
-    for k, v in (item_def.effects or {}).items():
+
+    for k, v in (item.effects or {}).items():
         if k in actor.attrs:
             actor.attrs[k].current = min(
                 actor.attrs[k].max_value,
                 actor.attrs[k].current + float(v) * qty,
             )
+
     return ActionResult(status=True, message=f"你使用了 {ctx.world.catalog.item(item_id).name} x {qty}")
 
 
@@ -60,32 +71,39 @@ def handle_consume(ctx, act) -> ActionResult:
 async def handle_move(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     target = getattr(act, "target", None)
-    if not target:
-        return ActionResult(status=False, code="INVALID", message="动作执行失败，缺少目标位置")
 
     if target == actor.location:
-        return ActionResult(status=False, code="INVALID", message=f"动作执行失败，你已经在 {ctx.catalog.loc(target).name}了")
-    result = await ctx.world.client.move(act.actor_id, actor.location,target)
-    if not result.get("status") or result["status"] != "ok":
-        return ActionResult(status=False, code="INVALID", message="Unity动作执行失败，移动失败")
+        return ActionResult(status=False, code="INVALID", message=f"移动失败，你已经在 {ctx.catalog.loc(target).name} 了")
+
+    result = await ctx.world.client.move(
+        act.actor_id,
+        ctx.world.catalog.loc(actor.location).name,
+        ctx.world.catalog.loc(target).name,
+    )
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 移动到{ctx.catalog.loc(target).name}")
+
     actor.location = target
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
     ON_ACTION_RESOLVE("on_move", ctx, act)
-    return ActionResult(status=True, message=f"你移动到了 {ctx.catalog.loc(target).name}")
+    return ActionResult(status=True, message=f"你来到了{ctx.catalog.loc(target).name}")
 
 
 @register("sleep", validators=[must_be_at(loc_id="location:home")])
-def handle_sleep(ctx, act) -> ActionResult:
+async def handle_sleep(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
+    result = await ctx.world.client.sleep(act.actor_id)
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 睡觉")
 
     fatigue = actor.attrs.get("fatigue")
-    fatigue.current = min(fatigue.max_value, fatigue.current + 20.0)
+    fatigue.current = min(fatigue.max_value, fatigue.current - FATIGUE_DECAY_PER_DAY)
     hunger = actor.attrs.get("hunger")
     thirst = actor.attrs.get("thirst")
-    hunger.current = min(hunger.max_value, hunger.current - 8.0)
-    thirst.current = min(thirst.max_value, thirst.current - 10.0)
-    return ActionResult(status=True, message="你睡了一觉，感觉好多了")
+    hunger.current = min(hunger.max_value, hunger.current - HUNGER_DECAY_PER_DAY)
+    thirst.current = min(thirst.max_value, thirst.current - THIRST_DECAY_PER_DAY)
+    return ActionResult(status=True, message="你睡了一觉，感觉神清气爽")
 
 
 @register("finish")
@@ -95,16 +113,15 @@ def handle_finish(ctx, act) -> ActionResult:
 
 
 @register("wait")
-def handle_wait(ctx, act) -> ActionResult:
+async def handle_wait(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
-
     actor.running = False
-    ctx.world.update_day()
+    await ctx.world.update_day()
     return ActionResult(status=True, message="你结束了上个回合")
 
 
 @register("buy", validators=[must_be_at(loc_id="location:market"), must_have_stock(), must_have_enough_money()])
-def handle_buy(ctx, act) -> ActionResult:
+async def handle_buy(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     item_id = "item:" + act.item
     qty = int(getattr(act, "qty", 1) or 1)
@@ -112,28 +129,36 @@ def handle_buy(ctx, act) -> ActionResult:
     unit_price = market.price(item_id)
     total = unit_price * qty
 
+    result = await ctx.world.client.buy(actor.id, qty, total)
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 购买{ctx.world.catalog.item(item_id).name}")
+
     actor.inventory.add(item_id, qty)
     actor.money -= total
     market.remove_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
-    return ActionResult(status=True, message=f"你购买了 {ctx.world.catalog.item(item_id).name} x {qty}, 单价 {unit_price:.2f}元/个")
+    return ActionResult(status=True, message=f"你购买了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 
 
 @register("sell", validators=[must_be_at(loc_id="location:market"), must_have_item(item_field="item", qty_field="qty")])
-def handle_sell(ctx, act) -> ActionResult:
+async def handle_sell(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     item_id = "item:" + act.item
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id) * ctx.world.catalog.item(item_id).sell_ratio
 
+    result = await ctx.world.client.sell(actor.id, qty, unit_price * qty)
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 出售{ctx.world.catalog.item(item_id).name}")
+
     actor.inventory.remove(item_id, qty)
     actor.money += unit_price * qty
     market.add_stock(item_id, qty)
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
-    return ActionResult(status=True, message=f"你出售了 {ctx.world.catalog.item(item_id).name} x {qty}, 单价 {unit_price:.2f}元/个")
+    return ActionResult(status=True, message=f"你出售了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 
 
 @register_skill("example")
@@ -165,3 +190,4 @@ def handle_skill(ctx, act) -> ActionResult:
         return ActionResult(status=False, code="SKILL_EMPTY", message="No skill specified")
 
     return _invoke_skill(skill_name, ctx, act)
+

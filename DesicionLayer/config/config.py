@@ -20,3 +20,5 @@ SIGMA = {"comsumable":0.15,
          "valuable":0.2}
 
 RANDOM_EVENT_PORB = 0.1
+
+USE_ACION_LAYER = False
