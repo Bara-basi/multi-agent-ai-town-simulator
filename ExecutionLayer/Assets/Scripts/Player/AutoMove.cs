@@ -86,7 +86,11 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
 
     void FixedUpdate()
     {
-        if (frozen) return;
+        if (frozen)
+        {
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+            return;
+        }
         rb.linearVelocity = autoMove * speed;
     }
 
@@ -99,6 +103,8 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         if (frozen)
         {
             if (ani) ani.SetInteger("move", 0);
+            autoMove = Vector2.zero;
+            if (rb != null) rb.linearVelocity = Vector2.zero;
             return;
         }
         if (suspendTimer > 0f)
@@ -365,6 +371,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         pathCells.Clear();
         pathIndex = 0;
         autoMove = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
         idleMoving = false;
         stuckTimer = 0f;
         hardStuckTimer = 0f;
@@ -605,14 +612,13 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
     {
         //延迟传送
         bool shouldCompleteGoTo = (curCmd == "go_to");
+        var preTeleportPos = transform.position;
 
         if (rb) rb.linearVelocity = Vector2.zero;
         frozen = true;
 
         if (preWait > 0f)
             yield return new WaitForSeconds(preWait);
-
-        if (vcam != null) vcam.PreviousStateIsValid = false;
 
         CancelAuto();
         idleMoving = false;
@@ -621,13 +627,26 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         if (rb != null)
         {
             rb.position = targetPosition;
+            transform.position = targetPosition;
             rb.linearVelocity = Vector2.zero;
         }
         else
         {
             transform.position = targetPosition;
         }
+        Physics2D.SyncTransforms();
         lastPos = transform.position;
+        if (vcam != null)
+        {
+            var warpTarget = vcam.Follow != null ? vcam.Follow : transform;
+            vcam.OnTargetObjectWarped(warpTarget, transform.position - preTeleportPos);
+            vcam.PreviousStateIsValid = false;
+        }
+        if (cam != null)
+        {
+            var p = cam.transform.position;
+            cam.transform.position = new Vector3(transform.position.x, transform.position.y, p.z);
+        }
 
         // 传送点通常是当前 go_to 的阶段终点，传送后直接进入后续动作
         if (shouldCompleteGoTo)

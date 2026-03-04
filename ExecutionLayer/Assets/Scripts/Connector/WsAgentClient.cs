@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.WebSockets;
@@ -56,9 +57,20 @@ public class WsAgentClient : MonoBehaviour
     private IAutoNavigator navigator;
 
     public PlayerHUD playerHUD;
+    [Header("Animation Throttle")]
+    public float animationDelaySeconds = 0.5f;
 
     private readonly List<string> inner_home_place = new() { "床","冰箱","储物柜","锅","茶桌"};
     private readonly List<string> inner_market_place = new() { "集市冰箱", "收银台", "货架" };
+    private readonly ConcurrentQueue<AnimationRequest> animationQueue = new();
+    private Coroutine animationPumpCoroutine;
+    private float lastAnimationPlayTime = float.NegativeInfinity;
+
+    struct AnimationRequest
+    {
+        public string target;
+        public int delta;
+    }
 
     void Awake()
     {
@@ -300,14 +312,12 @@ public class WsAgentClient : MonoBehaviour
 
         if (msg.type == "animation")
         {
-            var target = msg.target;
-            var delta = (int)msg.value;
-
-            mainThreadQueue.Enqueue(() =>
+            animationQueue.Enqueue(new AnimationRequest
             {
-                if (playerHUD != null)
-                    playerHUD.PopStatus(target, delta);
+                target = msg.target,
+                delta = (int)msg.value
             });
+            mainThreadQueue.Enqueue(TryStartAnimationPump);
 
             _ = SendJson(new OutMsg
             {
@@ -330,6 +340,39 @@ public class WsAgentClient : MonoBehaviour
             status = "error",
             error = "unknown command"
         });
+    }
+
+    void TryStartAnimationPump()
+    {
+        if (animationPumpCoroutine == null)
+            animationPumpCoroutine = StartCoroutine(CoPlayAnimationsWithDelay());
+    }
+
+    IEnumerator CoPlayAnimationsWithDelay()
+    {
+        while (true)
+        {
+            if (!animationQueue.TryDequeue(out var request))
+                break;
+
+            // 节流：保证任意两次播放开始时间至少间隔 animationDelaySeconds
+            if (animationDelaySeconds > 0f && !float.IsNegativeInfinity(lastAnimationPlayTime))
+            {
+                float elapsed = Time.time - lastAnimationPlayTime;
+                float wait = animationDelaySeconds - elapsed;
+                if (wait > 0f)
+                    yield return new WaitForSeconds(wait);
+            }
+
+            if (playerHUD != null)
+                playerHUD.PopStatus(request.target, request.delta);
+            lastAnimationPlayTime = Time.time;
+
+            // 让出一帧，避免长队列在同一帧内吞掉过多时间
+            yield return null;
+        }
+
+        animationPumpCoroutine = null;
     }
 
     void Update()
