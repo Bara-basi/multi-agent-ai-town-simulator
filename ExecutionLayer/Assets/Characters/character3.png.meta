@@ -10543,6 +10543,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: character3_141
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 544
+        width: 16
+        height: 24
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c59ca598529be8b448407a8bae3e9c1a
+      internalID: -1177031593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -10605,6 +10627,7 @@ TextureImporter:
       character3_139: -1023076809
       character3_14: -10420713
       character3_140: -963834728
+      character3_141: -1177031593
       character3_15: -1939415874
       character3_16: -1849978859
       character3_17: -1639317114

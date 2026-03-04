@@ -7,21 +7,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-
 public interface IAutoNavigator
 {
-    void AddCommand(float cost_time,string cmd,List<Vector2> target, Action onArrived);
+    void AddCommand(float cost_time, string cmd, List<Vector2> target, Action onArrived);
 }
+
 public interface IAutoHUDAnimation
 {
-    void AddAnimation(string type,float duration,int value);
+    void AddAnimation(string type, float duration, int value);
 }
+
 [Serializable]
 public class LocationPair
 {
     public string key;
     public List<Vector2> value;
 }
+
 [Serializable]
 public class LocationPath
 {
@@ -37,29 +39,43 @@ public class WsAgentClient : MonoBehaviour
 
     [Header("位置字典（名称->坐标）")]
     public List<LocationPair> locationsSerialized = new();
-    public List<LocationPath> locationPaths = new(); 
-    private Dictionary<string,List<string>> locationGraph = new();
+    public List<LocationPath> locationPaths = new();
+
+    private Dictionary<string, List<string>> locationGraph = new();
     private Dictionary<string, List<Vector2>> locations;
+
     private ClientWebSocket ws;
     private CancellationTokenSource cts;
+
     private readonly ConcurrentQueue<Action> mainThreadQueue = new();
+
+    // 关键：防止并发 SendAsync（ClientWebSocket 很怕这个）
+    private readonly SemaphoreSlim sendLock = new(1, 1);
+
     public MonoBehaviour navigatorBehaviour;
     private IAutoNavigator navigator;
+
     public PlayerHUD playerHUD;
+
+    private readonly List<string> inner_home_place = new() { "床","冰箱","储物柜","锅","茶桌"};
+    private readonly List<string> inner_market_place = new() { "集市冰箱", "收银台", "货架" };
+
     void Awake()
     {
         locationGraph = new Dictionary<string, List<string>>();
         locations = new Dictionary<string, List<Vector2>>();
-        //构建邻接表
+
+        // 构建位置字典
         if (locationsSerialized != null)
         {
             foreach (var pair in locationsSerialized)
             {
                 if (pair == null || string.IsNullOrEmpty(pair.key) || pair.value == null) continue;
-                locations[pair.key] = new List<Vector2>(pair.value); 
+                locations[pair.key] = new List<Vector2>(pair.value);
             }
         }
 
+        // 构建邻接表
         if (locationPaths != null)
         {
             foreach (var p in locationPaths)
@@ -68,6 +84,7 @@ public class WsAgentClient : MonoBehaviour
                 locationGraph[p.from] = new List<string>(p.to);
             }
         }
+
         navigator = navigatorBehaviour as IAutoNavigator;
         if (navigator == null)
             Debug.LogError("navigatorBehaviour 未实现 IAutoNavigator 接口！");
@@ -75,55 +92,28 @@ public class WsAgentClient : MonoBehaviour
 
     async void Start()
     {
+        string json = "{\"type\":\"command\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"update_state\",\"target\":\"item\",\"value\":\"10\"}";
+        string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
+        string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}"; 
+        string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}"; 
         await ConnectAndRun();
-        // StartCoroutine(test_call());
-
     }
-    /// <summary>
-    /// 测试调用的协程方法，用于定期发送JSON格式的命令消息
-    /// </summary>
-    /// <returns>返回一个WaitForSeconds枚举器，用于协程的等待操作</returns>
-    // private async Task<IEnumerator<UnityEngine.WaitForSeconds>> Testcall()
-    // {
-    //     // 无限循环，持续发送测试消息
-    //     while (true)
-    //     {
-    //        // 构建更新状态的JSON命令字符串
-    //        string json = "{\"type\":\"command\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"update_state\",\"target\":\"item\",\"value\":\"10\"}";
-    //        // 构建从家到收银台的移动JSON命令字符串
-    //        string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
-    //        // 构建从集市到河流的移动JSON命令字符串
-    //        string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}";
-    //        string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}";
-           
-           
-    //         // // 如果agentId为"agent-2"，则发送移动命令
-    //         if (agentId == "agent-4")
-    //         {
-    //             // HandleMessage(json1); // 处理第一个移动命令
-    //             await HandleMessage(animation_json1);
-            
-    //             // HandleMessage(animation_json1); // 处理动画命令
-    //         } 
-       
-
-    //         // 等待3秒后继续下一次循环
-    //         yield return new WaitForSeconds(3);
-
-    //     }
-    // }
 
     async Task ConnectAndRun()
     {
+        // 防止重复连接造成资源泄漏
+        try { cts?.Cancel(); } catch { }
+        try { ws?.Dispose(); } catch { }
+
         cts = new CancellationTokenSource();
         ws = new ClientWebSocket();
 
         try
         {
-            while (ws.State != WebSocketState.Open)
-                await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
-            
-            // 发送 hello（使用可序列化 DTO，而非匿名对象）
+            // ConnectAsync 一次就够了，你原来 while 循环容易在异常情况下狂重试
+            await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
+
+            // hello
             await SendJson(new OutMsgHello
             {
                 type = "hello",
@@ -131,7 +121,7 @@ public class WsAgentClient : MonoBehaviour
                 cap = new[] { "waiting" }
             });
 
-            // 启动接收循环
+            // 启动接收循环（后台线程）
             _ = Task.Run(ReceiveLoop);
         }
         catch (Exception e)
@@ -145,44 +135,104 @@ public class WsAgentClient : MonoBehaviour
     async Task ReceiveLoop()
     {
         var buffer = new byte[8192];
-        while (ws != null && ws.State == WebSocketState.Open)
-        {
-            var sb = new StringBuilder();
-            WebSocketReceiveResult result;
-            do
-            {
-                result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
-                if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye", cts.Token);
-                    return;
-                }
-                sb.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
-            } while (!result.EndOfMessage);
 
-            var json = sb.ToString();
-            await HandleMessage(json);
+        while (ws != null && ws.State == WebSocketState.Open && cts != null && !cts.IsCancellationRequested)
+        {
+            try
+            {
+                var sb = new StringBuilder();
+                WebSocketReceiveResult result;
+
+                do
+                {
+                    result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
+
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        try
+                        {
+                            await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye", cts.Token);
+                        }
+                        catch { }
+                        return;
+                    }
+
+                    sb.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+                }
+                while (!result.EndOfMessage);
+
+                var json = sb.ToString();
+
+                // HandleMessage 现在是同步方法：不 await，避免 CS1998 & 签名连锁爆炸
+                HandleMessage(json);
+            }
+            catch (OperationCanceledException)
+            {
+                // 正常取消
+                return;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("WS ReceiveLoop error: " + e.Message);
+                return;
+            }
         }
     }
 
-    async Task HandleMessage(string json)
+    void HandleMessage(string json)
     {
-        var msg = JsonUtility.FromJson<WSMsg>(WSMsg.Fix(json));
-        
+        WSMsg msg = null;
+
+        try
+        {
+            msg = JsonUtility.FromJson<WSMsg>(WSMsg.Fix(json));
+
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("Json parse failed: " + e.Message + "\nraw: " + json);
+            _ = SendJson(new OutMsg
+            {
+                type = "complete",
+                cmd = null,
+                agent_id = agentId,
+                action_id = null,
+                status = "error",
+                error = "json parse failed"
+            });
+            return;
+        }
+
+        if (msg == null || string.IsNullOrEmpty(msg.type))
+        {
+            _ = SendJson(new OutMsg
+            {
+                type = "complete",
+                cmd = null,
+                agent_id = agentId,
+                action_id = null,
+                status = "error",
+                error = "empty msg"
+            });
+            return;
+        }
 
         if (msg.type == "hello_ack")
-        {   
+        {
             // no-op
+            return;
         }
-        else if (msg.type == "ping")
+
+        if (msg.type == "ping")
         {
             _ = SendJson(new OutMsg { type = "pong" });
+            return;
         }
-        else if (msg.type == "command"  && msg.cmd == "go_to")
+
+        if (msg.type == "command" && msg.cmd == "go_to")
         {
-            //print(msg.target);
-            //print(msg.cur_location);
-            // ACK
+   
+            // ACK（先告诉后端收到了）
             _ = SendJson(new OutMsg
             {
                 type = "ack",
@@ -190,9 +240,14 @@ public class WsAgentClient : MonoBehaviour
                 action_id = msg.action_id
             });
 
-            // 主线程排队：解析坐标 -> 下发给导航器 -> 完成后上报
+            // 主线程队列执行（Unity API 只能主线程）
             mainThreadQueue.Enqueue(() =>
             {
+                if (msg.target == "家")
+                    msg.target = inner_home_place[UnityEngine.Random.Range(0, inner_home_place.Count)];
+
+                if (msg.target == "集市")
+                    msg.target = inner_market_place[UnityEngine.Random.Range(0, inner_market_place.Count)];
                 if (!TryResolveTarget(msg, out var target))
                 {
                     _ = SendJson(new OutMsg
@@ -206,8 +261,8 @@ public class WsAgentClient : MonoBehaviour
                     });
                     return;
                 }
-               
-                navigator?.AddCommand(msg.value,msg.cmd,target, onArrived: () =>
+
+                navigator?.AddCommand(msg.value, msg.cmd, target, onArrived: () =>
                 {
                     _ = SendJson(new OutMsg
                     {
@@ -219,11 +274,14 @@ public class WsAgentClient : MonoBehaviour
                     });
                 });
             });
-        }else if (msg.type == "command" && (msg.cmd !="go_to"))
+
+            return;
+        }
+
+        if (msg.type == "command" && msg.cmd != "go_to")
         {
             mainThreadQueue.Enqueue(() =>
             {
-                //print("cost_time"+msg.time_cost);
                 navigator?.AddCommand(msg.value, msg.cmd, new List<Vector2>(), onArrived: () =>
                 {
                     _ = SendJson(new OutMsg
@@ -236,104 +294,149 @@ public class WsAgentClient : MonoBehaviour
                     });
                 });
             });
-        }else if (msg.type == "animation")
+
+            return;
+        }
+
+        if (msg.type == "animation")
         {
             var target = msg.target;
             var delta = (int)msg.value;
-            var agent = msg.agent_id;
+
             mainThreadQueue.Enqueue(() =>
             {
-    
                 if (playerHUD != null)
                     playerHUD.PopStatus(target, delta);
             });
-            
-            _ = SendJson(new OutMsg{
-                type = "complete",
-                cmd = msg.cmd,
-                agent_id = agentId,
-                action_id = msg.action_id,
-                status = "ok"
-            });
-        }
-        else
-        {
+
             _ = SendJson(new OutMsg
             {
                 type = "complete",
                 cmd = msg.cmd,
                 agent_id = agentId,
                 action_id = msg.action_id,
-                status = "error",
-                error = "unknown command"
+                status = "ok"
             });
+
+            return;
         }
+
+        _ = SendJson(new OutMsg
+        {
+            type = "complete",
+            cmd = msg.cmd,
+            agent_id = agentId,
+            action_id = msg.action_id,
+            status = "error",
+            error = "unknown command"
+        });
     }
 
     void Update()
     {
         int processed = 0;
         const int MAX_PER_FRAME = 16;
+
         while (processed < MAX_PER_FRAME && mainThreadQueue.TryDequeue(out var action))
         {
-            action?.Invoke();
+            try { action?.Invoke(); }
+            catch (Exception e) { Debug.LogWarning("Main thread action error: " + e.Message); }
             processed++;
         }
     }
 
     bool TryResolveTarget(WSMsg msg, out List<Vector2> target)
     {
-       
-        var path = FindPath(msg.cur_location, msg.target, locationGraph);
-        //foreach(string p in path)
-        //{
-        //    print(p);
-        //}
-        if (path != null && path.Count > 0)
+        target = null;
+
+        if (msg == null) return false;
+
+        var start = msg.cur_location;
+        var goal = msg.target;
+
+        var path = FindPath(start, goal, locationGraph);
+        if (path == null || path.Count == 0) return false;
+
+        var result = new List<Vector2>();
+
+        foreach (var name in path)
         {
-            target = new List<Vector2>();
-            foreach (var name in path)
-            {
-                if (!locations.TryGetValue(name, out var list) || list == null || list.Count == 0)
-                    return false;
-                if (list[0].x == -1 && list[0].y == -1)
-                {
-                    continue;
-                }
-                if (list.Count == 1)
-                    target.Add(list[0]);
-                else 
-                    target.Add(list[UnityEngine.Random.Range(0, list.Count)]);
-                
-            }
-            return target.Count > 0;
+            if (!locations.TryGetValue(name, out var list) || list == null || list.Count == 0)
+                return false;
+
+            // -1,-1 表示“跳过点”
+            if (list[0].x == -1 && list[0].y == -1)
+                continue;
+
+            if (list.Count == 1) result.Add(list[0]);
+            else result.Add(list[UnityEngine.Random.Range(0, list.Count)]);
         }
 
-        target = null;
-        return false;
+        if (result.Count == 0) return false;
+
+        target = result;
+        return true;
     }
 
-    async Task SendJson(object obj) // 这里 obj 必须是 [Serializable] 的类/结构，字段而不是属性
+    // ✅ 仍然是 async，但内部做了 sendLock 防并发 + try/catch 防火并忘丢异常
+    async Task SendJson(object obj)
     {
-        if (ws == null || ws.State != WebSocketState.Open) return;
-        var json = JsonUtility.ToJson(obj);
+        if (ws == null || ws.State != WebSocketState.Open || cts == null || cts.IsCancellationRequested) return;
+
+        string json;
+        try
+        {
+            json = JsonUtility.ToJson(obj);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("ToJson failed: " + e.Message);
+            return;
+        }
+
         var bytes = Encoding.UTF8.GetBytes(json);
-        await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
+
+        await sendLock.WaitAsync();
+        try
+        {
+            await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            // ignore
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("SendAsync failed: " + e.Message + "\njson: " + json);
+        }
+        finally
+        {
+            sendLock.Release();
+        }
     }
 
     void OnDestroy()
     {
         try { cts?.Cancel(); } catch { }
+
         try
         {
             if (ws != null)
             {
                 if (ws.State == WebSocketState.Open)
-                    ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "destroy", CancellationToken.None).Wait(100);
+                {
+                    try
+                    {
+                        ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "destroy", CancellationToken.None).Wait(100);
+                    }
+                    catch { }
+                }
                 ws.Dispose();
             }
         }
         catch { }
+
+        try { sendLock?.Dispose(); } catch { }
     }
 
     [Serializable]
@@ -349,12 +452,10 @@ public class WsAgentClient : MonoBehaviour
 
         public static string Fix(string s)
         {
-            // 暂留逻辑，不做错误替换，直接返回
             return s;
         }
     }
 
-    // ---- 发送用 DTO（JsonUtility 需要字段 & [Serializable]） ----
     [Serializable]
     class OutMsg
     {
@@ -373,10 +474,12 @@ public class WsAgentClient : MonoBehaviour
         public string agent_id;
         public string[] cap;
     }
+
     List<string> FindPath(string start, string goal, Dictionary<string, List<string>> graph)
     {
         if (string.IsNullOrEmpty(start) || string.IsNullOrEmpty(goal) || graph == null)
             return null;
+
         if (start == goal) return new List<string> { start };
 
         var q = new Queue<string>();
@@ -389,24 +492,28 @@ public class WsAgentClient : MonoBehaviour
         while (q.Count > 0)
         {
             var u = q.Dequeue();
+
             if (!graph.TryGetValue(u, out var nbrs) || nbrs == null) continue;
+
             foreach (var v in nbrs)
             {
                 if (!vis.Add(v)) continue;
+
                 prev[v] = u;
+
                 if (v == goal)
                 {
-                    // 回溯路径：start -> ... -> goal
                     var path = new List<string> { goal };
                     while (prev.ContainsKey(path[path.Count - 1]))
                         path.Add(prev[path[path.Count - 1]]);
                     path.Reverse();
                     return path;
                 }
+
                 q.Enqueue(v);
             }
         }
+
         return null;
     }
-
-}
+}          

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TestPopup : MonoBehaviour
 {
@@ -6,29 +7,34 @@ public class TestPopup : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             hud.PopStatus("money", -15);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             hud.PopStatus("item", +1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
             hud.PopStatus("fish", +1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
+
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
         {
-            hud.PopStatus("food", +13);
+            hud.PopStatus("hunger", +13);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
+
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
         {
-            hud.PopStatus("sanity", +1);
+            hud.PopStatus("fatigue", +1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
+
+        if (Keyboard.current.digit6Key.wasPressedThisFrame)
         {
-            hud.PopStatus("water", +1);
+            hud.PopStatus("thirst", +1);
         }
     }
 }

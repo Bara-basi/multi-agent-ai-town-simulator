@@ -43,7 +43,15 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
     private bool isTeleporting = false; 
     private float frozenUntil = 0f;
     private string curCmd = "";
+    private bool idleMoving = false;
+    private Vector3Int idleTargetCell;
+    private float nextIdleMoveAt = 0f;
    
+    [Header("Idle Wander")]
+    public bool enableIdleWander = true;
+    public float idleMoveIntervalMin = 2f;
+    public float idleMoveIntervalMax = 5f;
+
 
     [Header("Path Following")]
     public float arriveCellEpsilon = 0.2f;
@@ -73,6 +81,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         if (!cam) cam = Camera.main;
         if (ani) ani.SetInteger("move", 0);
         lastPos = transform.position;
+        ScheduleNextIdleMove();
     }
 
     void FixedUpdate()
@@ -131,6 +140,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         // 若空闲且有新命令，取队头开始寻路
         if (curCmd == "" && actionList.Count > 0)
         {
+            StopIdleWander();
             var pair = actionList.Dequeue();
             currentCallback = pair.actionCallBack;
             curCmd = pair.cmd;
@@ -180,8 +190,6 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
                 //播放睡觉动画
                 ani.SetInteger("sleep", 1);
 
-
-
             }
             else if (pair.cmd == "pick_up")
             {
@@ -203,6 +211,15 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
             }
 
         }
+        if (curCmd == "" && actionList.Count == 0 && enableIdleWander)
+        {
+            HandleIdleWander();
+        }
+        else if (!idleMoving)
+        {
+            autoMove = Vector2.zero;
+        }
+
         if(curCmd == "go_to")
         {
             //向着某处走动
@@ -282,12 +299,9 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         }else if(curCmd == "waiting")
         {
             //原地等待或等待工作完成
-            print("waiting");
             res_time -= Time.deltaTime;
-            print(res_time);
             if(res_time <= 0)
             {
-                print("stop");
                 hud.StopWork();
                 CompleteCurrent();
             }
@@ -296,7 +310,6 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         {
             //睡觉动画
             res_time -= Time.deltaTime;
-            print(res_time);
             if (res_time <= 0)
             {
                 print("stop");
@@ -307,7 +320,6 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         {
             //捡东西
             res_time -= Time.deltaTime;
-            print(res_time);
             if (res_time <= 0)
             {
                 print("stop");
@@ -353,6 +365,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         pathCells.Clear();
         pathIndex = 0;
         autoMove = Vector2.zero;
+        idleMoving = false;
         stuckTimer = 0f;
         hardStuckTimer = 0f;
         hasGoal = false;
@@ -398,6 +411,76 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         var targetWorld = grid.GetCellCenterWorld(pathCells[pathIndex]);
         Vector2 dir = (Vector2)(targetWorld - transform.position);
         autoMove = dir.normalized;
+    }
+
+    void HandleIdleWander()
+    {
+        if (idleMoving)
+        {
+            var targetWorld = grid.GetCellCenterWorld(idleTargetCell);
+            targetWorld.z = 0f;
+            Vector2 dir = (Vector2)(targetWorld - transform.position);
+            float snapDist = Mathf.Max(arriveCellEpsilon, speed * Time.fixedDeltaTime * 1.1f);
+
+            if (dir.magnitude <= snapDist)
+            {
+                if (rb != null) rb.position = targetWorld;
+                else transform.position = targetWorld;
+                idleMoving = false;
+                autoMove = Vector2.zero;
+                ScheduleNextIdleMove();
+            }
+            else
+            {
+                autoMove = dir.normalized;
+            }
+            return;
+        }
+
+        if (Time.time < nextIdleMoveAt)
+        {
+            autoMove = Vector2.zero;
+            return;
+        }
+
+        TryStartIdleMove();
+    }
+
+    void TryStartIdleMove()
+    {
+        var currentCell = grid.WorldToCell(transform.position);
+        var dirs = new[] { Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right };
+        var walkableNeighbors = new List<Vector3Int>(4);
+
+        foreach (var d in dirs)
+        {
+            var cell = currentCell + d;
+            if (IsWalkable(cell))
+                walkableNeighbors.Add(cell);
+        }
+
+        if (walkableNeighbors.Count == 0)
+        {
+            autoMove = Vector2.zero;
+            ScheduleNextIdleMove();
+            return;
+        }
+
+        idleTargetCell = walkableNeighbors[UnityEngine.Random.Range(0, walkableNeighbors.Count)];
+        idleMoving = true;
+    }
+
+    void StopIdleWander()
+    {
+        idleMoving = false;
+        autoMove = Vector2.zero;
+    }
+
+    void ScheduleNextIdleMove()
+    {
+        float min = Mathf.Max(0f, idleMoveIntervalMin);
+        float max = Mathf.Max(min, idleMoveIntervalMax);
+        nextIdleMoveAt = Time.time + UnityEngine.Random.Range(min, max);
     }
 
     bool IsWalkable(Vector3Int cell)
@@ -511,22 +594,54 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
                                       )
     {
         if (isTeleporting) return;  // 防止重复触发
+        isTeleporting = true;
+        StopIdleWander();
+        autoMove = Vector2.zero;
+        if (rb) rb.linearVelocity = Vector2.zero;
         StartCoroutine(TeleportAfterDelay(targetPosition, preWait, postWait, vcam));
     }
 
     private IEnumerator TeleportAfterDelay(Vector3 targetPosition, float preWait, float postWait, CinemachineCamera vcam)
     {
         //延迟传送
-        
+        bool shouldCompleteGoTo = (curCmd == "go_to");
+
         if (rb) rb.linearVelocity = Vector2.zero;
         frozen = true;
-        yield return new WaitForSeconds(preWait);
-        vcam.PreviousStateIsValid = false;
-        frozenUntil = Time.time + postWait;
+
+        if (preWait > 0f)
+            yield return new WaitForSeconds(preWait);
+
+        if (vcam != null) vcam.PreviousStateIsValid = false;
+
         CancelAuto();
-        transform.position = targetPosition;
-        if (rb) rb.linearVelocity = Vector2.zero;
-        yield return new WaitForSeconds(postWait);
+        idleMoving = false;
+
+        targetPosition.z = transform.position.z;
+        if (rb != null)
+        {
+            rb.position = targetPosition;
+            rb.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            transform.position = targetPosition;
+        }
+        lastPos = transform.position;
+
+        // 传送点通常是当前 go_to 的阶段终点，传送后直接进入后续动作
+        if (shouldCompleteGoTo)
+        {
+            CompleteCurrent();
+        }
+
+        frozenUntil = Time.time + postWait;
+        if (postWait > 0f)
+            yield return new WaitForSeconds(postWait);
+
+        isTeleporting = false;
+        if (Time.time >= frozenUntil)
+            frozen = false;
         
 
     }
