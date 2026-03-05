@@ -115,6 +115,10 @@ def handle_finish(ctx, act) -> ActionResult:
 @register("wait")
 async def handle_wait(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
+    result = await ctx.world.client.move(act.actor_id, ctx.world.catalog.loc(actor.location).name, ctx.world.catalog.loc("location:home").name)
+    result &= await ctx.world.client.sleep(act.actor_id)
+    if not result:
+        return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 等待")
     actor.running = False
     await ctx.world.update_day()
     return ActionResult(status=True, message="你结束了上个回合")

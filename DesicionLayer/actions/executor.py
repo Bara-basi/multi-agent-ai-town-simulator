@@ -29,8 +29,8 @@ class _ActionView:
 
 
 class ActionExecutor:
-    def __init__(self, world, dispatch, config, catalog, logger):
-        self.ctx = ActionContext(world, dispatch, config, catalog, logger)
+    def __init__(self, world, dispatch, catalog, logger):
+        self.ctx = ActionContext(world, dispatch, catalog, logger)
 
     def _normalize_action(self, action: Any, **kwargs) -> _ActionView:
         payload: Dict[str, Any] = {}

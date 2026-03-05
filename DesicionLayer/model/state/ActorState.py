@@ -39,4 +39,3 @@ class ActorState:
         self.memory.act_records.append([])
         for attr in self.attrs.values():
             attr.current = min(attr.current - attr.decay_per_day, 100)
-        self.location = self.home

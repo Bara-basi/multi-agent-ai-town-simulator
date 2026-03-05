@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 import numpy as np
 
 from actions.hooks import ON_DAILY_SETTLE
-from config.config import RANDOM_EVENT_PORB
+from config.config import RANDOM_EVENT_PORB,WIN_CONDITION
 from model.definitions.ActorDef import ActorId
 from model.definitions.Catalog import Catalog
 from model.definitions.LocationDef import LocationId
@@ -34,6 +34,15 @@ class WorldState:
     def loc(self, loc_id: LocationId) -> LocationState:
         return self.locations[loc_id]
 
+
+    def is_game_over(self,actor_id) -> bool:
+        for attr in self.actor(actor_id=actor_id).attrs.values():
+            if attr.current <= 0:
+                return True
+        return False
+
+    def is_victory(self, actor_id) -> bool:
+        return self.actor(actor_id=actor_id).money >= WIN_CONDITION
     async def update_day(self) -> None:
         """尝试进入下一回合，如果有任何 Actor 仍在执行，则不推进。"""
         for actor in self.actors.values():
@@ -48,20 +57,6 @@ class WorldState:
                 update_fn(self.catalog)
         for actor in self.actors.values():
             actor.update_day()
-            if self.client is not None:
-                maybe_task = await self.client.move(
-                    actor.id,
-                    self.catalog.loc(actor.location).name,
-                    self.catalog.loc(actor.home).name,
-                )
-                if inspect.isawaitable(maybe_task):
-                    try:
-                        import asyncio
-
-                        loop = asyncio.get_running_loop()
-                        loop.create_task(maybe_task)
-                    except Exception:
-                        pass
 
         self.determine_random_event()
 

@@ -8,7 +8,17 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from actions.executor import ActionExecutor
-from config.runtime_config import AgentRuntimeConfig
+from config.config import (
+    ALLOW_OPPOSITE_TRADE_SAME_ITEM_SAME_DAY,
+    MAX_ACTION_RETRIES,
+    MAX_REPLAN_AFTER_ACTION_ERROR,
+    REFLECT_MIN_INTERVAL_STEPS,
+    REPEAT_ACTION_GUARD_THRESHOLD,
+    REPEAT_TRADE_SAME_ITEM_THRESHOLD,
+    SURVIVAL_FATIGUE_THRESHOLD,
+    SURVIVAL_HUNGER_THRESHOLD,
+    SURVIVAL_THIRST_THRESHOLD,
+)
 from model.brains.AgentBrain import Agent
 from model.state.WorldState import WorldState
 from model.state.actionResult import ActionResult
@@ -62,13 +72,11 @@ class AgentRuntime:
         world: WorldState,
         agents: Dict[ActorId, Agent],
         executor: ActionExecutor,
-        config: Optional[AgentRuntimeConfig] = None,
         logger: Optional[Any] = None,
     ):
         self.world = world
         self.agents = agents
         self.executor = executor
-        self.config = config or AgentRuntimeConfig()
         self.logger = logger
         self._states: Dict[Any, RuntimeActorState] = {}
 
@@ -96,13 +104,16 @@ class AgentRuntime:
             return s.split(":", 1)[1]
         return s
 
-    @staticmethod
-    def _is_survival_danger(obs: Observation) -> bool:
+    def _is_survival_danger(self, obs: Observation) -> bool:
         actor = obs.actor_snapshot or {}
         hunger = float(actor.get("hunger", 0.0) or 0.0)
         thirst = float(actor.get("thirst", 0.0) or 0.0)
         fatigue = float(actor.get("fatigue", 0.0) or 0.0)
-        return hunger < 20.0 or thirst < 20.0 or fatigue < 15.0
+        return (
+            hunger < SURVIVAL_HUNGER_THRESHOLD
+            or thirst < SURVIVAL_THIRST_THRESHOLD
+            or fatigue < SURVIVAL_FATIGUE_THRESHOLD
+        )
 
     def _allow_repeat_action_for_survival(self, action: Dict[str, Any], obs: Observation) -> bool:
         if not self._is_survival_danger(obs):
@@ -117,7 +128,7 @@ class AgentRuntime:
         sig = self._normalize_action_signature(action)
         if sig != st.last_action_sig:
             return False, ""
-        if st.same_action_streak < self.config.repeat_action_guard_threshold:
+        if st.same_action_streak < REPEAT_ACTION_GUARD_THRESHOLD:
             return False, ""
         if self._allow_repeat_action_for_survival(action, obs):
             return False, ""
@@ -142,7 +153,7 @@ class AgentRuntime:
         if (
             prev_side
             and prev_side != act_type
-            and not self.config.allow_opposite_trade_same_item_same_day
+            and not ALLOW_OPPOSITE_TRADE_SAME_ITEM_SAME_DAY
         ):
             return True, (
                 f"检测到同一回合对 `{item}` 发生买卖对冲倾向。"
@@ -151,7 +162,7 @@ class AgentRuntime:
             )
 
         trade_sig = f"{act_type}|{item}"
-        if trade_sig == st.last_trade_sig and st.same_trade_streak >= self.config.repeat_trade_same_item_threshold:
+        if trade_sig == st.last_trade_sig and st.same_trade_streak >= REPEAT_TRADE_SAME_ITEM_THRESHOLD:
             return True, (
                 f"检测到对 `{item}` 连续重复 `{act_type}`。"
                 "请停止同一交易动作的复读，改为下一步或结束本回合。"
@@ -322,7 +333,7 @@ class AgentRuntime:
             return True
         if st.last_day != self.world.day:
             return True
-        return (st.step - st.last_reflect_step) >= self.config.reflect_min_interval_steps
+        return (st.step - st.last_reflect_step) >= REFLECT_MIN_INTERVAL_STEPS
 
     async def tick_actor(self, actor_id: Any) -> ActionResult:
         st = self._st(actor_id)
@@ -354,7 +365,7 @@ class AgentRuntime:
         proposal: Optional[Dict[str, Any]] = None
         res: Optional[ActionResult] = None
         last_err: Optional[ActionResult] = None
-        max_try = self.config.max_action_retries + self.config.max_replan_after_action_error + 1
+        max_try = MAX_ACTION_RETRIES + MAX_REPLAN_AFTER_ACTION_ERROR + 1
         for _ in range(max_try):
             obs = self._obs(actor_id)
             try:

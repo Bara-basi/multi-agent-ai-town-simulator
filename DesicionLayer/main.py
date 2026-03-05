@@ -8,7 +8,15 @@ import threading
 from datetime import datetime
 from typing import Dict
 from actions.executor import ActionExecutor
-from config.runtime_config import AgentRuntimeConfig
+from config.config import (
+    ACT_MODEL_NAME,
+    ACTION_LAYER_CONNECT_POLL_SECONDS,
+    FATIGUE_DECAY_PER_DAY,
+    HUNGER_DECAY_PER_DAY,
+    THIRST_DECAY_PER_DAY,
+    TICK_INTERVAL_SECONDS,
+    USE_ACION_LAYER,
+)
 from model.brains.AgentBrain import Agent
 from model.brains.PromptBuilder import PromptBuilder
 from model.definitions.ActorDef import ActorId
@@ -21,11 +29,7 @@ from model.brains.NoopActionLayerClient import NoopActionLayerClient
 from runtime.build_state import build_state
 from runtime.load_data import load_catalog
 from runtime.runtime import AgentRuntime
-import logging
-from config.config import HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY,FATIGUE_DECAY_PER_DAY,USE_ACION_LAYER
 
-MODEL_NAME = "gpt-4.1-mini-2025-04-14"
-TICK_INTERVAL_SECONDS = 1.0
 logger = logging.getLogger(__name__)
 
 def _dispatch(_event_name: str, **_payload: object) -> None:
@@ -148,9 +152,7 @@ async def run(on_update=None) -> None:
         client = WebSocketServer(actor2agent=actor2agent)
         await client.start()
         while not all(client.is_connected(k) for k in actor2agent.values()):
-            print(client.connections.keys())
-            print(actor2agent.values())
-            await asyncio.sleep(1)
+            await asyncio.sleep(ACTION_LAYER_CONNECT_POLL_SECONDS)
         logger.info("全部客户端已连接")
     else:
         client = NoopActionLayerClient()
@@ -164,11 +166,9 @@ async def run(on_update=None) -> None:
     )
     _bootstrap_world_state(world)
 
-    runtime_config = AgentRuntimeConfig()
     executor = ActionExecutor(
         world=world,
         dispatch=_dispatch,
-        config=runtime_config,
         catalog=catalog,
         logger=logging.getLogger("action"),
     )
@@ -177,7 +177,7 @@ async def run(on_update=None) -> None:
     for actor_id, actor in actor_states.items():
         agents[actor_id] = Agent(
             id=actor_id,
-            model=LLM(model_name=MODEL_NAME),
+            model=LLM(model_name=ACT_MODEL_NAME),
             actor=actor,
             prompt_builder=PromptBuilder(),
         )
@@ -185,7 +185,6 @@ async def run(on_update=None) -> None:
         world=world,
         agents=agents,
         executor=executor,
-        config=runtime_config,
         logger=logging.getLogger("runtime"),
     )
     if on_update:

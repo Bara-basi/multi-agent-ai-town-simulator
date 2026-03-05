@@ -126,7 +126,7 @@ class PromptBuilder:
         base_dir = "debug_log/prompt"
         self._mkdir(base_dir)
         actor_suffix = self._actor_suffix(packet.actor_id)
-        fname_base = f"turn{packet.created_at}_{actor_suffix}"
+        fname_base = f"round{packet.created_at}_{actor_suffix}"
 
         md_path = os.path.join(base_dir, f"{fname_base}.md")
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -562,7 +562,7 @@ class PromptBuilder:
             [
                 "请制定本回合剩余阶段的行动计划。",
                 "- 先确保生存属性安全，再追求利润。",
-                f"- 除 sleep/wait 外，每次动作约消耗 {FATIGUE_DECAY_PER_ACTION} 点精神值。每回合结束时会恢复{-FATIGUE_DECAY_PER_DAY}点精神值，减少{HUNGER_DECAY_PER_DAY}点饱食度，减少{THIRST_DECAY_PER_DAY}点水分值。",
+                f"- 除 sleep/wait 外，每次动作消耗 {FATIGUE_DECAY_PER_ACTION} 点精神值。每回合结束时会恢复{-FATIGUE_DECAY_PER_DAY}点精神值，减少{HUNGER_DECAY_PER_DAY}点饱食度，减少{THIRST_DECAY_PER_DAY}点水分值。",
                 "- 给出**至少1**条可执行步骤，按顺序编号。",
                 "- 计划最多 4 步（不含“回合结束”），避免长链条件分支和碎步动作。",
                 "- 计划应以策略步骤表达，不要推演执行后的具体数值，不要重写边界检查。",

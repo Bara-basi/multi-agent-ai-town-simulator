@@ -16,7 +16,6 @@ class ActionContext:
     # 运行时上下文：把执行动作所需对象集中传给 handler/validator。
     world: Any
     dispatch: Any
-    config: Any
     catalog: Any
     logger: Any
 

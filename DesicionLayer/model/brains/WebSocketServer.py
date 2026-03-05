@@ -207,7 +207,7 @@ class WebSocketServer:
         if not result:
             return False
         result &= await self.update_state(actor_id=actor_id,state_name="sleeping",value=1)
-        result &= await self.show_animation(actor_id=actor_id,animation="fatigue",value=FATIGUE_DECAY_PER_DAY)
+        result &= await self.show_animation(actor_id=actor_id,animation="fatigue",value=-FATIGUE_DECAY_PER_DAY)
         result &= await self.show_animation(actor_id=actor_id,animation="hunger",value=-HUNGER_DECAY_PER_DAY)
         result &= await self.show_animation(actor_id=actor_id,animation="thirst",value=-THIRST_DECAY_PER_DAY)
         return result
