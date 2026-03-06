@@ -9,7 +9,7 @@ KAPPA = {
 }
 SIGMA = {
     "comsumable": 0.15,
-    "valuable": 0.2,
+    "valuable": 0.4,
 }
 
 # 模型配置

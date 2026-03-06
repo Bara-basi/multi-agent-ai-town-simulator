@@ -185,13 +185,11 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
             }else if(curCmd == "waiting")
             {
                 //等待或者工作中
-                print("waiting");
                 res_time = pair.cost;
                 hud.StartWork(res_time);
                 
             }else if(pair.cmd == "sleeping")
             {
-                print("sleeping");
                 res_time = pair.cost;
                 //播放睡觉动画
                 ani.SetInteger("sleep", 1);
@@ -199,7 +197,6 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
             }
             else if (pair.cmd == "pick_up")
             {
-                print("pick up something");
                 ani.SetTrigger("pick_up");
                 res_time = pair.cost;
 

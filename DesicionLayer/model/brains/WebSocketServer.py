@@ -171,7 +171,7 @@ class WebSocketServer:
     async def update_state(self, actor_id,state_name, value)->bool:
         agent_id = self.actor2agent.get(actor_id)
         if not agent_id:
-            logger.warning("Actor is not bound to agent_id: %s", actor_id)
+            logger.warning("Actor agent_id: %s 未找到", actor_id)
             return False
         result = await self.send(
             type="command",
@@ -179,6 +179,7 @@ class WebSocketServer:
             cmd=state_name,
             value=value,
         )
+        print("sleeping")
         return self.is_success(result)
 
     async def show_animation(self, actor_id, animation, value)->bool:
@@ -202,24 +203,24 @@ class WebSocketServer:
         return result
 
     
-    async def sleep(self,actor_id):
-        result = await self.move(actor_id=actor_id,source="家",target="床")
+    async def sleep(self,actor_id,source):
+        result = await self.move(actor_id=actor_id,source=source,target="床")
         if not result:
             return False
-        result &= await self.update_state(actor_id=actor_id,state_name="sleeping",value=1)
+        result &= await self.update_state(actor_id=actor_id,state_name="sleeping",value=5)
         result &= await self.show_animation(actor_id=actor_id,animation="fatigue",value=-FATIGUE_DECAY_PER_DAY)
         result &= await self.show_animation(actor_id=actor_id,animation="hunger",value=-HUNGER_DECAY_PER_DAY)
         result &= await self.show_animation(actor_id=actor_id,animation="thirst",value=-THIRST_DECAY_PER_DAY)
         return result
 
-    async def buy(self,actor_id,qty,money):
-        result = await self.move(actor_id=actor_id,source="集市",target="收银台")
+    async def buy(self,actor_id,qty,money,source):
+        result = await self.show_animation(actor_id=actor_id,animation="item",value=qty)
+        result &= await self.move(actor_id=actor_id,source=source,target="收银台")
         result &= await self.show_animation(actor_id=actor_id,animation="money",value=-money)
-        result &= await self.show_animation(actor_id=actor_id,animation="item",value=qty)
         return result
     
-    async def sell(self,actor_id,qty,money):
-        result = await self.move(actor_id=actor_id,source="集市",target="收银台")
+    async def sell(self,actor_id,qty,money,source):
+        result = await self.move(actor_id=actor_id,source=source,target="收银台")
         result &= await self.show_animation(actor_id=actor_id,animation="money",value=money)
         result &= await self.show_animation(actor_id=actor_id,animation="item",value=-qty)
         return result
@@ -258,12 +259,12 @@ async def run_smoke_test_main() -> None:
     """
     catalog = load_catalog()
     actor_id = next(iter(catalog.actors.keys()))
-    agent_id = "Agent-1"
+    agent_id = "agent-1"
     actor2agent = {actor_id: agent_id}
     server = WebSocketServer(actor2agent=actor2agent)
 
     unit_price = 100
-
+ 
     logger.info("Smoke test starting. actor_id=%s agent_id=%s", actor_id, agent_id)
     logger.info("Please start Unity client and send hello with agent_id=%s", agent_id)
 
@@ -276,11 +277,12 @@ async def run_smoke_test_main() -> None:
             ("consume", lambda: server.consume(actor_id=actor_id, item=catalog.item("item:water"), value=1)),
             ("move", lambda: server.move(actor_id=actor_id, source="家", target="床")),
     
-            ("show_animation", lambda: server.show_animation(actor_id=actor_id, animation="hunger", value=-1)),            ("buy", lambda: server.buy(actor_id=actor_id, qty=1, money=unit_price)),
+            ("show_animation", lambda: server.show_animation(actor_id=actor_id, animation="hunger", value=-1)),            ("buy", lambda: server.buy(actor_id=actor_id, qty=1, money=unit_price,source="家")),
             ("sell", lambda: server.sell(actor_id=actor_id, qty=1, money=unit_price)),
             ("move", lambda: server.move(actor_id=actor_id, source="集市", target="家")),
             ("update_state", lambda: server.update_state(actor_id=actor_id, state_name="sleeping", value=1)),
-            ("sleep", lambda: server.sleep(actor_id=actor_id)),
+            ("sleep", lambda: server.sleep(actor_id=actor_id,source="家")),
+
 
         ]
 

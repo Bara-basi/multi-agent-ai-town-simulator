@@ -93,7 +93,7 @@ async def handle_move(ctx, act) -> ActionResult:
 @register("sleep", validators=[must_be_at(loc_id="location:home")])
 async def handle_sleep(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
-    result = await ctx.world.client.sleep(act.actor_id)
+    result = await ctx.world.client.sleep(act.actor_id, ctx.world.catalog.loc(actor.location).name)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 睡觉")
 
@@ -116,9 +116,10 @@ def handle_finish(ctx, act) -> ActionResult:
 async def handle_wait(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
     result = await ctx.world.client.move(act.actor_id, ctx.world.catalog.loc(actor.location).name, ctx.world.catalog.loc("location:home").name)
-    result &= await ctx.world.client.sleep(act.actor_id)
+    result &= await ctx.world.client.sleep(act.actor_id, ctx.world.catalog.loc(actor.location).name)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 等待")
+    actor.location = actor.home
     actor.running = False
     await ctx.world.update_day()
     return ActionResult(status=True, message="你结束了上个回合")
@@ -133,7 +134,7 @@ async def handle_buy(ctx, act) -> ActionResult:
     unit_price = market.price(item_id)
     total = unit_price * qty
 
-    result = await ctx.world.client.buy(actor.id, qty, total)
+    result = await ctx.world.client.buy(actor.id, qty, total,ctx.catalog.loc(actor.location).name)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 购买{ctx.world.catalog.item(item_id).name}")
 
@@ -153,7 +154,7 @@ async def handle_sell(ctx, act) -> ActionResult:
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id) * ctx.world.catalog.item(item_id).sell_ratio
 
-    result = await ctx.world.client.sell(actor.id, qty, unit_price * qty)
+    result = await ctx.world.client.sell(actor.id, qty, unit_price * qty, ctx.catalog.loc(actor.location).name)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 出售{ctx.world.catalog.item(item_id).name}")
 

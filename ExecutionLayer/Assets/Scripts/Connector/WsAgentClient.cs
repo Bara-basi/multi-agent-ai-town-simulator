@@ -50,7 +50,7 @@ public class WsAgentClient : MonoBehaviour
 
     private readonly ConcurrentQueue<Action> mainThreadQueue = new();
 
-    // 关键：防止并发 SendAsync（ClientWebSocket 很怕这个）
+    // 防止并发 SendAsync
     private readonly SemaphoreSlim sendLock = new(1, 1);
 
     public MonoBehaviour navigatorBehaviour;
@@ -104,10 +104,9 @@ public class WsAgentClient : MonoBehaviour
 
     async void Start()
     {
-        string json = "{\"type\":\"command\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"update_state\",\"target\":\"item\",\"value\":\"10\"}";
-        string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
-        string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}"; 
-        string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}"; 
+        // string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
+        // string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}"; 
+        // string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}"; 
         await ConnectAndRun();
     }
 
@@ -122,7 +121,7 @@ public class WsAgentClient : MonoBehaviour
 
         try
         {
-            // ConnectAsync 一次就够了，你原来 while 循环容易在异常情况下狂重试
+           
             await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
 
             // hello
@@ -244,7 +243,7 @@ public class WsAgentClient : MonoBehaviour
         if (msg.type == "command" && msg.cmd == "go_to")
         {
    
-            // ACK（先告诉后端收到了）
+            // ACK
             _ = SendJson(new OutMsg
             {
                 type = "ack",
@@ -252,7 +251,7 @@ public class WsAgentClient : MonoBehaviour
                 action_id = msg.action_id
             });
 
-            // 主线程队列执行（Unity API 只能主线程）
+            // 主线程队列执行
             mainThreadQueue.Enqueue(() =>
             {
                 if (msg.target == "家")
