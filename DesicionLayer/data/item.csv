@@ -1,6 +1,0 @@
-itemId,name,category,basePrice,sellRatio,quantity,description,hunger,thirst,fatigue
-item:water,瓶装水,comsumable,5,0.85,40,最基础的补水来源,0,10,0
-item:bread,面包,comsumable,7,0.85,60,最基础的食物来源,15,0,0
-item:meat,烤肉,comsumable,15,0.8,30,更具性价比的食物,35,0,0
-item:silver_ring,银戒指,valuable,200,1.0,10,低价储值物品,0,0,0
-item:gold,黄金,valuable,1000,1.0,10,高价储值物品,0,0,0

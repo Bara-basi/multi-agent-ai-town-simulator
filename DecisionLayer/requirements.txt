@@ -1,0 +1,5 @@
+openai>=1.0.0
+websockets>=12.0
+numpy>=1.24
+PyQt5>=5.15
+matplotlib>=3.7

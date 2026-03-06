@@ -1,0 +1,5 @@
+actorId,name,gender,age,info,skill,
+actor:jiangfan,江凡,男,28,你是一个平民,None,
+actor:linmomo,林墨墨,女,21,你是一个手艺人，你精通各种制作工艺,None
+actor:zhongqiheng,钟启恒,男,32,你是一个银行家，你精通赚钱的门道，,event:compound_interest
+actor:shilaomou,石老谋,男,45,你是一个奸商,None,
