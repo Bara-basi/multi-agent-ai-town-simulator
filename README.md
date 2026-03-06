@@ -154,7 +154,7 @@ python main.py
 ```
 
 API 配置：
-- 本项目的决策层依赖 OpenAI API，运行前需要配置环境变量 `OPENAI_API_KEY`
+- 本项目的决策层依赖 OpenAI API，运行前需要配置环境变量 `OPENAI_API_KEY`,在config/config.py中指定三个阶段的模型名称
 - Windows PowerShell:
 
 ```powershell
