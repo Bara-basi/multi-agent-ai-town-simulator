@@ -10,6 +10,7 @@ public class PlayerHUD : MonoBehaviour
     [Header("Refs")]
     public CanvasGroup canvasGroup;       
     public Animator workIndicatorAnimator;     
+    public Image workIndicatorImage;
     public StatusPopupSpawner statusPopup;
 
     [Header("Working Indicator")]
@@ -18,6 +19,33 @@ public class PlayerHUD : MonoBehaviour
     public float hideFadeTime = 0.12f;
 
     private Coroutine _timerCo;
+
+    private void HideRootSpriteRenderer()
+    {
+        // The root SpriteRenderer is only a legacy placeholder and causes a white box in Scene view.
+        if (TryGetComponent<SpriteRenderer>(out var sr))
+            sr.enabled = false;
+    }
+
+    private void EnsureWorkIndicatorImageRef()
+    {
+        if (workIndicatorImage != null)
+            return;
+
+        if (workIndicatorAnimator != null)
+            workIndicatorImage = workIndicatorAnimator.GetComponent<Image>();
+    }
+
+    private void SetWorkIndicatorVisible(bool visible)
+    {
+        EnsureWorkIndicatorImageRef();
+        if (workIndicatorImage == null)
+            return;
+
+        var c = workIndicatorImage.color;
+        c.a = visible ? 1f : 0f;
+        workIndicatorImage.color = c;
+    }
 
     public void PopStatus(string key, int delta, string overrideText = null)
     {
@@ -28,10 +56,15 @@ public class PlayerHUD : MonoBehaviour
     void Reset()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+        EnsureWorkIndicatorImageRef();
     }
 
     void Awake()
     {
+        HideRootSpriteRenderer();
+        EnsureWorkIndicatorImageRef();
+        SetWorkIndicatorVisible(false);
+
         if (hideHudWhenIdle && canvasGroup != null)
         {
             canvasGroup.alpha = 0f;
@@ -43,9 +76,23 @@ public class PlayerHUD : MonoBehaviour
 
     }
 
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            HideRootSpriteRenderer();
+            EnsureWorkIndicatorImageRef();
+            SetWorkIndicatorVisible(false);
+        }
+    }
+#endif
+
 
     public void StartWork(float durationSec = 0f)
     {
+        SetWorkIndicatorVisible(true);
+
         if (workIndicatorAnimator != null)
             workIndicatorAnimator.SetBool("Working", true);
 
@@ -68,6 +115,7 @@ public class PlayerHUD : MonoBehaviour
     {
         if (workIndicatorAnimator != null)
             workIndicatorAnimator.SetBool("Working", false);
+        SetWorkIndicatorVisible(false);
 
         if (_timerCo != null)
         {
