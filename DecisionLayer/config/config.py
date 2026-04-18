@@ -10,6 +10,9 @@ SIGMA = {
     "comsumable": 0.15,
     "valuable": 0.4,
 }
+MARKET_PRICE_CHANGE_PROB = 0.85
+INTEL_ACCURACY_MIN = 0.60
+INTEL_ACCURACY_MAX = 0.95
 
 # 模型配置
 ACT_MODEL_NAME = "gpt-4.1-mini-2025-04-14"

@@ -41,6 +41,8 @@ class Observation:
     memory: str = field(default_factory=list)
     memory_current_plan: str = ""
     memory_previous_plans: str = ""
+    decision_public_feed: List[str] = field(default_factory=list)
+    decision_private_context: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -63,6 +65,8 @@ class RuntimeActorState:
     same_trade_streak: int = 0
     last_success_item_action_core: Optional[str] = None
     last_success_step: int = 0
+    last_decision_day: int = 0
+    decision_payload: Optional[Dict[str, Any]] = None
 
 
 class AgentRuntime:
@@ -313,6 +317,8 @@ class AgentRuntime:
             memory=s["memory"],
             memory_current_plan=s.get("memory_current_plan", ""),
             memory_previous_plans=s.get("memory_previous_plans", ""),
+            decision_public_feed=s.get("decision_public_feed", []),
+            decision_private_context=s.get("decision_private_context", {}),
         )
     def _should_plan(self, st: RuntimeActorState) -> bool:
         # 正常情况：每回合只计划一次。只有首轮/跨天/显式重计划 才计划。
@@ -348,6 +354,29 @@ class AgentRuntime:
         # 仅保留“最近失败反馈”，成功后会清空，避免长期污染提示词。
         if st.last_result is None or st.last_result.status:
             agent.prompt_builder.error_log = ""
+
+        # 每回合开始时，先运行决策点代理，再进入 plan。
+        if st.last_decision_day != self.world.day:
+            try:
+                llm_payload = await agent.make_desicion(obs)
+            except Exception as e:
+                logger.exception("decision-point step failed for actor %s: %s", actor_id, e)
+                llm_payload = {"decision": "skip", "item": None, "reason": "runtime_exception"}
+
+            # 真正执行决策点效果（本步骤才会扣点/加钱/锁价/生成情报）。
+            actor = self.world.actor(actor_id)
+            market = self.world.locations["location:market"].market()
+            st.decision_payload = actor.apply_decision_point(
+                llm_payload,
+                catalog=self.world.catalog,
+                market=market,
+            )
+            locked_item = str((st.decision_payload or {}).get("locked_item") or "").strip()
+            if locked_item:
+                self.world.invalidate_intel_for_locked_item(locked_item)
+            self.world.record_decision_effect(actor_id, st.decision_payload)
+            st.last_decision_day = self.world.day
+            obs = self._obs(actor_id)
 
         if self._should_plan(st):
             try:

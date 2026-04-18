@@ -27,6 +27,7 @@ class WorldState:
     actors: Dict[ActorId, ActorState] = field(default_factory=dict)
     locations: Dict[LocationId, LocationState] = field(default_factory=dict)
     client: Any = None
+    decision_public_feed: List[str] = field(default_factory=list)
 
     def actor(self, actor_id: ActorId) -> ActorState:
         return self.actors[actor_id]
@@ -58,12 +59,38 @@ class WorldState:
         for actor in self.actors.values():
             actor.update_day()
 
+        # New round: clear in-round public decision visibility cache.
+        self.decision_public_feed = []
+
         self.determine_random_event()
 
         for actor_id in self.actors.keys():
             ON_DAILY_SETTLE("on_end_of_round", event=self.events, actor=self.actor(actor_id))
 
         logger.info("回合结算成功,进入回合%s", self.day)
+
+    def record_decision_effect(self, actor_id: ActorId, effect: Dict[str, Any]) -> None:
+        note = str((effect or {}).get("public_note") or "").strip()
+        if note:
+            self.decision_public_feed.append(note)
+
+    def invalidate_intel_for_locked_item(self, item_short_id: str) -> None:
+        target = str(item_short_id or "").strip()
+        if not target:
+            return
+        for actor in self.actors.values():
+            intel_rows = list(getattr(actor, "decision_intel", []) or [])
+            changed = False
+            for row in intel_rows:
+                if str(row.get("item", "")).strip() != target:
+                    continue
+                row["valid"] = False
+                row["intel_price"] = None
+                row["trend"] = "情报失效"
+                row["invalid_reason"] = "该商品已被锁价，锁价优先于情报，情报自动失效。"
+                changed = True
+            if changed:
+                actor.decision_intel = intel_rows
 
     def observe(self, actor_id: ActorId) -> Dict[str, Any]:
         actor = self.actor(actor_id)
@@ -85,6 +112,8 @@ class WorldState:
             "home": actor.home,
             "cur_location": actor.location,
             "money": actor.money,
+            "decision_point": int(getattr(actor, "decision_point", 0) or 0),
+            "decision_point_max": int(getattr(actor, "decision_point_max", 3) or 3),
             "thirst": actor.attrs.get("thirst").current if actor.attrs.get("thirst") else 0.0,
             "hunger": actor.attrs.get("hunger").current if actor.attrs.get("hunger") else 0.0,
             "fatigue": actor.attrs.get("fatigue").current if actor.attrs.get("fatigue") else 0.0,
@@ -92,6 +121,16 @@ class WorldState:
             "inventory_map": dict(getattr(actor.inventory, "qty", {}) or {}),
             "identity": f"你叫{name}，{gender}，{age}岁。{info}",
             "skill": getattr(actor_def, "skill", None),
+        }
+
+        decision_private_context = {
+            "decision": (getattr(actor, "decision_last_result", {}) or {}).get("decision", "skip"),
+            "reason": (getattr(actor, "decision_last_result", {}) or {}).get("reason", ""),
+            "dp_cost": int((getattr(actor, "decision_last_result", {}) or {}).get("dp_cost", 0) or 0),
+            "cash_delta": float((getattr(actor, "decision_last_result", {}) or {}).get("cash_delta", 0.0) or 0.0),
+            "private_note": (getattr(actor, "decision_last_result", {}) or {}).get("private_note", ""),
+            "locked_item": (getattr(actor, "decision_last_result", {}) or {}).get("locked_item"),
+            "intel": list(getattr(actor, "decision_intel", []) or []),
         }
 
         location_snapshot: Dict[str, Any] = {}
@@ -141,6 +180,8 @@ class WorldState:
             "memory": memory_text,
             "memory_current_plan": memory_current_plan,
             "memory_previous_plans": memory_previous_plans,
+            "decision_public_feed": list(self.decision_public_feed),
+            "decision_private_context": decision_private_context,
         }
 
     def determine_random_event(self) -> None:

@@ -76,6 +76,3 @@ def ON_ENTER_LOCATION():
     pass
 
 
-def ON_DIALOGUE_END():
-    """对话结束时触发。"""
-    pass
