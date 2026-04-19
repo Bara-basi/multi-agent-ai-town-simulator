@@ -27,7 +27,6 @@ class WorldState:
     actors: Dict[ActorId, ActorState] = field(default_factory=dict)
     locations: Dict[LocationId, LocationState] = field(default_factory=dict)
     client: Any = None
-    decision_public_feed: List[str] = field(default_factory=list)
 
     def actor(self, actor_id: ActorId) -> ActorState:
         return self.actors[actor_id]
@@ -59,20 +58,12 @@ class WorldState:
         for actor in self.actors.values():
             actor.update_day()
 
-        # New round: clear in-round public decision visibility cache.
-        self.decision_public_feed = []
-
         self.determine_random_event()
 
         for actor_id in self.actors.keys():
             ON_DAILY_SETTLE("on_end_of_round", event=self.events, actor=self.actor(actor_id))
 
         logger.info("回合结算成功,进入回合%s", self.day)
-
-    def record_decision_effect(self, actor_id: ActorId, effect: Dict[str, Any]) -> None:
-        note = str((effect or {}).get("public_note") or "").strip()
-        if note:
-            self.decision_public_feed.append(note)
 
     def invalidate_intel_for_locked_item(self, item_short_id: str) -> None:
         target = str(item_short_id or "").strip()
@@ -130,7 +121,9 @@ class WorldState:
             "cash_delta": float((getattr(actor, "decision_last_result", {}) or {}).get("cash_delta", 0.0) or 0.0),
             "private_note": (getattr(actor, "decision_last_result", {}) or {}).get("private_note", ""),
             "locked_item": (getattr(actor, "decision_last_result", {}) or {}).get("locked_item"),
+            "locked_items": list((getattr(actor, "decision_last_result", {}) or {}).get("locked_items", []) or []),
             "intel": list(getattr(actor, "decision_intel", []) or []),
+            "executed_actions": list(getattr(actor, "decision_action_log", []) or []),
         }
 
         location_snapshot: Dict[str, Any] = {}
@@ -180,7 +173,6 @@ class WorldState:
             "memory": memory_text,
             "memory_current_plan": memory_current_plan,
             "memory_previous_plans": memory_previous_plans,
-            "decision_public_feed": list(self.decision_public_feed),
             "decision_private_context": decision_private_context,
         }
 

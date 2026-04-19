@@ -41,7 +41,6 @@ class Observation:
     memory: str = field(default_factory=list)
     memory_current_plan: str = ""
     memory_previous_plans: str = ""
-    decision_public_feed: List[str] = field(default_factory=list)
     decision_private_context: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -107,6 +106,52 @@ class AgentRuntime:
         if s.startswith("item:"):
             return s.split(":", 1)[1]
         return s
+
+    @staticmethod
+    def _coerce_proposal(raw: Any) -> Optional[Dict[str, Any]]:
+        """
+        Normalize model output into a single action dict.
+        Supports dict/list/nested action payloads.
+        """
+        if raw is None:
+            return None
+
+        candidate: Any = raw
+        if isinstance(candidate, list):
+            candidate = next((x for x in candidate if isinstance(x, dict)), None)
+            if candidate is None:
+                return None
+
+        if not isinstance(candidate, dict):
+            return None
+
+        if isinstance(candidate.get("action"), dict):
+            outer = dict(candidate)
+            inner = dict(outer.pop("action"))
+            inner.update(outer)
+            candidate = inner
+
+        action_type = (
+            candidate.get("type")
+            or candidate.get("name")
+            or candidate.get("cmd")
+            or candidate.get("action_type")
+        )
+        action_type = str(action_type or "").strip()
+        if not action_type:
+            return None
+
+        normalized: Dict[str, Any] = dict(candidate)
+        normalized["type"] = action_type
+
+        if "item_id" in normalized and "item" not in normalized:
+            normalized["item"] = normalized.get("item_id")
+        if "destination" in normalized and "target" not in normalized:
+            normalized["target"] = normalized.get("destination")
+        if "location" in normalized and "target" not in normalized:
+            normalized["target"] = normalized.get("location")
+
+        return normalized
 
     def _is_survival_danger(self, obs: Observation) -> bool:
         actor = obs.actor_snapshot or {}
@@ -317,7 +362,6 @@ class AgentRuntime:
             memory=s["memory"],
             memory_current_plan=s.get("memory_current_plan", ""),
             memory_previous_plans=s.get("memory_previous_plans", ""),
-            decision_public_feed=s.get("decision_public_feed", []),
             decision_private_context=s.get("decision_private_context", {}),
         )
     def _should_plan(self, st: RuntimeActorState) -> bool:
@@ -361,20 +405,22 @@ class AgentRuntime:
                 llm_payload = await agent.make_desicion(obs)
             except Exception as e:
                 logger.exception("decision-point step failed for actor %s: %s", actor_id, e)
-                llm_payload = {"decision": "skip", "item": None, "reason": "runtime_exception"}
+                llm_payload = [{"decision": "skip", "item": None, "reason": "runtime_exception"}]
 
             # 真正执行决策点效果（本步骤才会扣点/加钱/锁价/生成情报）。
             actor = self.world.actor(actor_id)
             market = self.world.locations["location:market"].market()
-            st.decision_payload = actor.apply_decision_point(
+            st.decision_payload = actor.apply_decision_point_batch(
                 llm_payload,
                 catalog=self.world.catalog,
                 market=market,
             )
-            locked_item = str((st.decision_payload or {}).get("locked_item") or "").strip()
-            if locked_item:
-                self.world.invalidate_intel_for_locked_item(locked_item)
-            self.world.record_decision_effect(actor_id, st.decision_payload)
+            locked_items = list((st.decision_payload or {}).get("locked_items", []) or [])
+            for locked_item in locked_items:
+                locked_short = str(locked_item or "").strip()
+                if locked_short:
+                    self.world.invalidate_intel_for_locked_item(locked_short)
+
             st.last_decision_day = self.world.day
             obs = self._obs(actor_id)
 
@@ -397,8 +443,10 @@ class AgentRuntime:
         max_try = MAX_ACTION_RETRIES + MAX_REPLAN_AFTER_ACTION_ERROR + 1
         for _ in range(max_try):
             obs = self._obs(actor_id)
+            raw_proposal: Any = None
             try:
-                proposal = await agent.act(obs)
+                raw_proposal = await agent.act(obs)
+                proposal = self._coerce_proposal(raw_proposal)
             except Exception as e:
                 last_err = ActionResult(status=False, code="CRASH", message=f"动作生成失败: {e}")
                 proposal = None
@@ -409,7 +457,16 @@ class AgentRuntime:
                 continue
 
             if proposal is None:
-                last_err = ActionResult(status=False, code="NO_ACTION", message="无合法动作输出")
+                raw_preview = ""
+                try:
+                    raw_preview = repr(raw_proposal)[:300]
+                except Exception:
+                    raw_preview = "<unrepr-able>"
+                last_err = ActionResult(
+                    status=False,
+                    code="NO_ACTION",
+                    message=f"无合法动作输出: {raw_preview}",
+                )
                 try:
                     await self._force_replan_after_error(actor_id, st, reason=last_err.message)
                 except Exception as plan_e:

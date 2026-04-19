@@ -37,14 +37,14 @@ class NoopActionLayerClient:
         _ = actor_id, item, value
         return True
 
-    async def sleep(self, actor_id) -> bool:
-        _ = actor_id
+    async def sleep(self, actor_id, source=None) -> bool:
+        _ = actor_id, source
         return True
 
-    async def buy(self, actor_id, qty, money) -> bool:
-        _ = actor_id, qty, money
+    async def buy(self, actor_id, qty, money, source=None) -> bool:
+        _ = actor_id, qty, money, source
         return True
 
-    async def sell(self, actor_id, qty, money) -> bool:
-        _ = actor_id, qty, money
+    async def sell(self, actor_id, qty, money, source=None) -> bool:
+        _ = actor_id, qty, money, source
         return True

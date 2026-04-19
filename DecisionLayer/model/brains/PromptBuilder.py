@@ -74,17 +74,18 @@ class PromptBuilder:
 
     STABLE_DECISION_POINT_POLICY = "\n".join(
         [
-            "你是“决策点代理（Decision Point Agent）”，在每回合开始时先于 Plan Agent 执行。",
-            "你的任务是：基于当前状态，选择本回合是否消耗1点决策点。",
+            "你是“决策点代理（Decision Point Agent）",
+            "你的任务是：基于当前状态，输出本回合决策点动作列表（可多次消耗决策点）。",
             "目标优先级：先保障生存，再提高盈利效率，再考虑信息优势。",
-            "你只能在 4 个动作中 4 选 1：skip / exchange_cash / get_intel / lock_price。",
+            "每个列表元素都只能在 4 个动作中 4 选 1：skip / exchange_cash / get_intel / lock_price。",
             "动作含义：",
             "- skip：不使用决策点。",
             "- exchange_cash：消耗1点决策点，兑换40元现金。",
-            "- get_intel：消耗1点决策点，获取随机3个商品的明日价格情报。",
+            "- get_intel：消耗1点决策点，获取随机3个商品的明日价格情报,多次使用时不会重复获取同一商品。",
             "- lock_price：消耗1点决策点，锁定任意商品价格1回合。",
             "决策原则：",
             "- 决策点为0时只能选择 skip。",
+            "- 决策点为3时即将溢出，建议至少消耗1点决策点。",
             "- 生存压力高且现金紧张时，优先 exchange_cash。",
             "- 有明确交易计划且信息价值高时，优先 get_intel。",
             "- 已有重点交易标的且希望规避短期波动时，优先 lock_price。",
@@ -96,8 +97,8 @@ class PromptBuilder:
 
     STABLE_DECISION_POINT_OUTPUT = "\n".join(
         [
-            "必须严格输出单个 JSON 对象，禁止输出任何额外文本、Markdown 或代码块。",
-            "JSON Schema（严格遵守）：",
+            "必须严格输出单个 JSON 列表（array），禁止输出任何额外文本、Markdown 或代码块。",
+            "列表元素 Schema（严格遵守）：",
             "{",
             '  "decision": "skip | exchange_cash | get_intel | lock_price",',
             '  "item": "string | null",',
@@ -105,7 +106,9 @@ class PromptBuilder:
             "}",
             "字段约束：",
             "- item 仅在 decision=lock_price 时可填写商品短ID（如 bread、water），其他情况必须为 null。",
-            "- reason 用一句简短中文说明依据（生存压力/现金压力/价格风险/信息价值）。",
+            "- reason 用一句简短中文说明依据（生存压力/现金压力/价格风险/信息价值/决策点溢出）。",
+            "- 列表元素允许重复（例如可连续两次 get_intel）。",
+            "- 单回合最多输出3个元素；系统会按顺序逐条执行，决策点耗尽后后续元素自动失效。",
         ]
     )
 
@@ -331,46 +334,53 @@ class PromptBuilder:
     def _build_decision_point_plan_context(self, obs: Any) -> str:
         actor = getattr(obs, "actor_snapshot", {}) or {}
         private_ctx = getattr(obs, "decision_private_context", {}) or {}
-        public_feed = getattr(obs, "decision_public_feed", []) or []
         dp = int(actor.get("decision_point", 0) or 0)
         dp_max = int(actor.get("decision_point_max", 3) or 3)
 
         lines: List[str] = [
             f"- 你的当前决策点：{dp}/{dp_max}",
+            "- 什么是决策点？每回合回复一点的稀有货币，有你之前的Agent决定是否使用。"
             "- 锁价优先于情报：若商品已被其它玩家锁价，则该商品的明日价格情报自动失效。",
         ]
-        lines.append(
-            f"- 本回合公开可见的其他Agent决策：{'；'.join(public_feed) if public_feed else '暂无'}"
-        )
-
-        decision = str(private_ctx.get("decision", "skip") or "skip")
-        reason = str(private_ctx.get("reason", "") or "")
         private_note = str(private_ctx.get("private_note", "") or "")
-        lines.append(f"- 你本回合的决策点动作：{decision}")
-        if reason:
-            lines.append(f"- 你本回合决策理由：{reason}")
         if private_note:
             lines.append(f"- 决策点执行结果：{private_note}")
+
+        executed_actions = list(private_ctx.get("executed_actions", []) or [])
+        if executed_actions:
+            reasons: List[str] = []
+            for row in executed_actions:
+                r = str((row or {}).get("reason", "") or "").strip()
+                if r and r not in reasons:
+                    reasons.append(r)
+            if reasons:
+                lines.append(f"- 你本回合决策理由摘要：{'；'.join(reasons)}")
+            lines.append("- 你本回合已执行的决策点动作序列：")
+            for idx, row in enumerate(executed_actions, start=1):
+                d = str((row or {}).get("decision", "skip"))
+                item = (row or {}).get("locked_item") or (row or {}).get("item")
+                item_text = f", item={item}" if item else ""
+                lines.append(f"  - #{idx}: {d}{item_text}")
 
         cash_delta = float(private_ctx.get("cash_delta", 0.0) or 0.0)
         if cash_delta != 0:
             lines.append(f"- 决策点现金变动：{cash_delta:+.2f} 元")
 
-        locked_item = private_ctx.get("locked_item")
-        if locked_item:
-            lines.append(f"- 你已锁定商品：{locked_item}（全局生效1回合，但其它Agent不可见）")
+        locked_items = list(private_ctx.get("locked_items", []) or [])
+        if locked_items:
+            lines.append(f"- 你已锁定商品：{', '.join(str(x) for x in locked_items)}（全局生效1回合，但其它Agent不可见）")
 
         intel_rows = list(private_ctx.get("intel", []) or [])
         if intel_rows:
             lines.append("- 你获取的明日价格情报：")
+            valid_rows = [row for row in intel_rows if bool(row.get("valid", False))]
+            if not valid_rows:
+                lines.append("  - 暂无可用情报")
             for row in intel_rows:
+                if not bool(row.get("valid", False)):
+                    continue
                 item = row.get("item", "unknown")
                 acc = float(row.get("accuracy", 0.0) or 0.0)
-                valid = bool(row.get("valid", False))
-                invalid_reason = str(row.get("invalid_reason", "") or "")
-                if not valid:
-                    lines.append(f"  - {item}：情报失效（正确率{acc:.2f}），原因：{invalid_reason}")
-                    continue
                 intel_price = float(row.get("intel_price", 0.0) or 0.0)
                 trend = str(row.get("trend", "明日趋势未知") or "明日趋势未知")
                 lines.append(f"  - {item}：情报价 {intel_price:.2f}，{trend}，情报正确率 {acc:.2f}")
@@ -503,8 +513,6 @@ class PromptBuilder:
 
         decision_state = "\n".join(
             [
-                f"- 日期：第{day}天",
-                f"- 当前位置：{cur_loc}",
                 f"- 现金：{money:.2f}/10000 元",
                 f"- 决策点：{decision_point}/{decision_point_max}（每回合+1，上限3）",
                 f"- 生存属性：饱食度 {hunger:.2f}/100，水分值 {thirst:.2f}/100，精神值 {fatigue:.2f}/100",
@@ -517,10 +525,10 @@ class PromptBuilder:
 
         task = "\n".join(
             [
-                "基于上述信息，输出本回合的单次决策点动作（4选1）。",
-                "- 仅返回 JSON 对象，不要任何额外文本。",
-                "- 优先做有明确收益或明确风险对冲价值的选择。",
-                "- 若收益不确定且风险不高，选择 skip。",
+                "基于上述信息，输出本回合的决策点动作列表（JSON array）。",
+                "- 列表长度建议 1~3；可为空时请返回 [ {\"decision\":\"skip\",\"item\":null,\"reason\":\"...\"} ]。",
+                "- 列表元素允许重复（如连续两次 get_intel）。",
+                "- 仅返回 JSON 列表，不要任何额外文本。",
             ]
         )
         sections.append(self._sec("## 任务", task, "task"))

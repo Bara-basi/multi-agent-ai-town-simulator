@@ -19,6 +19,13 @@ SkillHandler = Callable[[Any, Any], ActionResult]
 _SKILL_REGISTRY: Dict[str, SkillHandler] = {}
 
 
+def _norm_item_id(raw: Any) -> str:
+    s = str(raw or "").strip()
+    if not s:
+        return ""
+    return s if s.startswith("item:") else f"item:{s}"
+
+
 def register_skill(skill_name: str):
     def deco(fn: SkillHandler) -> SkillHandler:
         if skill_name in _SKILL_REGISTRY:
@@ -128,7 +135,9 @@ async def handle_wait(ctx, act) -> ActionResult:
 @register("buy", validators=[must_be_at(loc_id="location:market"), must_have_stock(), must_have_enough_money()])
 async def handle_buy(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
-    item_id = "item:" + act.item
+    item_id = _norm_item_id(getattr(act, "item", None))
+    if not item_id:
+        return ActionResult(status=False, code="INVALID", message="buy 缺少 item 字段")
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id)
@@ -149,7 +158,9 @@ async def handle_buy(ctx, act) -> ActionResult:
 @register("sell", validators=[must_be_at(loc_id="location:market"), must_have_item(item_field="item", qty_field="qty")])
 async def handle_sell(ctx, act) -> ActionResult:
     actor = ctx.world.actor(act.actor_id)
-    item_id = "item:" + act.item
+    item_id = _norm_item_id(getattr(act, "item", None))
+    if not item_id:
+        return ActionResult(status=False, code="INVALID", message="sell 缺少 item 字段")
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id) * ctx.world.catalog.item(item_id).sell_ratio
@@ -195,4 +206,3 @@ def handle_skill(ctx, act) -> ActionResult:
         return ActionResult(status=False, code="SKILL_EMPTY", message="No skill specified")
 
     return _invoke_skill(skill_name, ctx, act)
-

@@ -40,6 +40,7 @@ class ActorState:
     decision_last_result: Dict[str, Any] = field(default_factory=dict)
     decision_intel: List[Dict[str, Any]] = field(default_factory=list)
     decision_locked_item: Optional[str] = None
+    decision_action_log: List[Dict[str, Any]] = field(default_factory=list)
 
     def can_go(self, loc: LocationId) -> bool:
         return loc in self.unlocked_locations
@@ -72,6 +73,7 @@ class ActorState:
     def _base_decision_result(self, decision: str, reason: str) -> Dict[str, Any]:
         return {
             "decision": decision,
+            "item": None,
             "reason": reason,
             "dp_cost": 0,
             "cash_delta": 0.0,
@@ -81,6 +83,14 @@ class ActorState:
             "public_note": "",
             "lock_hidden": False,
         }
+
+    def _used_intel_items_in_round(self) -> set[str]:
+        used: set[str] = set()
+        for row in self.decision_intel:
+            item = str((row or {}).get("item") or "").strip()
+            if item:
+                used.add(item)
+        return used
 
     def apply_decision_point(self, decision_payload: Dict[str, Any], *, catalog: Any, market: Any) -> Dict[str, Any]:
         decision = str((decision_payload or {}).get("decision") or "skip").strip().lower()
@@ -93,8 +103,8 @@ class ActorState:
             reason = reason or "invalid_decision_fallback"
 
         result = self._base_decision_result(decision=decision, reason=reason)
-        self.decision_intel = []
-        self.decision_locked_item = None
+        if raw_item:
+            result["item"] = self._short_item_id(raw_item)
 
         if decision == "skip":
             result["private_note"] = "本回合未使用决策点。"
@@ -150,6 +160,7 @@ class ActorState:
             self.decision_point = max(0, self.decision_point - 1)
             result["dp_cost"] = 1
             result["locked_item"] = self._short_item_id(item_id)
+            result["item"] = self._short_item_id(item_id)
             result["private_note"] = (
                 f"消耗1点决策点，已锁定 {self._short_item_id(item_id)} 的明日价格1回合。"
                 "锁价优先于情报：若其它Agent拿到该商品情报，情报会自动失效。"
@@ -168,12 +179,24 @@ class ActorState:
         item_pool = list((market._stock or {}).keys()) if getattr(market, "_stock", None) else list((catalog.items or {}).keys())
         if not item_pool:
             result["private_note"] = "消耗1点决策点，但当前无可用商品情报。"
-            result["public_note"] = f"{self.id} 使用了决策点获取情报。"
+            result["public_note"] = ""
             self.decision_last_result = result
             return result
 
-        pick_n = min(3, len(item_pool))
-        picked = random.sample(item_pool, pick_n)
+        # 同一回合内，get_intel 的商品不重复。
+        used_short_ids = self._used_intel_items_in_round()
+        candidate_pool = [
+            item_id for item_id in item_pool
+            if self._short_item_id(item_id) not in used_short_ids
+        ]
+        if not candidate_pool:
+            result["private_note"] = "消耗1点决策点，但本回合可抽取的情报商品已用尽。"
+            result["public_note"] = ""
+            self.decision_last_result = result
+            return result
+
+        pick_n = min(3, len(candidate_pool))
+        picked = random.sample(candidate_pool, pick_n)
 
         intel_rows: List[Dict[str, Any]] = []
         for item_id in picked:
@@ -214,13 +237,58 @@ class ActorState:
                 }
             )
 
-        self.decision_intel = intel_rows
+        self.decision_intel.extend(intel_rows)
         result["intel"] = intel_rows
         result["private_note"] = "消耗1点决策点，获得3个商品的明日价格情报（含情报正确率）。"
         # 情报属于私有信息：对其它 Agent 完全不可见。
         result["public_note"] = ""
         self.decision_last_result = result
         return result
+
+    def apply_decision_point_batch(self, decision_payloads: Any, *, catalog: Any, market: Any) -> Dict[str, Any]:
+        # Reset round-scoped decision context once per round.
+        self.decision_intel = []
+        self.decision_locked_item = None
+        self.decision_action_log = []
+
+        payload_list: List[Dict[str, Any]] = []
+        if isinstance(decision_payloads, list):
+            payload_list = [x for x in decision_payloads if isinstance(x, dict)]
+        elif isinstance(decision_payloads, dict):
+            payload_list = [decision_payloads]
+        if not payload_list:
+            payload_list = [{"decision": "skip", "item": None, "reason": "empty_list_fallback"}]
+
+        total_dp_cost = 0
+        total_cash_delta = 0.0
+        all_locked_items: List[str] = []
+        reason_list: List[str] = []
+        for payload in payload_list:
+            single = self.apply_decision_point(payload, catalog=catalog, market=market)
+            self.decision_action_log.append(single)
+            total_dp_cost += int(single.get("dp_cost", 0) or 0)
+            total_cash_delta += float(single.get("cash_delta", 0.0) or 0.0)
+            locked = str(single.get("locked_item") or "").strip()
+            if locked and locked not in all_locked_items:
+                all_locked_items.append(locked)
+            rs = str(single.get("reason", "") or "").strip()
+            if rs and rs not in reason_list:
+                reason_list.append(rs)
+
+        summary = {
+            "decision": "batch",
+            "reason": "；".join(reason_list) if reason_list else "",
+            "dp_cost": total_dp_cost,
+            "cash_delta": total_cash_delta,
+            "intel": list(self.decision_intel),
+            "locked_item": all_locked_items[-1] if all_locked_items else None,
+            "locked_items": all_locked_items,
+            "private_note": f"本回合共执行 {len(self.decision_action_log)} 个决策点动作。",
+            "public_note": "",
+            "executed_actions": list(self.decision_action_log),
+        }
+        self.decision_last_result = summary
+        return summary
 
     def update_day(self) -> None:
         self.running = True
@@ -231,6 +299,7 @@ class ActorState:
         self.decision_last_result = {}
         self.decision_intel = []
         self.decision_locked_item = None
+        self.decision_action_log = []
 
         for attr in self.attrs.values():
             attr.current = min(attr.current - attr.decay_per_day, 100)
