@@ -55,6 +55,20 @@ class ActorState:
             return item_id.split(":", 1)[1]
         return str(item_id)
 
+    def update_inventory_buy_price_on_buy(self, item_id: str, qty: int, unit_price: float) -> None:
+        if qty <= 0:
+            return
+
+        normalized_item_id = self._normalize_item_id(item_id)
+        old_qty = int((self.inventory.qty or {}).get(normalized_item_id, 0) or 0)
+        old_avg = float((self.inventory.buy_price or {}).get(normalized_item_id, 0.0) or 0.0)
+        new_total_qty = old_qty + int(qty)
+        if new_total_qty <= 0:
+            return
+
+        new_avg = ((old_avg * old_qty) + (float(unit_price) * int(qty))) / new_total_qty
+        self.inventory.buy_price[normalized_item_id] = new_avg
+
     @staticmethod
     def _trend_text(cur_price: float, next_price: float) -> str:
         if cur_price <= 0:

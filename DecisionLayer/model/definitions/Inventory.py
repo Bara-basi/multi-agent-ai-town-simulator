@@ -7,7 +7,7 @@ from model.definitions.Catalog import Catalog
 @dataclass(slots=True)
 class Inventory:
     qty: Dict[ItemId, int] = field(default_factory=dict)
-    buy_price: Dict[ItemId, int] = field(default_factory=dict)
+    buy_price: Dict[ItemId, float] = field(default_factory=dict)
     keep_days: Dict[ItemId, int] = field(default_factory=dict)
     
 

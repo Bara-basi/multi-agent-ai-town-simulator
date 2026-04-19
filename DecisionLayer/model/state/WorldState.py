@@ -110,6 +110,7 @@ class WorldState:
             "fatigue": actor.attrs.get("fatigue").current if actor.attrs.get("fatigue") else 0.0,
             "inventory": actor.inventory.snapshot(self.catalog),
             "inventory_map": dict(getattr(actor.inventory, "qty", {}) or {}),
+            "inventory_buy_price_map": dict(getattr(actor.inventory, "buy_price", {}) or {}),
             "identity": f"你叫{name}，{gender}，{age}岁。{info}",
             "skill": getattr(actor_def, "skill", None),
         }

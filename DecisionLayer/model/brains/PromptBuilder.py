@@ -191,6 +191,15 @@ class PromptBuilder:
                 out[self._normalize_item_id(str(item_id))] = q
         return out
 
+    def _extract_inventory_buy_price_map(self, obs: Any) -> Dict[str, float]:
+        actor = getattr(obs, "actor_snapshot", {}) or {}
+        buy_price_map = actor.get("inventory_buy_price_map", {}) or {}
+        out: Dict[str, float] = {}
+        if isinstance(buy_price_map, dict):
+            for item_id, price in buy_price_map.items():
+                out[self._normalize_item_id(str(item_id))] = self._safe_float(price, 0.0)
+        return out
+
     def _stable_prefix_sections(self) -> List[PromptSection]:
         return [
             self._sec("## 全局约束", self.STABLE_GLOBAL_POLICY, "rules"),
@@ -236,7 +245,20 @@ class PromptBuilder:
             f"精神值[{self._safe_float(actor.get('fatigue'), 0.0):.2f}/100]"
         )
         inv = f"背包：{actor.get('inventory', '空') or '空'}"
-        state = "\n".join([f"日期：第{day}天", identity, location, money, attrs, inv])
+        inv_qty_map = self._extract_inventory_map(obs)
+        inv_buy_price_map = self._extract_inventory_buy_price_map(obs)
+        avg_cost_parts: List[str] = []
+        for short_item_id, qty in sorted(inv_qty_map.items()):
+            if qty <= 0:
+                continue
+            if short_item_id in inv_buy_price_map:
+                avg_price = self._safe_float(inv_buy_price_map.get(short_item_id), 0.0)
+                avg_cost_parts.append(f"{short_item_id}:{avg_price:.2f}元")
+            else:
+                avg_cost_parts.append(f"{short_item_id}:未知")
+        inv_avg_cost = "，".join(avg_cost_parts) if avg_cost_parts else "无"
+
+        state = "\n".join([f"日期：第{day}天", identity, location, money, attrs, inv, f"背包平均买入价：{inv_avg_cost}"])
 
         return [
             self._sec("## 背景", background, "info"),
@@ -401,6 +423,7 @@ class PromptBuilder:
             [
                 "请制定本回合行动计划。",
                 "- 先保生存，再追求利润。",
+                "- 交易时结合“背包平均买入价”和当前市场价评估浮盈亏。",
                 "- 计划最多4步（不含回合结束）。",
                 "- 给出可执行步骤，不要虚构结果。",
                 "- 目标完成或信息不足时，最后一步写“回合结束”。",

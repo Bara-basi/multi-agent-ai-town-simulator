@@ -147,6 +147,7 @@ async def handle_buy(ctx, act) -> ActionResult:
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 购买{ctx.world.catalog.item(item_id).name}")
 
+    actor.update_inventory_buy_price_on_buy(item_id=item_id, qty=qty, unit_price=unit_price)
     actor.inventory.add(item_id, qty)
     actor.money -= total
     market.remove_stock(item_id, qty)
