@@ -1,4 +1,4 @@
-"""程序入口：组装世界状态、动作执行器，并启动单一 runtime 管理全部 Agent 循环。"""
+﻿"""Program entry: build world state, action executor and start runtime."""
 
 import asyncio
 import logging
@@ -7,6 +7,7 @@ import shutil
 import threading
 from datetime import datetime
 from typing import Dict
+
 from actions.executor import ActionExecutor
 from config.config import (
     ACT_MODEL_NAME,
@@ -18,27 +19,63 @@ from config.config import (
     USE_ACION_LAYER,
 )
 from model.brains.AgentBrain import Agent
+from model.brains.NoopActionLayerClient import NoopActionLayerClient
 from model.brains.PromptBuilder import PromptBuilder
+from model.brains.WebSocketServer import WebSocketServer
 from model.definitions.ActorDef import ActorId
 from model.definitions.Inventory import Inventory
 from model.definitions.OpenAIModel import LLM
 from model.state.ActorState import Attribute
 from model.state.WorldState import WorldState
-from model.brains.WebSocketServer import WebSocketServer
-from model.brains.NoopActionLayerClient import NoopActionLayerClient
 from runtime.build_state import build_state
 from runtime.load_data import load_catalog
 from runtime.runtime import AgentRuntime
 
 logger = logging.getLogger(__name__)
 
+
+def _delete_dir_safely(path: str) -> None:
+    try:
+        shutil.rmtree(path, ignore_errors=True)
+    except Exception:
+        logger.exception("Failed to delete directory: %s", path)
+
+
+def _cleanup_debug_log_on_start(path: str = "debug_log") -> None:
+    mode = str(os.getenv("DEBUG_LOG_CLEANUP_MODE", "async") or "async").strip().lower()
+    if not os.path.exists(path):
+        return
+    if mode == "off":
+        logger.info("Skip debug log cleanup (DEBUG_LOG_CLEANUP_MODE=off)")
+        return
+    if mode == "sync":
+        _delete_dir_safely(path)
+        return
+
+    # Default: async cleanup to avoid startup blocking on large log trees.
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archived = f"{path}_old_{ts}"
+    try:
+        os.replace(path, archived)
+    except Exception:
+        logger.exception("Archive debug log failed, fallback to sync delete")
+        _delete_dir_safely(path)
+        return
+
+    t = threading.Thread(
+        target=_delete_dir_safely,
+        args=(archived,),
+        name="debug-log-cleanup",
+        daemon=True,
+    )
+    t.start()
+
+
 def _dispatch(_event_name: str, **_payload: object) -> None:
-    # 事件分发预留点：当前版本未接入总线，仅保持接口形状。
     return None
 
 
 def _format_inventory_text(actor) -> str:
-    # 监控面板展示用：兼容 Inventory/dict/list 等多种历史结构。
     inv = getattr(actor, "inventory", None)
     if inv is None:
         return ""
@@ -49,13 +86,15 @@ def _format_inventory_text(actor) -> str:
         return "\n".join(f"{k}: {v}" for k, v in sorted(qty.items()))
     snap = getattr(inv, "snapshot", None)
     if callable(snap):
-        text = str(snap())
+        try:
+            text = str(snap())
+        except TypeError:
+            text = str(inv)
         return text if text else "empty"
     return str(inv)
 
 
 def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: ActorId, result) -> Dict[str, object]:
-    # 将运行时内部状态整理成 UI 可直接渲染的扁平结构。
     actor = world.actor(actor_id)
     st = runtime._st(actor_id)
     try:
@@ -93,7 +132,6 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
 
 
 def _bootstrap_world_state(world: WorldState) -> None:
-    # 启动时兜底标准化：把历史数据结构纠正为当前运行时期望形状。
     for actor in world.actors.values():
         if not isinstance(actor.inventory, Inventory):
             normalized = Inventory()
@@ -121,9 +159,18 @@ def _bootstrap_world_state(world: WorldState) -> None:
             actor.inventory = normalized
 
         attrs = actor.attrs or {}
-        attrs.setdefault("hunger", Attribute(name="饱食度", current=50.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0))
-        attrs.setdefault("thirst", Attribute(name="水分值", current=50.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0))
-        attrs.setdefault("fatigue", Attribute(name="精神值", current=50.0, decay_per_day=FATIGUE_DECAY_PER_DAY, max_value=100.0))
+        attrs.setdefault(
+            "hunger",
+            Attribute(name="hunger", current=50.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0),
+        )
+        attrs.setdefault(
+            "thirst",
+            Attribute(name="thirst", current=50.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0),
+        )
+        attrs.setdefault(
+            "fatigue",
+            Attribute(name="fatigue", current=50.0, decay_per_day=FATIGUE_DECAY_PER_DAY, max_value=100.0),
+        )
         actor.attrs = attrs
 
     for location in world.locations.values():
@@ -143,21 +190,20 @@ def _bootstrap_world_state(world: WorldState) -> None:
 
 
 async def run(on_update=None) -> None:
-    # 1) 读静态定义 2) 构建动态状态 3) 启动单一 runtime 管理全部 actor。
-
     catalog = load_catalog()
     actor_states, location_states = build_state(catalog)
-    actor2agent = {actor_id:f"agent-{i}" for i,actor_id in enumerate(catalog.actors.keys(),start=1)}
+    actor2agent = {actor_id: f"agent-{i}" for i, actor_id in enumerate(catalog.actors.keys(), start=1)}
+
     if USE_ACION_LAYER:
         client = WebSocketServer(actor2agent=actor2agent)
         await client.start()
         while not all(client.is_connected(k) for k in actor2agent.values()):
             await asyncio.sleep(ACTION_LAYER_CONNECT_POLL_SECONDS)
-        logger.info("全部客户端已连接")
+        logger.info("All action-layer clients connected")
     else:
         client = NoopActionLayerClient()
-        logger.info("USE_ACION_LAYER=False，已禁用 Unity 执行层。")
-    
+        logger.info("USE_ACION_LAYER=False, Unity action layer disabled")
+
     world = WorldState(
         catalog=catalog,
         actors=actor_states,
@@ -181,12 +227,14 @@ async def run(on_update=None) -> None:
             actor=actor,
             prompt_builder=PromptBuilder(),
         )
+
     runtime = AgentRuntime(
         world=world,
         agents=agents,
         executor=executor,
         logger=logging.getLogger("runtime"),
     )
+
     if on_update:
         for actor_id in agents.keys():
             on_update(_build_monitor_payload(world, runtime, actor_id, result=None))
@@ -204,24 +252,27 @@ async def run(on_update=None) -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    if os.path.exists("debug_log"):
-        shutil.rmtree("debug_log")
-    
-    try:
-        from monitor import run_monitor
-    except Exception as e:
-        logging.warning("PyQt monitor unavailable, fallback to CLI mode: %s", e)
+    _cleanup_debug_log_on_start("debug_log")
+
+    enable_monitor = str(os.getenv("ENABLE_MONITOR_UI", "1") or "1").strip().lower() not in {"0", "false", "off"}
+    if not enable_monitor:
+        logging.info("ENABLE_MONITOR_UI=0, run in CLI mode.")
         asyncio.run(run())
     else:
-        catalog = load_catalog()
-        actor_ids = list(catalog.actors.keys())
-        actor_name_map = {str(actor_id): str(actor_def.name) for actor_id, actor_def in catalog.actors.items()}
+        try:
+            from monitor import run_monitor
+        except Exception as e:
+            logging.warning("PyQt monitor unavailable, fallback to CLI mode: %s", e)
+            asyncio.run(run())
+        else:
+            catalog = load_catalog()
+            actor_ids = list(catalog.actors.keys())
+            actor_name_map = {str(actor_id): str(actor_def.name) for actor_id, actor_def in catalog.actors.items()}
 
-        def _start_simulation(push_update):
-            # 仿真逻辑跑在后台线程，避免阻塞 Qt UI 事件循环。
-            def _target():
-                asyncio.run(run(on_update=push_update))
+            def _start_simulation(push_update):
+                def _target():
+                    asyncio.run(run(on_update=push_update))
 
-            threading.Thread(target=_target, name="simulation-thread", daemon=True).start()
+                threading.Thread(target=_target, name="simulation-thread", daemon=True).start()
 
-        run_monitor(_start_simulation, actor_ids=actor_ids, actor_name_map=actor_name_map)
+            run_monitor(_start_simulation, actor_ids=actor_ids, actor_name_map=actor_name_map)

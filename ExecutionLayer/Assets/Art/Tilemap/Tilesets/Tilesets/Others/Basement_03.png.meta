@@ -1,0 +1,1354 @@
+fileFormatVersion: 2
+guid: 9671063e2f0f2fa41bd354abc3cf7f67
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8960333467169837831
+    second: Basement_03_0
+  - first:
+      213: -395640208303286451
+    second: Basement_03_1
+  - first:
+      213: 5228902594755715040
+    second: Basement_03_2
+  - first:
+      213: 438770508563590975
+    second: Basement_03_3
+  - first:
+      213: 8101405464551955826
+    second: Basement_03_4
+  - first:
+      213: 8444322165061099415
+    second: Basement_03_5
+  - first:
+      213: 2565266261775818887
+    second: Basement_03_6
+  - first:
+      213: 2165846596903447427
+    second: Basement_03_7
+  - first:
+      213: 3747841011130958814
+    second: Basement_03_8
+  - first:
+      213: -8488778126772470457
+    second: Basement_03_9
+  - first:
+      213: -3955943790663084027
+    second: Basement_03_10
+  - first:
+      213: 4694896068250493458
+    second: Basement_03_11
+  - first:
+      213: -5205487567499419979
+    second: Basement_03_12
+  - first:
+      213: 3748428018598975040
+    second: Basement_03_13
+  - first:
+      213: -8340037195796362697
+    second: Basement_03_14
+  - first:
+      213: -8914543895817517779
+    second: Basement_03_15
+  - first:
+      213: -5036843855328870537
+    second: Basement_03_16
+  - first:
+      213: -3594897872775542960
+    second: Basement_03_17
+  - first:
+      213: 8494354466592406606
+    second: Basement_03_18
+  - first:
+      213: -3362277841614747421
+    second: Basement_03_19
+  - first:
+      213: 7230986411208715924
+    second: Basement_03_20
+  - first:
+      213: -1748678512960795137
+    second: Basement_03_21
+  - first:
+      213: -4244338489174422483
+    second: Basement_03_22
+  - first:
+      213: -813774735946953535
+    second: Basement_03_23
+  - first:
+      213: -982538922669680169
+    second: Basement_03_24
+  - first:
+      213: 7670844001448327460
+    second: Basement_03_25
+  - first:
+      213: -4440498441707170963
+    second: Basement_03_26
+  - first:
+      213: -810504658586856370
+    second: Basement_03_27
+  - first:
+      213: 2733900679823665514
+    second: Basement_03_28
+  - first:
+      213: -2054097736700292144
+    second: Basement_03_29
+  - first:
+      213: -8499211163439046797
+    second: Basement_03_30
+  - first:
+      213: -7594943525191166430
+    second: Basement_03_31
+  - first:
+      213: -5606237537005647271
+    second: Basement_03_32
+  - first:
+      213: 764071788435422361
+    second: Basement_03_33
+  - first:
+      213: 7193743516662363298
+    second: Basement_03_34
+  - first:
+      213: -5470941051133424777
+    second: Basement_03_35
+  - first:
+      213: -6986685350414809939
+    second: Basement_03_36
+  - first:
+      213: 4549279338590218446
+    second: Basement_03_37
+  - first:
+      213: 6597478534878544240
+    second: Basement_03_38
+  - first:
+      213: -4869232385547371691
+    second: Basement_03_39
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Basement_03_0
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 725
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fc2c4c7f2086a380800000000000000
+      internalID: -8960333467169837831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_1
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 725
+        width: 59
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d479835a357628af0800000000000000
+      internalID: -395640208303286451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_2
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 713
+        width: 38
+        height: 55
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ef588db43bc09840800000000000000
+      internalID: 5228902594755715040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_3
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 752
+        width: 41
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3fa9dce373d61600800000000000000
+      internalID: 438770508563590975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_4
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 674
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27d1700d859fd6070800000000000000
+      internalID: 8101405464551955826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_5
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 674
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79f9c69e442403570800000000000000
+      internalID: 8444322165061099415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_6
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 686
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 780217fd218a99320800000000000000
+      internalID: 2565266261775818887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_7
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 686
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38b2b663102ae0e10800000000000000
+      internalID: 2165846596903447427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 665
+        width: 58
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed30a1fea81030430800000000000000
+      internalID: 3747841011130958814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_9
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 701
+        width: 44
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74dfe98e44dc13a80800000000000000
+      internalID: -8488778126772470457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_10
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 677
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5085d16f41aa919c0800000000000000
+      internalID: -3955943790663084027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_11
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 677
+        width: 47
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 212e275791f972140800000000000000
+      internalID: 4694896068250493458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_12
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 701
+        width: 44
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5be1c7023a462c7b0800000000000000
+      internalID: -5205487567499419979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_13
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04696b24c67150430800000000000000
+      internalID: 3748428018598975040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_14
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 650
+        width: 35
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73a430b9b5c324c80800000000000000
+      internalID: -8340037195796362697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_15
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 578
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d258b2bde8d294480800000000000000
+      internalID: -8914543895817517779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_16
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 578
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77f730e2339891ab0800000000000000
+      internalID: -5036843855328870537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_17
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 590
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05708696e6b5c1ec0800000000000000
+      internalID: -3594897872775542960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_18
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 590
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4c3e71e16202e570800000000000000
+      internalID: 8494354466592406606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_19
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 437
+        width: 182
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e8c26efd1ac651d0800000000000000
+      internalID: -3362277841614747421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_20
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 482
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49ea5cf54df995460800000000000000
+      internalID: 7230986411208715924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_21
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 482
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffd0d9848227bb7e0800000000000000
+      internalID: -1748678512960795137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_22
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 509
+        width: 68
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2c8d3ea1a41915c0800000000000000
+      internalID: -4244338489174422483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_23
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 509
+        width: 68
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ccc1b07034e4b4f0800000000000000
+      internalID: -813774735946953535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 383
+        width: 49
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d957483e025d52f0800000000000000
+      internalID: -982538922669680169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_25
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 335
+        width: 56
+        height: 107
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42973c93aff447a60800000000000000
+      internalID: 7670844001448327460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_26
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 335
+        width: 56
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d635e5ca13e2062c0800000000000000
+      internalID: -4440498441707170963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_27
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 311
+        width: 62
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e449128ae4280c4f0800000000000000
+      internalID: -810504658586856370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_28
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 386
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a69a618fe24c0f520800000000000000
+      internalID: 2733900679823665514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_29
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 386
+        width: 59
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d39b06ddf06e73e0800000000000000
+      internalID: -2054097736700292144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_30
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 413
+        width: 68
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37f5e244a7cbc0a80800000000000000
+      internalID: -8499211163439046797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_31
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 413
+        width: 68
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 226d3d38a17599690800000000000000
+      internalID: -7594943525191166430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 311
+        width: 46
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95a4158c9a4a232b0800000000000000
+      internalID: -5606237537005647271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_33
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 266
+        width: 106
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99c379c4e378a9a00800000000000000
+      internalID: 764071788435422361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 215
+        width: 49
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a4fde34d9f45d360800000000000000
+      internalID: 7193743516662363298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_35
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 50
+        width: 194
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77b071ca9105314b0800000000000000
+      internalID: -5470941051133424777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_36
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 215
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da4891bd0be4a0f90800000000000000
+      internalID: -6986685350414809939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_37
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 173
+        width: 107
+        height: 137
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec8a1b09479422f30800000000000000
+      internalID: 4549279338590218446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_38
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 128
+        width: 91
+        height: 134
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07143b4c5c3fe8b50800000000000000
+      internalID: 6597478534878544240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_39
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 119
+        width: 49
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55bfe9291f20d6cb0800000000000000
+      internalID: -4869232385547371691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_40
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 533cdc0b8a62ffa44bbecf45c01d887a
+      internalID: 101103025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_41
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ef3c2737fece574d948318a2a47649d
+      internalID: 2126974490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_42
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1eb87cbb02e3aea4fb3b0803f8e39b70
+      internalID: 714481873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_43
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 725
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61e27ca02b589b44e904175941d5c1b1
+      internalID: -1566103890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_44
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f93489ac5f27da844ba0b7a415302a73
+      internalID: 608829059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_45
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 576
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b37dced3510da1541b27b03b53163b6a
+      internalID: 2114934274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_46
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 480
+        width: 48
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb0fa7da7e79eb9478f120d8223ddea3
+      internalID: -222979104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basement_03_47
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 492
+        width: 96
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5230f4ea0432424fa4ebe870a234875
+      internalID: -1892034312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 21c028f243db5b6498a64de272bc9c91
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Basement_03_0: -8960333467169837831
+      Basement_03_1: -395640208303286451
+      Basement_03_10: -3955943790663084027
+      Basement_03_11: 4694896068250493458
+      Basement_03_12: -5205487567499419979
+      Basement_03_13: 3748428018598975040
+      Basement_03_14: -8340037195796362697
+      Basement_03_15: -8914543895817517779
+      Basement_03_16: -5036843855328870537
+      Basement_03_17: -3594897872775542960
+      Basement_03_18: 8494354466592406606
+      Basement_03_19: -3362277841614747421
+      Basement_03_2: 5228902594755715040
+      Basement_03_20: 7230986411208715924
+      Basement_03_21: -1748678512960795137
+      Basement_03_22: -4244338489174422483
+      Basement_03_23: -813774735946953535
+      Basement_03_24: -982538922669680169
+      Basement_03_25: 7670844001448327460
+      Basement_03_26: -4440498441707170963
+      Basement_03_27: -810504658586856370
+      Basement_03_28: 2733900679823665514
+      Basement_03_29: -2054097736700292144
+      Basement_03_3: 438770508563590975
+      Basement_03_30: -8499211163439046797
+      Basement_03_31: -7594943525191166430
+      Basement_03_32: -5606237537005647271
+      Basement_03_33: 764071788435422361
+      Basement_03_34: 7193743516662363298
+      Basement_03_35: -5470941051133424777
+      Basement_03_36: -6986685350414809939
+      Basement_03_37: 4549279338590218446
+      Basement_03_38: 6597478534878544240
+      Basement_03_39: -4869232385547371691
+      Basement_03_4: 8101405464551955826
+      Basement_03_40: 101103025
+      Basement_03_41: 2126974490
+      Basement_03_42: 714481873
+      Basement_03_43: -1566103890
+      Basement_03_44: 608829059
+      Basement_03_45: 2114934274
+      Basement_03_46: -222979104
+      Basement_03_47: -1892034312
+      Basement_03_5: 8444322165061099415
+      Basement_03_6: 2565266261775818887
+      Basement_03_7: 2165846596903447427
+      Basement_03_8: 3747841011130958814
+      Basement_03_9: -8488778126772470457
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -571,6 +571,10 @@ class AgentRuntime:
         # 单角色无限 tick 循环；异常只记录日志，不中断整体仿真。
         while True:
             try:
+                actor_state = self.world.actor(actor_id)
+                if not bool(getattr(actor_state, "running", True)):
+                    await asyncio.sleep(interval_seconds)
+                    continue
                 res = await self.tick_actor(actor_id)
                 if on_tick:
                     on_tick(actor_id, res)

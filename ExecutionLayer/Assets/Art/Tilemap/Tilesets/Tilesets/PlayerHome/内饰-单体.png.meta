@@ -1,0 +1,2251 @@
+fileFormatVersion: 2
+guid: ceb97387b0eef1d4da10030eb9a84978
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4619946996597682042
+    second: Japanese_Interiors_01_0
+  - first:
+      213: 1282302502951253246
+    second: Japanese_Interiors_01_1
+  - first:
+      213: 7820220930978373099
+    second: Japanese_Interiors_01_2
+  - first:
+      213: 903545478819880216
+    second: Japanese_Interiors_01_3
+  - first:
+      213: -2081604207653206112
+    second: Japanese_Interiors_01_4
+  - first:
+      213: 8037838006553029068
+    second: Japanese_Interiors_01_5
+  - first:
+      213: 8780298611449114303
+    second: Japanese_Interiors_01_6
+  - first:
+      213: -6815495052219962882
+    second: Japanese_Interiors_01_7
+  - first:
+      213: 4358245784982084683
+    second: Japanese_Interiors_01_8
+  - first:
+      213: 1400361251839040146
+    second: Japanese_Interiors_01_9
+  - first:
+      213: -4886500528274161738
+    second: Japanese_Interiors_01_10
+  - first:
+      213: 7926723660998624532
+    second: Japanese_Interiors_01_11
+  - first:
+      213: -1417644530046743711
+    second: Japanese_Interiors_01_12
+  - first:
+      213: -6019190863054466390
+    second: Japanese_Interiors_01_13
+  - first:
+      213: -6182886042074914240
+    second: Japanese_Interiors_01_14
+  - first:
+      213: 7626908207620476733
+    second: Japanese_Interiors_01_15
+  - first:
+      213: 7508746852353165600
+    second: Japanese_Interiors_01_16
+  - first:
+      213: 926146781785551618
+    second: Japanese_Interiors_01_17
+  - first:
+      213: -798810509621481436
+    second: Japanese_Interiors_01_18
+  - first:
+      213: -4563245811336220881
+    second: Japanese_Interiors_01_19
+  - first:
+      213: -6527827039943525574
+    second: Japanese_Interiors_01_20
+  - first:
+      213: 4346679518371638733
+    second: Japanese_Interiors_01_21
+  - first:
+      213: -6693415069683804733
+    second: Japanese_Interiors_01_22
+  - first:
+      213: -3175458669422869436
+    second: Japanese_Interiors_01_23
+  - first:
+      213: -3312543609837811780
+    second: Japanese_Interiors_01_24
+  - first:
+      213: -4325255595299495171
+    second: Japanese_Interiors_01_25
+  - first:
+      213: -545985428186121100
+    second: Japanese_Interiors_01_26
+  - first:
+      213: -228990561148102996
+    second: Japanese_Interiors_01_27
+  - first:
+      213: -6886763114972158448
+    second: Japanese_Interiors_01_28
+  - first:
+      213: -2120027699799336270
+    second: Japanese_Interiors_01_29
+  - first:
+      213: 787052567974258199
+    second: Japanese_Interiors_01_30
+  - first:
+      213: -6614931868191564880
+    second: Japanese_Interiors_01_31
+  - first:
+      213: 3056255065537365212
+    second: Japanese_Interiors_01_32
+  - first:
+      213: 5155964550155695883
+    second: Japanese_Interiors_01_33
+  - first:
+      213: 6859665594472724282
+    second: Japanese_Interiors_01_34
+  - first:
+      213: 166808973524082734
+    second: Japanese_Interiors_01_35
+  - first:
+      213: 7605461695135633844
+    second: Japanese_Interiors_01_36
+  - first:
+      213: -1548363639403705521
+    second: Japanese_Interiors_01_37
+  - first:
+      213: -7238818614286885847
+    second: Japanese_Interiors_01_38
+  - first:
+      213: 6417219125372368956
+    second: Japanese_Interiors_01_39
+  - first:
+      213: 7594915028166703386
+    second: Japanese_Interiors_01_40
+  - first:
+      213: -4606143627741596334
+    second: Japanese_Interiors_01_41
+  - first:
+      213: -2552696013517023553
+    second: Japanese_Interiors_01_42
+  - first:
+      213: 2509908508932904827
+    second: Japanese_Interiors_01_43
+  - first:
+      213: -2371966309384979975
+    second: Japanese_Interiors_01_44
+  - first:
+      213: 6323712310712832331
+    second: Japanese_Interiors_01_45
+  - first:
+      213: 8039242084531153053
+    second: Japanese_Interiors_01_46
+  - first:
+      213: 3187418745041765211
+    second: Japanese_Interiors_01_47
+  - first:
+      213: -5382746179358941951
+    second: Japanese_Interiors_01_48
+  - first:
+      213: 1049201327548905323
+    second: Japanese_Interiors_01_49
+  - first:
+      213: -5808830281672990909
+    second: Japanese_Interiors_01_50
+  - first:
+      213: -3923294024425768409
+    second: Japanese_Interiors_01_51
+  - first:
+      213: 4135663633570066141
+    second: Japanese_Interiors_01_52
+  - first:
+      213: -4251855315643255516
+    second: Japanese_Interiors_01_53
+  - first:
+      213: -8623475284200347883
+    second: Japanese_Interiors_01_54
+  - first:
+      213: -6168933377522425126
+    second: Japanese_Interiors_01_55
+  - first:
+      213: 9156445632444564134
+    second: Japanese_Interiors_01_56
+  - first:
+      213: -7442078234208282198
+    second: Japanese_Interiors_01_57
+  - first:
+      213: 6362653848265092382
+    second: Japanese_Interiors_01_58
+  - first:
+      213: 8600140858984603895
+    second: Japanese_Interiors_01_59
+  - first:
+      213: -1776940183610444467
+    second: Japanese_Interiors_01_60
+  - first:
+      213: -8838957270025545770
+    second: Japanese_Interiors_01_61
+  - first:
+      213: -1146495907591379255
+    second: Japanese_Interiors_01_62
+  - first:
+      213: -5478454550876378831
+    second: Japanese_Interiors_01_63
+  - first:
+      213: -6731196484942193361
+    second: Japanese_Interiors_01_64
+  - first:
+      213: 2091297960062893929
+    second: Japanese_Interiors_01_65
+  - first:
+      213: -1303981434652009468
+    second: Japanese_Interiors_01_66
+  - first:
+      213: -7919357200693378632
+    second: Japanese_Interiors_01_67
+  - first:
+      213: -5450498267952884130
+    second: Japanese_Interiors_01_68
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 671
+        width: 241
+        height: 97
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68099a22fa6a2efb0800000000000000
+      internalID: -4619946996597682042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_1
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 680
+        width: 29
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef4f00f1557abc110800000000000000
+      internalID: 1282302502951253246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_2
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 680
+        width: 29
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bed5a00e081078c60800000000000000
+      internalID: 7820220930978373099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_3
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 674
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81d187763d90a8c00800000000000000
+      internalID: 903545478819880216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_5
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 623
+        width: 17
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc92ab6a4132c8f60800000000000000
+      internalID: 8037838006553029068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_6
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 632
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbea74d2113e9d970800000000000000
+      internalID: 8780298611449114303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_7
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 599
+        width: 77
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef92ffb2c5f7a61a0800000000000000
+      internalID: -6815495052219962882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_8
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 629
+        width: 41
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4c53b153799b7c30800000000000000
+      internalID: 4358245784982084683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_9
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 602
+        width: 92
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a561d93251f6310800000000000000
+      internalID: 1400361251839040146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_10
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 626
+        width: 92
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bfb579c8a9af2cb0800000000000000
+      internalID: -4886500528274161738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_11
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 626
+        width: 50
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 415c18e0c21610e60800000000000000
+      internalID: 7926723660998624532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_12
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 605
+        width: 32
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16bc9c89fc3835ce0800000000000000
+      internalID: -1417644530046743711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_13
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 605
+        width: 35
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa29c541dc9877ca0800000000000000
+      internalID: -6019190863054466390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_14
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 605
+        width: 35
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 042676f27e9f13aa0800000000000000
+      internalID: -6182886042074914240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_15
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 605
+        width: 35
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3fcab11b9838d960800000000000000
+      internalID: 7626908207620476733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_16
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 602
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 029c7daaa7d643860800000000000000
+      internalID: 7508746852353165600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_17
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 581
+        width: 41
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 203f23257955adc00800000000000000
+      internalID: 926146781785551618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_18
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 521
+        width: 134
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420b923e21e0ae4f0800000000000000
+      internalID: -798810509621481436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_19
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 497
+        width: 83
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2fe3889c181ca0c0800000000000000
+      internalID: -4563245811336220881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_20
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 533
+        width: 47
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3bf9f0a4ef7865a0800000000000000
+      internalID: -6527827039943525574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_21
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 509
+        width: 50
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcde1050ef1825c30800000000000000
+      internalID: 4346679518371638733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_22
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 533
+        width: 50
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c5104515763c13a0800000000000000
+      internalID: -6693415069683804733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_23
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 503
+        width: 77
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4448d1a1a218ee3d0800000000000000
+      internalID: -3175458669422869436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_24
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 536
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb780a0332b7702d0800000000000000
+      internalID: -3312543609837811780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_25
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 503
+        width: 44
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df22767c3fa99f3c0800000000000000
+      internalID: -4325255595299495171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_26
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 512
+        width: 50
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47c3d6455254c68f0800000000000000
+      internalID: -545985428186121100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_27
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 506
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca699d14c4672dcf0800000000000000
+      internalID: -228990561148102996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_28
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 479
+        width: 92
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01662df3f6d4d60a0800000000000000
+      internalID: -6886763114972158448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_29
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 458
+        width: 92
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bad8771a062492e0800000000000000
+      internalID: -2120027699799336270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_30
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 479
+        width: 74
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7162aadf32c2cea00800000000000000
+      internalID: 787052567974258199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_31
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 491
+        width: 50
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bbd707638a0334a0800000000000000
+      internalID: -6614931868191564880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_32
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 449
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd4c7541acff96a20800000000000000
+      internalID: 3056255065537365212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_33
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 449
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b07798ed07aad8740800000000000000
+      internalID: 5155964550155695883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_34
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 431
+        width: 92
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a37f38c938d623f50800000000000000
+      internalID: 6859665594472724282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_35
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 356
+        width: 50
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e20204ca0ef905200800000000000000
+      internalID: 166808973524082734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_36
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 356
+        width: 71
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b15663cd170c8960800000000000000
+      internalID: 7605461695135633844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_37
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 431
+        width: 77
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4b063a397b138ae0800000000000000
+      internalID: -1548363639403705521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_38
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 446
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92cd1fdb2dc8a8b90800000000000000
+      internalID: -7238818614286885847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_39
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 437
+        width: 41
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c38b9ad6bca8e0950800000000000000
+      internalID: 6417219125372368956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_41
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 363
+        width: 48
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 255780466c0b310c0800000000000000
+      internalID: -4606143627741596334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_42
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 365
+        width: 41
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb613ce1080039cd0800000000000000
+      internalID: -2552696013517023553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_43
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 365
+        width: 44
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b771da5ad7cf4d220800000000000000
+      internalID: 2509908508932904827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_44
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 254
+        width: 96
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f9f9e57535151fd0800000000000000
+      internalID: -2371966309384979975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_45
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 269
+        width: 49
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b419dc597d652c750800000000000000
+      internalID: 6323712310712832331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_46
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 269
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d98a9d70510219f60800000000000000
+      internalID: 8039242084531153053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_47
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 269
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53c2a0067cfb3c20800000000000000
+      internalID: 3187418745041765211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_48
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 269
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10d183f6ed4ac45b0800000000000000
+      internalID: -5382746179358941951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_49
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 269
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b67bb6a6c038f8e00800000000000000
+      internalID: 1049201327548905323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_50
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 287
+        width: 41
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f5954a2a3e26fa0800000000000000
+      internalID: -5808830281672990909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_51
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 293
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72a70bc0fd8ad89c0800000000000000
+      internalID: -3923294024425768409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_53
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 173
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4253ab22e106ef4c0800000000000000
+      internalID: -4251855315643255516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_54
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 191
+        width: 86
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 517a0eb0be2435880800000000000000
+      internalID: -8623475284200347883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_55
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 191
+        width: 86
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad2a9bd07cb836aa0800000000000000
+      internalID: -6168933377522425126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_56
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 191
+        width: 86
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a2090f2aca321f70800000000000000
+      internalID: 9156445632444564134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_57
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 191
+        width: 86
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa9595b964d68b890800000000000000
+      internalID: -7442078234208282198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_58
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 50
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1dec96d6ffac4850800000000000000
+      internalID: 6362653848265092382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_59
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 50
+        width: 50
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f0a916bb86d95770800000000000000
+      internalID: 8600140858984603895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_60
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 50
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4538c0515a0757e0800000000000000
+      internalID: -1776940183610444467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_61
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 50
+        width: 50
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d755479137b55580800000000000000
+      internalID: -8838957270025545770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_62
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 77
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c6a393eb04d610f0800000000000000
+      internalID: -1146495907591379255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_63
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 77
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13924e0bc9e98f3b0800000000000000
+      internalID: -5478454550876378831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_65
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 2
+        width: 92
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96f3c0d1a68c50d10800000000000000
+      internalID: 2091297960062893929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_66
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 2
+        width: 50
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40cdcd14bc357ede0800000000000000
+      internalID: -1303981434652009468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_67
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 2
+        width: 92
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b14d33a59ac81290800000000000000
+      internalID: -7919357200693378632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Japanese_Interiors_01_68
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 2
+        width: 50
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5659c904b0fb54b0800000000000000
+      internalID: -5450498267952884130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_0"
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 309
+        width: 48
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa00a5c229a202548ad5871ef698926f
+      internalID: 7523735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_1"
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 270
+        width: 39
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68060ae0c126f0848b96e6d4861b78e4
+      internalID: -1161394302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_2"
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 363
+        width: 48
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5db859722c8e7a146ad4dc51658641b5
+      internalID: 1960554187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_3"
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 255
+        width: 96
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4d63ed34b0005549bc80fe9e8381dcf
+      internalID: -1163068864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_4"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 255
+        width: 96
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00719108d6a498f4f9bba60e9eb28831
+      internalID: -2014406025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_5"
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 350
+        width: 96
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6d2ce8bcd3459642a1c0175144e83c6
+      internalID: -1336419365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_6"
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 350
+        width: 96
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6eaac4795786fc43a9b753ead4e0b19
+      internalID: -841834745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_7"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 401
+        width: 92
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce2ca285fc7e3494bb42670a26a6e9e5
+      internalID: -1499188258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_8"
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 50
+        width: 96
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20a1b49cc7f87a9418645d6eaedface9
+      internalID: 1224962185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_9"
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 96
+        width: 96
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3d63a374be3ea343b99038a1e34a14e
+      internalID: 1587366798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_10"
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 96
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0c7dacb09158264486ee2c6db5f8aaa
+      internalID: 1331960528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_11"
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 174
+        width: 45
+        height: 45
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eaef50dc20c60b3448743793789a8a86
+      internalID: 895215303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_12"
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 269
+        width: 42
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43d754486a3a4754da620f4130eeb94e
+      internalID: 189762760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_13"
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 675
+        width: 45
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 340a043cc8b72d44e9ecf83b08cf6fc6
+      internalID: -1670638758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_14"
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 675
+        width: 51
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f0788db9f647754897a1bad97c1536e
+      internalID: 782232635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_15"
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 675
+        width: 45
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66b6434d2a6087c42bc9ccf977df4798
+      internalID: -644103875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_16"
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 675
+        width: 23
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 347306535a891b643938c07e5f9ba199
+      internalID: 674103104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u5185\u9970-\u5355\u4F53_17"
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 722
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1042d8743ccef3c4a8920191e80f959c
+      internalID: 573321815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 922c8babb06f5af47a30202a25a772f3
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Japanese_Interiors_01_0: -4619946996597682042
+      Japanese_Interiors_01_1: 1282302502951253246
+      Japanese_Interiors_01_10: -4886500528274161738
+      Japanese_Interiors_01_11: 7926723660998624532
+      Japanese_Interiors_01_12: -1417644530046743711
+      Japanese_Interiors_01_13: -6019190863054466390
+      Japanese_Interiors_01_14: -6182886042074914240
+      Japanese_Interiors_01_15: 7626908207620476733
+      Japanese_Interiors_01_16: 7508746852353165600
+      Japanese_Interiors_01_17: 926146781785551618
+      Japanese_Interiors_01_18: -798810509621481436
+      Japanese_Interiors_01_19: -4563245811336220881
+      Japanese_Interiors_01_2: 7820220930978373099
+      Japanese_Interiors_01_20: -6527827039943525574
+      Japanese_Interiors_01_21: 4346679518371638733
+      Japanese_Interiors_01_22: -6693415069683804733
+      Japanese_Interiors_01_23: -3175458669422869436
+      Japanese_Interiors_01_24: -3312543609837811780
+      Japanese_Interiors_01_25: -4325255595299495171
+      Japanese_Interiors_01_26: -545985428186121100
+      Japanese_Interiors_01_27: -228990561148102996
+      Japanese_Interiors_01_28: -6886763114972158448
+      Japanese_Interiors_01_29: -2120027699799336270
+      Japanese_Interiors_01_3: 903545478819880216
+      Japanese_Interiors_01_30: 787052567974258199
+      Japanese_Interiors_01_31: -6614931868191564880
+      Japanese_Interiors_01_32: 3056255065537365212
+      Japanese_Interiors_01_33: 5155964550155695883
+      Japanese_Interiors_01_34: 6859665594472724282
+      Japanese_Interiors_01_35: 166808973524082734
+      Japanese_Interiors_01_36: 7605461695135633844
+      Japanese_Interiors_01_37: -1548363639403705521
+      Japanese_Interiors_01_38: -7238818614286885847
+      Japanese_Interiors_01_39: 6417219125372368956
+      Japanese_Interiors_01_4: -2081604207653206112
+      Japanese_Interiors_01_40: 7594915028166703386
+      Japanese_Interiors_01_41: -4606143627741596334
+      Japanese_Interiors_01_42: -2552696013517023553
+      Japanese_Interiors_01_43: 2509908508932904827
+      Japanese_Interiors_01_44: -2371966309384979975
+      Japanese_Interiors_01_45: 6323712310712832331
+      Japanese_Interiors_01_46: 8039242084531153053
+      Japanese_Interiors_01_47: 3187418745041765211
+      Japanese_Interiors_01_48: -5382746179358941951
+      Japanese_Interiors_01_49: 1049201327548905323
+      Japanese_Interiors_01_5: 8037838006553029068
+      Japanese_Interiors_01_50: -5808830281672990909
+      Japanese_Interiors_01_51: -3923294024425768409
+      Japanese_Interiors_01_52: 4135663633570066141
+      Japanese_Interiors_01_53: -4251855315643255516
+      Japanese_Interiors_01_54: -8623475284200347883
+      Japanese_Interiors_01_55: -6168933377522425126
+      Japanese_Interiors_01_56: 9156445632444564134
+      Japanese_Interiors_01_57: -7442078234208282198
+      Japanese_Interiors_01_58: 6362653848265092382
+      Japanese_Interiors_01_59: 8600140858984603895
+      Japanese_Interiors_01_6: 8780298611449114303
+      Japanese_Interiors_01_60: -1776940183610444467
+      Japanese_Interiors_01_61: -8838957270025545770
+      Japanese_Interiors_01_62: -1146495907591379255
+      Japanese_Interiors_01_63: -5478454550876378831
+      Japanese_Interiors_01_64: -6731196484942193361
+      Japanese_Interiors_01_65: 2091297960062893929
+      Japanese_Interiors_01_66: -1303981434652009468
+      Japanese_Interiors_01_67: -7919357200693378632
+      Japanese_Interiors_01_68: -5450498267952884130
+      Japanese_Interiors_01_7: -6815495052219962882
+      Japanese_Interiors_01_8: 4358245784982084683
+      Japanese_Interiors_01_9: 1400361251839040146
+      "\u5185\u9970-\u5355\u4F53_0": 7523735
+      "\u5185\u9970-\u5355\u4F53_1": -1161394302
+      "\u5185\u9970-\u5355\u4F53_10": 1331960528
+      "\u5185\u9970-\u5355\u4F53_11": 895215303
+      "\u5185\u9970-\u5355\u4F53_12": 189762760
+      "\u5185\u9970-\u5355\u4F53_13": -1670638758
+      "\u5185\u9970-\u5355\u4F53_14": 782232635
+      "\u5185\u9970-\u5355\u4F53_15": -644103875
+      "\u5185\u9970-\u5355\u4F53_16": 674103104
+      "\u5185\u9970-\u5355\u4F53_17": 573321815
+      "\u5185\u9970-\u5355\u4F53_18": 342822566
+      "\u5185\u9970-\u5355\u4F53_2": 1960554187
+      "\u5185\u9970-\u5355\u4F53_3": -1163068864
+      "\u5185\u9970-\u5355\u4F53_4": -2014406025
+      "\u5185\u9970-\u5355\u4F53_5": -1336419365
+      "\u5185\u9970-\u5355\u4F53_6": -841834745
+      "\u5185\u9970-\u5355\u4F53_7": -1499188258
+      "\u5185\u9970-\u5355\u4F53_8": 1224962185
+      "\u5185\u9970-\u5355\u4F53_9": 1587366798
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,981 @@
+fileFormatVersion: 2
+guid: 770a46e5bc82d9247bdb91216fa5c913
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7010249078526713633
+    second: saler_0
+  - first:
+      213: 3801550527097627789
+    second: saler_1
+  - first:
+      213: -2839694457893700506
+    second: saler_2
+  - first:
+      213: -1458602163517353213
+    second: saler_3
+  - first:
+      213: 5127444760424272243
+    second: saler_4
+  - first:
+      213: 5426962875720392619
+    second: saler_5
+  - first:
+      213: 2771675043608931313
+    second: saler_6
+  - first:
+      213: -8807210565125562530
+    second: saler_7
+  - first:
+      213: 5739924887950944320
+    second: saler_8
+  - first:
+      213: -4674930133185742472
+    second: saler_9
+  - first:
+      213: -501517207795754594
+    second: saler_10
+  - first:
+      213: -8754468621165992704
+    second: saler_11
+  - first:
+      213: 3989784645586524716
+    second: saler_12
+  - first:
+      213: -8919909712882364818
+    second: saler_13
+  - first:
+      213: 5030900569144260491
+    second: saler_14
+  - first:
+      213: 1185465052330174458
+    second: saler_15
+  - first:
+      213: -8938822039172607701
+    second: saler_16
+  - first:
+      213: 1526063730865587799
+    second: saler_17
+  - first:
+      213: -868911973095300177
+    second: saler_18
+  - first:
+      213: 8225667892388816704
+    second: saler_19
+  - first:
+      213: -7737123089740785552
+    second: saler_20
+  - first:
+      213: 2415155875641149384
+    second: saler_21
+  - first:
+      213: -6118349505650939044
+    second: saler_22
+  - first:
+      213: -490298501878704665
+    second: saler_23
+  - first:
+      213: -4686420217700427299
+    second: saler_24
+  - first:
+      213: -6260060708587671970
+    second: saler_25
+  - first:
+      213: -9218958135775950071
+    second: saler_26
+  - first:
+      213: -8711306415834071105
+    second: saler_27
+  - first:
+      213: -4643942151066392635
+    second: saler_28
+  - first:
+      213: -3112608546289383726
+    second: saler_29
+  - first:
+      213: 7797197545771338203
+    second: saler_30
+  - first:
+      213: -4786042712357294642
+    second: saler_31
+  - first:
+      213: -3889455482415402272
+    second: saler_32
+  - first:
+      213: 2108004883084102112
+    second: saler_33
+  - first:
+      213: 3847590036584884893
+    second: saler_34
+  - first:
+      213: -2659441689920646168
+    second: saler_35
+  - first:
+      213: 4985703431338761951
+    second: saler_36
+  - first:
+      213: 7008733010447315680
+    second: saler_37
+  - first:
+      213: 7220670153931116392
+    second: saler_38
+  - first:
+      213: -3624967783825970563
+    second: saler_39
+  - first:
+      213: -3292977158446068493
+    second: saler_40
+  - first:
+      213: 3622534375822124497
+    second: saler_41
+  - first:
+      213: -5152378467068207602
+    second: saler_42
+  - first:
+      213: -1137148522549972529
+    second: saler_43
+  - first:
+      213: 8986564863712761099
+    second: saler_44
+  - first:
+      213: -4433756495119680792
+    second: saler_45
+  - first:
+      213: -5524436054322415096
+    second: saler_46
+  - first:
+      213: -3751571723082424458
+    second: saler_47
+  - first:
+      213: -4725212257617924070
+    second: saler_48
+  - first:
+      213: -1514838986015635348
+    second: saler_49
+  - first:
+      213: 7580550762492791944
+    second: saler_50
+  - first:
+      213: -7594782382569659874
+    second: saler_51
+  - first:
+      213: 3659659702813989245
+    second: saler_52
+  - first:
+      213: 2224246380741585614
+    second: saler_53
+  - first:
+      213: -8423617168072144865
+    second: saler_54
+  - first:
+      213: 7821373661681547984
+    second: saler_55
+  - first:
+      213: -3277398739904671725
+    second: saler_56
+  - first:
+      213: 5037110836488988672
+    second: saler_57
+  - first:
+      213: -698009449533178002
+    second: saler_58
+  - first:
+      213: 4125173362766908591
+    second: saler_59
+  - first:
+      213: -2851320531372526021
+    second: saler_60
+  - first:
+      213: 5082994249662010537
+    second: saler_61
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: saler_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 608
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd0e76fda9796be90800000000000000
+      internalID: -7010249078526713633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 608
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d846a5b1012d1c430800000000000000
+      internalID: 3801550527097627789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_2
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 608
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66cb9969fe06798d0800000000000000
+      internalID: -2839694457893700506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 608
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 371d68ed7d7582740800000000000000
+      internalID: 5127444760424272243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bafdb807bf1705b40800000000000000
+      internalID: 5426962875720392619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_6
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fb202764c7f67620800000000000000
+      internalID: 2771675043608931313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_7
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5f9f9357a086c580800000000000000
+      internalID: -8807210565125562530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_8
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0486dbf264f48af40800000000000000
+      internalID: 5739924887950944320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_9
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 879b1bd00df4f1fb0800000000000000
+      internalID: -4674930133185742472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_10
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e999694b1c04a09f0800000000000000
+      internalID: -501517207795754594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_11
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 005e8161c21e18680800000000000000
+      internalID: -8754468621165992704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_12
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2a1e721fff8e5730800000000000000
+      internalID: 3989784645586524716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_13
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6e0717306d163480800000000000000
+      internalID: -8919909712882364818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_14
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b87772ca96951d540800000000000000
+      internalID: 5030900569144260491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_15
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af7a7c92f2e937010800000000000000
+      internalID: 1185465052330174458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_16
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b211fac17bce2f380800000000000000
+      internalID: -8938822039172607701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_17
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 756c9d6b0eaad2510800000000000000
+      internalID: 1526063730865587799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_18
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa322960a2101f3f0800000000000000
+      internalID: -868911973095300177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_19
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 047eb2edd51772270800000000000000
+      internalID: 8225667892388816704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_20
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 078178cfa8730a490800000000000000
+      internalID: -7737123089740785552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_21
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c7c9cc097b548120800000000000000
+      internalID: 2415155875641149384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_22
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5b2dff7a81471ba0800000000000000
+      internalID: -6118349505650939044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_23
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e51d993c1c1239f0800000000000000
+      internalID: -490298501878704665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_24
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9d1c744ad76feb0800000000000000
+      internalID: -4686420217700427299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_25
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5e6048e3fbcf19a0800000000000000
+      internalID: -6260060708587671970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_26
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90b80ed6b6eaf0080800000000000000
+      internalID: -9218958135775950071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_27
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbff0a228f83b1780800000000000000
+      internalID: -8711306415834071105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: saler_28
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 576
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c76930e7376d8fb0800000000000000
+      internalID: -4643942151066392635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 323f950fb875ce24a802a0b4add10987
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      saler_0: -7010249078526713633
+      saler_1: 3801550527097627789
+      saler_10: -501517207795754594
+      saler_11: -8754468621165992704
+      saler_12: 3989784645586524716
+      saler_13: -8919909712882364818
+      saler_14: 5030900569144260491
+      saler_15: 1185465052330174458
+      saler_16: -8938822039172607701
+      saler_17: 1526063730865587799
+      saler_18: -868911973095300177
+      saler_19: 8225667892388816704
+      saler_2: -2839694457893700506
+      saler_20: -7737123089740785552
+      saler_21: 2415155875641149384
+      saler_22: -6118349505650939044
+      saler_23: -490298501878704665
+      saler_24: -4686420217700427299
+      saler_25: -6260060708587671970
+      saler_26: -9218958135775950071
+      saler_27: -8711306415834071105
+      saler_28: -4643942151066392635
+      saler_29: -3112608546289383726
+      saler_3: -1458602163517353213
+      saler_30: 7797197545771338203
+      saler_31: -4786042712357294642
+      saler_32: -3889455482415402272
+      saler_33: 2108004883084102112
+      saler_34: 3847590036584884893
+      saler_35: -2659441689920646168
+      saler_36: 4985703431338761951
+      saler_37: 7008733010447315680
+      saler_38: 7220670153931116392
+      saler_39: -3624967783825970563
+      saler_4: 5127444760424272243
+      saler_40: -3292977158446068493
+      saler_41: 3622534375822124497
+      saler_42: -5152378467068207602
+      saler_43: -1137148522549972529
+      saler_44: 8986564863712761099
+      saler_45: -4433756495119680792
+      saler_46: -5524436054322415096
+      saler_47: -3751571723082424458
+      saler_48: -4725212257617924070
+      saler_49: -1514838986015635348
+      saler_5: 5426962875720392619
+      saler_50: 7580550762492791944
+      saler_51: -7594782382569659874
+      saler_52: 3659659702813989245
+      saler_53: 2224246380741585614
+      saler_54: -8423617168072144865
+      saler_55: 7821373661681547984
+      saler_56: -3277398739904671725
+      saler_57: 5037110836488988672
+      saler_58: -698009449533178002
+      saler_59: 4125173362766908591
+      saler_6: 2771675043608931313
+      saler_60: -2851320531372526021
+      saler_61: 5082994249662010537
+      saler_7: -8807210565125562530
+      saler_8: 5739924887950944320
+      saler_9: -4674930133185742472
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

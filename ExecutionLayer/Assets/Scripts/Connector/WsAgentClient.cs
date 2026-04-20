@@ -52,6 +52,9 @@ public class WsAgentClient : MonoBehaviour
 
     // 防止并发 SendAsync
     private readonly SemaphoreSlim sendLock = new(1, 1);
+    private Coroutine reconnectCoroutine;
+    [Header("Reconnect")]
+    public float reconnectDelaySeconds = 2f;
 
     public MonoBehaviour navigatorBehaviour;
     private IAutoNavigator navigator;
@@ -138,10 +141,27 @@ public class WsAgentClient : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogWarning("WS connect failed (backend offline?): " + e.Message);
+            ScheduleReconnect();
         }
     }
 
     void Retry() => _ = ConnectAndRun();
+
+    void ScheduleReconnect()
+    {
+        if (cts != null && cts.IsCancellationRequested) return;
+        if (reconnectCoroutine != null) return;
+        reconnectCoroutine = StartCoroutine(CoReconnect());
+    }
+
+    IEnumerator CoReconnect()
+    {
+        var wait = Mathf.Max(0.1f, reconnectDelaySeconds);
+        yield return new WaitForSeconds(wait);
+        reconnectCoroutine = null;
+        if (this != null && isActiveAndEnabled)
+            Retry();
+    }
 
     async Task ReceiveLoop()
     {
@@ -165,6 +185,7 @@ public class WsAgentClient : MonoBehaviour
                             await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye", cts.Token);
                         }
                         catch { }
+                        ScheduleReconnect();
                         return;
                     }
 
@@ -185,9 +206,12 @@ public class WsAgentClient : MonoBehaviour
             catch (Exception e)
             {
                 Debug.LogWarning("WS ReceiveLoop error: " + e.Message);
+                ScheduleReconnect();
                 return;
             }
         }
+
+        ScheduleReconnect();
     }
 
     void HandleMessage(string json)
@@ -460,6 +484,11 @@ public class WsAgentClient : MonoBehaviour
     void OnDestroy()
     {
         try { cts?.Cancel(); } catch { }
+        if (reconnectCoroutine != null)
+        {
+            StopCoroutine(reconnectCoroutine);
+            reconnectCoroutine = null;
+        }
 
         try
         {

@@ -1,0 +1,650 @@
+fileFormatVersion: 2
+guid: bbe89e599762ce64baa3249931721a47
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6345350205660758912
+    second: Tileset_Cars_6_MV_0
+  - first:
+      213: 5557648399117177460
+    second: Tileset_Cars_6_MV_1
+  - first:
+      213: -4322414684521428959
+    second: Tileset_Cars_6_MV_2
+  - first:
+      213: 6013817624458989402
+    second: Tileset_Cars_6_MV_3
+  - first:
+      213: -3755913193316419570
+    second: Tileset_Cars_6_MV_4
+  - first:
+      213: 9155833159320729780
+    second: Tileset_Cars_6_MV_5
+  - first:
+      213: 6048856144446511885
+    second: Tileset_Cars_6_MV_6
+  - first:
+      213: -1875978490727028781
+    second: Tileset_Cars_6_MV_7
+  - first:
+      213: -1816878567150229034
+    second: Tileset_Cars_6_MV_8
+  - first:
+      213: -5272521277870327792
+    second: Tileset_Cars_6_MV_9
+  - first:
+      213: 1491695486828153952
+    second: Tileset_Cars_6_MV_10
+  - first:
+      213: 1180433149578292436
+    second: Tileset_Cars_6_MV_11
+  - first:
+      213: -7986918084538759864
+    second: Tileset_Cars_6_MV_12
+  - first:
+      213: 8134759253218767161
+    second: Tileset_Cars_6_MV_13
+  - first:
+      213: 8977921636584569717
+    second: Tileset_Cars_6_MV_14
+  - first:
+      213: -7593272943996730711
+    second: Tileset_Cars_6_MV_15
+  - first:
+      213: 3558858737269111420
+    second: Tileset_Cars_6_MV_16
+  - first:
+      213: 1411179213487791051
+    second: Tileset_Cars_6_MV_17
+  - first:
+      213: -2531766793793594713
+    second: Tileset_Cars_6_MV_18
+  - first:
+      213: -1965713868291061469
+    second: Tileset_Cars_6_MV_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_0
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 623
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08c73286b99c0f7a0800000000000000
+      internalID: -6345350205660758912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_1
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 545
+        width: 113
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 472d5e7f5cbb02d40800000000000000
+      internalID: 5557648399117177460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_2
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 671
+        width: 215
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1280b2ddeb2b304c0800000000000000
+      internalID: -4322414684521428959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_3
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 590
+        width: 113
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5f8cd1544f557350800000000000000
+      internalID: 6013817624458989402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_4
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 479
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e08fb21b9d050ebc0800000000000000
+      internalID: -3755913193316419570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_5
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 527
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b8fd0cafbd001f70800000000000000
+      internalID: 9155833159320729780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_6
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 353
+        width: 113
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0b5c2b7d9ad1f350800000000000000
+      internalID: 6048856144446511885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_7
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 335
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d721f5808f27f5e0800000000000000
+      internalID: -1875978490727028781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_8
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 302
+        width: 113
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d96df4c19629c6e0800000000000000
+      internalID: -1816878567150229034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_9
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 383
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 018b9d135dd34d6b0800000000000000
+      internalID: -5272521277870327792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_10
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 191
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06c0275542193b410800000000000000
+      internalID: 1491695486828153952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_11
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 65
+        width: 113
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dca5b102bdb16010800000000000000
+      internalID: 1180433149578292436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_12
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 161
+        width: 113
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8458ce09154c82190800000000000000
+      internalID: -7986918084538759864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_13
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 110
+        width: 113
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9313d65e07874e070800000000000000
+      internalID: 8134759253218767161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_14
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 47
+        width: 215
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57bbae1592cf79c70800000000000000
+      internalID: 8977921636584569717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_15
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 62
+        width: 50
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a28d720d764f9690800000000000000
+      internalID: -7593272943996730711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_16
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 0
+        width: 113
+        height: 169
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7a78b87a2b936130800000000000000
+      internalID: 3558858737269111420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_17
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 0
+        width: 188
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcbda569404859310800000000000000
+      internalID: 1411179213487791051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_18
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 0
+        width: 95
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aa9dc1d38b5ddcd0800000000000000
+      internalID: -2531766793793594713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_Cars_6_MV_19
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 14
+        width: 77
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 329c37ec6a168b4e0800000000000000
+      internalID: -1965713868291061469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Tileset_Cars_6_MV_0: -6345350205660758912
+      Tileset_Cars_6_MV_1: 5557648399117177460
+      Tileset_Cars_6_MV_10: 1491695486828153952
+      Tileset_Cars_6_MV_11: 1180433149578292436
+      Tileset_Cars_6_MV_12: -7986918084538759864
+      Tileset_Cars_6_MV_13: 8134759253218767161
+      Tileset_Cars_6_MV_14: 8977921636584569717
+      Tileset_Cars_6_MV_15: -7593272943996730711
+      Tileset_Cars_6_MV_16: 3558858737269111420
+      Tileset_Cars_6_MV_17: 1411179213487791051
+      Tileset_Cars_6_MV_18: -2531766793793594713
+      Tileset_Cars_6_MV_19: -1965713868291061469
+      Tileset_Cars_6_MV_2: -4322414684521428959
+      Tileset_Cars_6_MV_3: 6013817624458989402
+      Tileset_Cars_6_MV_4: -3755913193316419570
+      Tileset_Cars_6_MV_5: 9155833159320729780
+      Tileset_Cars_6_MV_6: 6048856144446511885
+      Tileset_Cars_6_MV_7: -1875978490727028781
+      Tileset_Cars_6_MV_8: -1816878567150229034
+      Tileset_Cars_6_MV_9: -5272521277870327792
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

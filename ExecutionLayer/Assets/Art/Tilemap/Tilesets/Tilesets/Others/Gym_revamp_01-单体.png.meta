@@ -1,0 +1,2028 @@
+fileFormatVersion: 2
+guid: d3b23fa6c184cd643b300af9596c397f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3976323844192950227
+    second: Gym_revamp_01_0
+  - first:
+      213: 2565160368084690120
+    second: Gym_revamp_01_1
+  - first:
+      213: -1799305636677024097
+    second: Gym_revamp_01_2
+  - first:
+      213: -8087474837949187848
+    second: Gym_revamp_01_3
+  - first:
+      213: 1042260078164756891
+    second: Gym_revamp_01_4
+  - first:
+      213: 5462442334308317544
+    second: Gym_revamp_01_5
+  - first:
+      213: -1877062247050719917
+    second: Gym_revamp_01_6
+  - first:
+      213: -7818818487942558602
+    second: Gym_revamp_01_7
+  - first:
+      213: 1765199751741252113
+    second: Gym_revamp_01_8
+  - first:
+      213: -8382712436719415597
+    second: Gym_revamp_01_9
+  - first:
+      213: 8126219777143093859
+    second: Gym_revamp_01_10
+  - first:
+      213: -3878010599397518661
+    second: Gym_revamp_01_11
+  - first:
+      213: 8169855324364717291
+    second: Gym_revamp_01_12
+  - first:
+      213: -298138070122777786
+    second: Gym_revamp_01_13
+  - first:
+      213: 5208996060797704274
+    second: Gym_revamp_01_14
+  - first:
+      213: 3192038071119972530
+    second: Gym_revamp_01_15
+  - first:
+      213: 7473324913241712671
+    second: Gym_revamp_01_16
+  - first:
+      213: 4735444084334838323
+    second: Gym_revamp_01_17
+  - first:
+      213: -4289855458274890222
+    second: Gym_revamp_01_18
+  - first:
+      213: 6117969976534964798
+    second: Gym_revamp_01_19
+  - first:
+      213: 2336059512730487103
+    second: Gym_revamp_01_20
+  - first:
+      213: 3320439503263611889
+    second: Gym_revamp_01_21
+  - first:
+      213: 8886891425586436256
+    second: Gym_revamp_01_22
+  - first:
+      213: -8131767942291924330
+    second: Gym_revamp_01_23
+  - first:
+      213: -2248128297942724657
+    second: Gym_revamp_01_24
+  - first:
+      213: -1920075917567841048
+    second: Gym_revamp_01_25
+  - first:
+      213: -7306545095494929866
+    second: Gym_revamp_01_26
+  - first:
+      213: -87556859909069952
+    second: Gym_revamp_01_27
+  - first:
+      213: -1860557606162734656
+    second: Gym_revamp_01_28
+  - first:
+      213: 465616503547614131
+    second: Gym_revamp_01_29
+  - first:
+      213: 1438344852641178035
+    second: Gym_revamp_01_30
+  - first:
+      213: 8691000051165771408
+    second: Gym_revamp_01_31
+  - first:
+      213: 8512761883777436235
+    second: Gym_revamp_01_32
+  - first:
+      213: -6558376290970652455
+    second: Gym_revamp_01_33
+  - first:
+      213: 3710305640839059323
+    second: Gym_revamp_01_34
+  - first:
+      213: 2464258055376757118
+    second: Gym_revamp_01_35
+  - first:
+      213: -461814377187695318
+    second: Gym_revamp_01_36
+  - first:
+      213: 3375851102368499088
+    second: Gym_revamp_01_37
+  - first:
+      213: 9211946114460874880
+    second: Gym_revamp_01_38
+  - first:
+      213: 780042720013624388
+    second: Gym_revamp_01_39
+  - first:
+      213: -7820332491503585965
+    second: Gym_revamp_01_40
+  - first:
+      213: 1975331619582409359
+    second: Gym_revamp_01_41
+  - first:
+      213: 6492901872644951367
+    second: Gym_revamp_01_42
+  - first:
+      213: 4818392762766572268
+    second: Gym_revamp_01_43
+  - first:
+      213: 5596011886630805123
+    second: Gym_revamp_01_44
+  - first:
+      213: -8196033243878296996
+    second: Gym_revamp_01_45
+  - first:
+      213: 3863661071659147841
+    second: Gym_revamp_01_46
+  - first:
+      213: 4733327242014392612
+    second: Gym_revamp_01_47
+  - first:
+      213: -5018798408758589139
+    second: Gym_revamp_01_48
+  - first:
+      213: 1437181175120124173
+    second: Gym_revamp_01_49
+  - first:
+      213: -6690112335146933646
+    second: Gym_revamp_01_50
+  - first:
+      213: 5347727655352284526
+    second: Gym_revamp_01_51
+  - first:
+      213: 3161405814401964797
+    second: Gym_revamp_01_52
+  - first:
+      213: -1098605836385583149
+    second: Gym_revamp_01_53
+  - first:
+      213: 2790428764263263004
+    second: Gym_revamp_01_54
+  - first:
+      213: 1250081004221774635
+    second: Gym_revamp_01_55
+  - first:
+      213: 8320006771628793123
+    second: Gym_revamp_01_56
+  - first:
+      213: 5498553905845874037
+    second: Gym_revamp_01_57
+  - first:
+      213: 4785637034512565630
+    second: Gym_revamp_01_58
+  - first:
+      213: -513844305923202682
+    second: Gym_revamp_01_59
+  - first:
+      213: -912433522991227167
+    second: Gym_revamp_01_60
+  - first:
+      213: 440031361125532767
+    second: Gym_revamp_01_61
+  - first:
+      213: -7443853505411343638
+    second: Gym_revamp_01_62
+  - first:
+      213: 2962973376180609119
+    second: Gym_revamp_01_63
+  - first:
+      213: 3698348272428109784
+    second: Gym_revamp_01_64
+  - first:
+      213: 3226031234904365280
+    second: Gym_revamp_01_65
+  - first:
+      213: 5677206181787233013
+    second: Gym_revamp_01_66
+  - first:
+      213: -4004787952038949577
+    second: Gym_revamp_01_67
+  - first:
+      213: -8937488211045004374
+    second: Gym_revamp_01_68
+  - first:
+      213: -7687774323003474955
+    second: Gym_revamp_01_69
+  - first:
+      213: -4863808746997512014
+    second: Gym_revamp_01_70
+  - first:
+      213: -2107454585561232997
+    second: Gym_revamp_01_71
+  - first:
+      213: 519568288486197126
+    second: Gym_revamp_01_72
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Gym_revamp_01_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 692
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d28a6faf78241d8c0800000000000000
+      internalID: -3976323844192950227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_1
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 692
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c4299393c7499320800000000000000
+      internalID: 2565160368084690120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_2
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 677
+        width: 140
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f96028b7e059707e0800000000000000
+      internalID: -1799305636677024097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_3
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 677
+        width: 50
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f8f022fb7483cf80800000000000000
+      internalID: -8087474837949187848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_4
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 731
+        width: 47
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b99c49ad40ad67e00800000000000000
+      internalID: 1042260078164756891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_5
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 731
+        width: 47
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 869b08e9c5e7ecb40800000000000000
+      internalID: 5462442334308317544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_6
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 731
+        width: 47
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35dce37d4d553f5e0800000000000000
+      internalID: -1877062247050719917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_7
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 731
+        width: 47
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67c4de6d20afd7390800000000000000
+      internalID: -7818818487942558602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_8
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 602
+        width: 47
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 112252062df3f7810800000000000000
+      internalID: 1765199751741252113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_9
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 596
+        width: 47
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3de071bc37f9aab80800000000000000
+      internalID: -8382712436719415597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_10
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 596
+        width: 47
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36a3e5f25d126c070800000000000000
+      internalID: 8126219777143093859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_11
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 596
+        width: 47
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb216bb08e98e2ac0800000000000000
+      internalID: -3878010599397518661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_12
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 596
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: becb71bb128216170800000000000000
+      internalID: 8169855324364717291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_13
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 596
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 643bf4c310dccdbf0800000000000000
+      internalID: -298138070122777786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_14
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 581
+        width: 86
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2589140a1521a4840800000000000000
+      internalID: 5208996060797704274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_15
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 581
+        width: 44
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b801aaa6b56c4c20800000000000000
+      internalID: 3192038071119972530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_16
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 479
+        width: 74
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1869d8c96596b760800000000000000
+      internalID: 7473324913241712671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_17
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 596
+        width: 68
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 332c0842e4da7b140800000000000000
+      internalID: 4735444084334838323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 527
+        width: 97
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21e21c7703f5774c0800000000000000
+      internalID: -4289855458274890222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_19
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 551
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a1fdd774567e450800000000000000
+      internalID: 6117969976534964798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_20
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 548
+        width: 41
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f390976ffb95b6020800000000000000
+      internalID: 2336059512730487103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_21
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 551
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fbb332c222941e20800000000000000
+      internalID: 3320439503263611889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_22
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 548
+        width: 41
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a85b83baa4945b70800000000000000
+      internalID: 8886891425586436256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_23
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 530
+        width: 98
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69ad7c3f328262f80800000000000000
+      internalID: -8131767942291924330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_24
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 461
+        width: 50
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcfce9f593b0dc0e0800000000000000
+      internalID: -2248128297942724657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_25
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 527
+        width: 68
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec269f30258a55e0800000000000000
+      internalID: -1920075917567841048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_26
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 527
+        width: 86
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 632f6a782ffe99a90800000000000000
+      internalID: -7306545095494929866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_27
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 461
+        width: 74
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 083a873ff7fe8cef0800000000000000
+      internalID: -87556859909069952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 410
+        width: 97
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1e48007b8fd26e0800000000000000
+      internalID: -1860557606162734656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_29
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 500
+        width: 95
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b3d3873eb3367600800000000000000
+      internalID: 465616503547614131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_30
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 482
+        width: 191
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b16036d50706f310800000000000000
+      internalID: 1438344852641178035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_31
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 488
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09633a8ef72ac9870800000000000000
+      internalID: 8691000051165771408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_32
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 488
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4a0a0ca4d7632670800000000000000
+      internalID: 8512761883777436235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_33
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 431
+        width: 98
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0b959d287fbf4a0800000000000000
+      internalID: -6558376290970652455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_34
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 434
+        width: 44
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7717528257ad7330800000000000000
+      internalID: 3710305640839059323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_35
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 386
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7160a925adc23220800000000000000
+      internalID: 2464258055376757118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_36
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 383
+        width: 86
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a252f8f454e4799f0800000000000000
+      internalID: -461814377187695318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_37
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 434
+        width: 98
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 095094b01be69de20800000000000000
+      internalID: 3375851102368499088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_38
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 440
+        width: 17
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 088fa722f2867df70800000000000000
+      internalID: 9211946114460874880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_39
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 437
+        width: 23
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 444aa0498b443da00800000000000000
+      internalID: 780042720013624388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_40
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 389
+        width: 44
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 355bb7a6809987390800000000000000
+      internalID: -7820332491503585965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_41
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 389
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8a7eca64a9c96b10800000000000000
+      internalID: 1975331619582409359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_42
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 314
+        width: 95
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74d88703adb6b1a50800000000000000
+      internalID: 6492901872644951367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_43
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 314
+        width: 95
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceab30550be5ed240800000000000000
+      internalID: 4818392762766572268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_44
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 314
+        width: 95
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38e1e75792709ad40800000000000000
+      internalID: 5596011886630805123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_45
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 314
+        width: 95
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c52775b6037d14e80800000000000000
+      internalID: -8196033243878296996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_46
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 194
+        width: 97
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 142afbc264b7e9530800000000000000
+      internalID: 3863661071659147841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_47
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 242
+        width: 92
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42182f16c0820b140800000000000000
+      internalID: 4733327242014392612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_48
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 242
+        width: 50
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2906ae1075a95ab0800000000000000
+      internalID: -5018798408758589139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_49
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 146
+        width: 92
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d09d9ec0aa4e1f310800000000000000
+      internalID: 1437181175120124173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_50
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 146
+        width: 50
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 272ab14e642f723a0800000000000000
+      internalID: -6690112335146933646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_51
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 98
+        width: 49
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e653ec418f1f63a40800000000000000
+      internalID: 5347727655352284526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_52
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 146
+        width: 92
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa984e96d19fdb20800000000000000
+      internalID: 3161405814401964797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_53
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 146
+        width: 50
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dff01effc7f0c0f0800000000000000
+      internalID: -1098605836385583149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_54
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 101
+        width: 71
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1ba1f04d2899b620800000000000000
+      internalID: 2790428764263263004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_55
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 101
+        width: 71
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2b3a15dc0e295110800000000000000
+      internalID: 1250081004221774635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_56
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 101
+        width: 77
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32d57c7d31a967370800000000000000
+      internalID: 8320006771628793123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_57
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57da74015a9ce4c40800000000000000
+      internalID: 5498553905845874037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_58
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e75431a078ff96240800000000000000
+      internalID: 4785637034512565630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_59
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 681279383557ed8f0800000000000000
+      internalID: -513844305923202682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_60
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ee13fc8b826653f0800000000000000
+      internalID: -912433522991227167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_61
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f544be9013e4b1600800000000000000
+      internalID: 440031361125532767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_62
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aea19e11dae12b890800000000000000
+      internalID: -7443853505411343638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_63
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f506f2e46989e1920800000000000000
+      internalID: 2962973376180609119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_64
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 56
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dfc1c9b82c235330800000000000000
+      internalID: 3698348272428109784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_65
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 0
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e81aced05a25cc20800000000000000
+      internalID: 3226031234904365280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_66
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 0
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fa641671fc79ce40800000000000000
+      internalID: 5677206181787233013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_67
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 0
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73d44fd63922c68c0800000000000000
+      internalID: -4004787952038949577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_68
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 0
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aabcb6c23d9a7f380800000000000000
+      internalID: -8937488211045004374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_69
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 5
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fb320c1cf98f4590800000000000000
+      internalID: -7687774323003474955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_70
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 5
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b886c3d6b7408cb0800000000000000
+      internalID: -4863808746997512014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_71
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 5
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b99ca5f5831d0c2e0800000000000000
+      internalID: -2107454585561232997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gym_revamp_01_72
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 5
+        width: 35
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68707c70b90e53700800000000000000
+      internalID: 519568288486197126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Gym_revamp_01_0: -3976323844192950227
+      Gym_revamp_01_1: 2565160368084690120
+      Gym_revamp_01_10: 8126219777143093859
+      Gym_revamp_01_11: -3878010599397518661
+      Gym_revamp_01_12: 8169855324364717291
+      Gym_revamp_01_13: -298138070122777786
+      Gym_revamp_01_14: 5208996060797704274
+      Gym_revamp_01_15: 3192038071119972530
+      Gym_revamp_01_16: 7473324913241712671
+      Gym_revamp_01_17: 4735444084334838323
+      Gym_revamp_01_18: -4289855458274890222
+      Gym_revamp_01_19: 6117969976534964798
+      Gym_revamp_01_2: -1799305636677024097
+      Gym_revamp_01_20: 2336059512730487103
+      Gym_revamp_01_21: 3320439503263611889
+      Gym_revamp_01_22: 8886891425586436256
+      Gym_revamp_01_23: -8131767942291924330
+      Gym_revamp_01_24: -2248128297942724657
+      Gym_revamp_01_25: -1920075917567841048
+      Gym_revamp_01_26: -7306545095494929866
+      Gym_revamp_01_27: -87556859909069952
+      Gym_revamp_01_28: -1860557606162734656
+      Gym_revamp_01_29: 465616503547614131
+      Gym_revamp_01_3: -8087474837949187848
+      Gym_revamp_01_30: 1438344852641178035
+      Gym_revamp_01_31: 8691000051165771408
+      Gym_revamp_01_32: 8512761883777436235
+      Gym_revamp_01_33: -6558376290970652455
+      Gym_revamp_01_34: 3710305640839059323
+      Gym_revamp_01_35: 2464258055376757118
+      Gym_revamp_01_36: -461814377187695318
+      Gym_revamp_01_37: 3375851102368499088
+      Gym_revamp_01_38: 9211946114460874880
+      Gym_revamp_01_39: 780042720013624388
+      Gym_revamp_01_4: 1042260078164756891
+      Gym_revamp_01_40: -7820332491503585965
+      Gym_revamp_01_41: 1975331619582409359
+      Gym_revamp_01_42: 6492901872644951367
+      Gym_revamp_01_43: 4818392762766572268
+      Gym_revamp_01_44: 5596011886630805123
+      Gym_revamp_01_45: -8196033243878296996
+      Gym_revamp_01_46: 3863661071659147841
+      Gym_revamp_01_47: 4733327242014392612
+      Gym_revamp_01_48: -5018798408758589139
+      Gym_revamp_01_49: 1437181175120124173
+      Gym_revamp_01_5: 5462442334308317544
+      Gym_revamp_01_50: -6690112335146933646
+      Gym_revamp_01_51: 5347727655352284526
+      Gym_revamp_01_52: 3161405814401964797
+      Gym_revamp_01_53: -1098605836385583149
+      Gym_revamp_01_54: 2790428764263263004
+      Gym_revamp_01_55: 1250081004221774635
+      Gym_revamp_01_56: 8320006771628793123
+      Gym_revamp_01_57: 5498553905845874037
+      Gym_revamp_01_58: 4785637034512565630
+      Gym_revamp_01_59: -513844305923202682
+      Gym_revamp_01_6: -1877062247050719917
+      Gym_revamp_01_60: -912433522991227167
+      Gym_revamp_01_61: 440031361125532767
+      Gym_revamp_01_62: -7443853505411343638
+      Gym_revamp_01_63: 2962973376180609119
+      Gym_revamp_01_64: 3698348272428109784
+      Gym_revamp_01_65: 3226031234904365280
+      Gym_revamp_01_66: 5677206181787233013
+      Gym_revamp_01_67: -4004787952038949577
+      Gym_revamp_01_68: -8937488211045004374
+      Gym_revamp_01_69: -7687774323003474955
+      Gym_revamp_01_7: -7818818487942558602
+      Gym_revamp_01_70: -4863808746997512014
+      Gym_revamp_01_71: -2107454585561232997
+      Gym_revamp_01_72: 519568288486197126
+      Gym_revamp_01_8: 1765199751741252113
+      Gym_revamp_01_9: -8382712436719415597
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

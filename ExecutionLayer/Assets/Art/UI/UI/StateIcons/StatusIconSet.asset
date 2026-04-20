@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb98ffe0e64c8d542b02693d0eff8295, type: 3}
+  m_Name: StatusIconSet
+  m_EditorClassIdentifier: Assembly-CSharp::StatusIconSet
+  entries:
+  - key: fish
+    icon: {fileID: 8966945178157639174, guid: 4efcbf5cdafe2dc4a9dfdf862f17e83b, type: 3}
+  - key: money
+    icon: {fileID: 7675826601332790545, guid: e079580562817d140b67b96bda8b516a, type: 3}
+  - key: item
+    icon: {fileID: 1729840402284382006, guid: 2ea4fb1700e6fe24685881de4f8ea838, type: 3}
+  - key: thirst
+    icon: {fileID: 8509550459451208454, guid: 391c5e7254b7d244f9460b0e2222cad2, type: 3}
+  - key: hunger
+    icon: {fileID: -1951656256530496896, guid: 250ac80e43d72144f93d8312d7602906, type: 3}
+  - key: fatigue
+    icon: {fileID: 5606786551959019901, guid: 1c13f6be11513504fb91dc36d4405d3e, type: 3}

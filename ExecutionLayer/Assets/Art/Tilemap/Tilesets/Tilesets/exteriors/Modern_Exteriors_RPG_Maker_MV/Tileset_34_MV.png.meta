@@ -1,0 +1,546 @@
+fileFormatVersion: 2
+guid: abfb39624a32eb943b37b2f7e2a203b8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6079638610530454523
+    second: Tileset_34_MV_0
+  - first:
+      213: 8733948235379019575
+    second: Tileset_34_MV_1
+  - first:
+      213: 4732370163772721165
+    second: Tileset_34_MV_2
+  - first:
+      213: -7044614056340981960
+    second: Tileset_34_MV_3
+  - first:
+      213: 3887354514124790735
+    second: Tileset_34_MV_4
+  - first:
+      213: -4133561919668751362
+    second: Tileset_34_MV_5
+  - first:
+      213: -4783983468086988498
+    second: Tileset_34_MV_6
+  - first:
+      213: 1912549064717813112
+    second: Tileset_34_MV_7
+  - first:
+      213: -7023533602681651600
+    second: Tileset_34_MV_8
+  - first:
+      213: 1577751242147386141
+    second: Tileset_34_MV_9
+  - first:
+      213: 8117308107118726557
+    second: Tileset_34_MV_10
+  - first:
+      213: -4680384747829575531
+    second: Tileset_34_MV_11
+  - first:
+      213: 5205152581383863131
+    second: Tileset_34_MV_12
+  - first:
+      213: 3010497233010942288
+    second: Tileset_34_MV_13
+  - first:
+      213: -7363081365789936562
+    second: Tileset_34_MV_14
+  - first:
+      213: -3871992158003447450
+    second: Tileset_34_MV_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tileset_34_MV_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 575
+        width: 385
+        height: 191
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfbca6fda173f5450800000000000000
+      internalID: 6079638610530454523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_1
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 623
+        width: 164
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73f8a6845a7353970800000000000000
+      internalID: 8733948235379019575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_2
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 674
+        width: 17
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d08845d3791cca140800000000000000
+      internalID: 4732370163772721165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_3
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 677
+        width: 110
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8377218f6d08c3e90800000000000000
+      internalID: -7044614056340981960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 191
+        width: 166
+        height: 308
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcb5b62a558a2f530800000000000000
+      internalID: 3887354514124790735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_5
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 386
+        width: 242
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef3ff09a553a2a6c0800000000000000
+      internalID: -4133561919668751362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_6
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 479
+        width: 95
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e217555e160eb9db0800000000000000
+      internalID: -4783983468086988498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_7
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 389
+        width: 212
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 875c202cd3dba8a10800000000000000
+      internalID: 1912549064717813112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_8
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 479
+        width: 118
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07ef3209665678e90800000000000000
+      internalID: -7023533602681651600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_9
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 287
+        width: 146
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d13502c356c45e510800000000000000
+      internalID: 1577751242147386141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_10
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 0
+        width: 326
+        height: 466
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9dc53157b876a070800000000000000
+      internalID: 8117308107118726557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_11
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 203
+        width: 113
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 590467d9edeeb0fb0800000000000000
+      internalID: -4680384747829575531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 142
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5bb717d1ba6c3840800000000000000
+      internalID: 5205152581383863131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_13
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 0
+        width: 95
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 051e9ea784f67c920800000000000000
+      internalID: 3010497233010942288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_14
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 107
+        width: 113
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e44fac3528411d990800000000000000
+      internalID: -7363081365789936562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tileset_34_MV_15
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 0
+        width: 98
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6693b11a5abe34ac0800000000000000
+      internalID: -3871992158003447450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Tileset_34_MV_0: 6079638610530454523
+      Tileset_34_MV_1: 8733948235379019575
+      Tileset_34_MV_10: 8117308107118726557
+      Tileset_34_MV_11: -4680384747829575531
+      Tileset_34_MV_12: 5205152581383863131
+      Tileset_34_MV_13: 3010497233010942288
+      Tileset_34_MV_14: -7363081365789936562
+      Tileset_34_MV_15: -3871992158003447450
+      Tileset_34_MV_2: 4732370163772721165
+      Tileset_34_MV_3: -7044614056340981960
+      Tileset_34_MV_4: 3887354514124790735
+      Tileset_34_MV_5: -4133561919668751362
+      Tileset_34_MV_6: -4783983468086988498
+      Tileset_34_MV_7: 1912549064717813112
+      Tileset_34_MV_8: -7023533602681651600
+      Tileset_34_MV_9: 1577751242147386141
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

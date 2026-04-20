@@ -1,0 +1,1222 @@
+fileFormatVersion: 2
+guid: 393877f4026176847b7455b41bd02d5d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7107229231466770330
+    second: "Grocery_Store_05 - \u5355\u4F53_0"
+  - first:
+      213: 2661269359342730338
+    second: "Grocery_Store_05 - \u5355\u4F53_1"
+  - first:
+      213: 372706368986489105
+    second: "Grocery_Store_05 - \u5355\u4F53_2"
+  - first:
+      213: 3528955689333686888
+    second: "Grocery_Store_05 - \u5355\u4F53_3"
+  - first:
+      213: 8647502723974984766
+    second: "Grocery_Store_05 - \u5355\u4F53_4"
+  - first:
+      213: -1163350492111038183
+    second: "Grocery_Store_05 - \u5355\u4F53_5"
+  - first:
+      213: -7091551901485098473
+    second: "Grocery_Store_05 - \u5355\u4F53_6"
+  - first:
+      213: 9142715245535438278
+    second: "Grocery_Store_05 - \u5355\u4F53_7"
+  - first:
+      213: -6858138347052377671
+    second: "Grocery_Store_05 - \u5355\u4F53_8"
+  - first:
+      213: -7074139735230723189
+    second: "Grocery_Store_05 - \u5355\u4F53_9"
+  - first:
+      213: 6649208093745549644
+    second: "Grocery_Store_05 - \u5355\u4F53_10"
+  - first:
+      213: 4515195189041237422
+    second: "Grocery_Store_05 - \u5355\u4F53_11"
+  - first:
+      213: 1308722559563294206
+    second: "Grocery_Store_05 - \u5355\u4F53_12"
+  - first:
+      213: -8747761375064661281
+    second: "Grocery_Store_05 - \u5355\u4F53_13"
+  - first:
+      213: 4665860869309688130
+    second: "Grocery_Store_05 - \u5355\u4F53_14"
+  - first:
+      213: -2677063299064630058
+    second: "Grocery_Store_05 - \u5355\u4F53_15"
+  - first:
+      213: 8013319005475478723
+    second: "Grocery_Store_05 - \u5355\u4F53_16"
+  - first:
+      213: -300807588894892222
+    second: "Grocery_Store_05 - \u5355\u4F53_17"
+  - first:
+      213: 2642899135981463733
+    second: "Grocery_Store_05 - \u5355\u4F53_18"
+  - first:
+      213: 3272446259051478156
+    second: "Grocery_Store_05 - \u5355\u4F53_19"
+  - first:
+      213: -6364321051849420879
+    second: "Grocery_Store_05 - \u5355\u4F53_20"
+  - first:
+      213: 7401697014139094323
+    second: "Grocery_Store_05 - \u5355\u4F53_21"
+  - first:
+      213: 7673119842598068486
+    second: "Grocery_Store_05 - \u5355\u4F53_22"
+  - first:
+      213: -8076812921271380030
+    second: "Grocery_Store_05 - \u5355\u4F53_23"
+  - first:
+      213: -6196184053682114730
+    second: "Grocery_Store_05 - \u5355\u4F53_24"
+  - first:
+      213: 5755132560345011196
+    second: "Grocery_Store_05 - \u5355\u4F53_25"
+  - first:
+      213: 1636023145944416844
+    second: "Grocery_Store_05 - \u5355\u4F53_26"
+  - first:
+      213: 8127930053157953882
+    second: "Grocery_Store_05 - \u5355\u4F53_27"
+  - first:
+      213: 2290428972566137725
+    second: "Grocery_Store_05 - \u5355\u4F53_28"
+  - first:
+      213: 4157252344953895701
+    second: "Grocery_Store_05 - \u5355\u4F53_29"
+  - first:
+      213: -8471652436614753902
+    second: "Grocery_Store_05 - \u5355\u4F53_30"
+  - first:
+      213: 8952753566885332328
+    second: "Grocery_Store_05 - \u5355\u4F53_31"
+  - first:
+      213: -9202149703271495318
+    second: "Grocery_Store_05 - \u5355\u4F53_32"
+  - first:
+      213: 4545908403168108102
+    second: "Grocery_Store_05 - \u5355\u4F53_33"
+  - first:
+      213: -5482177617797846873
+    second: "Grocery_Store_05 - \u5355\u4F53_34"
+  - first:
+      213: -7862927107524547585
+    second: "Grocery_Store_05 - \u5355\u4F53_35"
+  - first:
+      213: -1151421716203837847
+    second: "Grocery_Store_05 - \u5355\u4F53_36"
+  - first:
+      213: -5625245000018600436
+    second: "Grocery_Store_05 - \u5355\u4F53_37"
+  - first:
+      213: 3600802102326299442
+    second: "Grocery_Store_05 - \u5355\u4F53_38"
+  - first:
+      213: 6640314384174338603
+    second: "Grocery_Store_05 - \u5355\u4F53_39"
+  - first:
+      213: -9180669151321312491
+    second: "Grocery_Store_05 - \u5355\u4F53_40"
+  - first:
+      213: -2513894028245583198
+    second: "Grocery_Store_05 - \u5355\u4F53_41"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_0"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 698
+        width: 44
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66096217bac0e5d90800000000000000
+      internalID: -7107229231466770330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_1"
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 686
+        width: 92
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26c314fd16abee420800000000000000
+      internalID: 2661269359342730338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_2"
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 671
+        width: 146
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11127f8c77e1c2500800000000000000
+      internalID: 372706368986489105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_3"
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 692
+        width: 41
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86204d2908e59f030800000000000000
+      internalID: 3528955689333686888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_4"
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 653
+        width: 32
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3470c839e9120870800000000000000
+      internalID: 8647502723974984766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_5"
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 653
+        width: 44
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 919127024e2fadfe0800000000000000
+      internalID: -1163350492111038183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_6"
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 653
+        width: 35
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71a1cb54e1fb59d90800000000000000
+      internalID: -7091551901485098473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_7"
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 674
+        width: 140
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c520bc531371ee70800000000000000
+      internalID: 9142715245535438278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_8"
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 674
+        width: 50
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b95573628ff2d0a0800000000000000
+      internalID: -6858138347052377671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_9"
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 632
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8bc816246b93dd90800000000000000
+      internalID: -7074139735230723189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_10"
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 575
+        width: 146
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c411b51488bb64c50800000000000000
+      internalID: 6649208093745549644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_11"
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 587
+        width: 35
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ead0b561a1239ae30800000000000000
+      internalID: 4515195189041237422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_12"
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 587
+        width: 35
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef56f48eb34892210800000000000000
+      internalID: 1308722559563294206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_13"
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 608
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd263638065b99680800000000000000
+      internalID: -8747761375064661281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_14"
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 605
+        width: 41
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24969966db770c040800000000000000
+      internalID: 4665860869309688130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_15"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 575
+        width: 49
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d4740afc1929dad0800000000000000
+      internalID: -2677063299064630058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_16"
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 509
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cc9049dd27053f60800000000000000
+      internalID: 8013319005475478723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_17"
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 557
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24f9d26771153dbf0800000000000000
+      internalID: -300807588894892222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_18"
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 557
+        width: 95
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b8ac51f2c67da420800000000000000
+      internalID: 2642899135981463733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_19"
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 491
+        width: 32
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8cb151d8801a6d20800000000000000
+      internalID: 3272446259051478156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_20"
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 491
+        width: 32
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bf89f319b36da7a0800000000000000
+      internalID: -6364321051849420879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_21"
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 491
+        width: 32
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33584dee73c18b660800000000000000
+      internalID: 7401697014139094323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_22"
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 491
+        width: 32
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6012f09c7d56c7a60800000000000000
+      internalID: 7673119842598068486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_23"
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 527
+        width: 32
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7955ed07569ef80800000000000000
+      internalID: -8076812921271380030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_24"
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 479
+        width: 47
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65f66559e6bb20aa0800000000000000
+      internalID: -6196184053682114730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_25"
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 383
+        width: 68
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf316a652965edf40800000000000000
+      internalID: 5755132560345011196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_26"
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 383
+        width: 95
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42855a126254b610800000000000000
+      internalID: 1636023145944416844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_27"
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 419
+        width: 146
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a51a3b9d1553cc070800000000000000
+      internalID: 8127930053157953882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_28"
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 413
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7b411de30d39cf10800000000000000
+      internalID: 2290428972566137725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_29"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 239
+        width: 92
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51bf2ae4bf681b930800000000000000
+      internalID: 4157252344953895701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_30"
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 296
+        width: 119
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 291510f5ef4ae6a80800000000000000
+      internalID: -8471652436614753902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_31"
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 317
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 865cfc37fe19e3c70800000000000000
+      internalID: 8952753566885332328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_32"
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 119
+        width: 140
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a69498699956b4080800000000000000
+      internalID: -9202149703271495318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_33"
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 119
+        width: 95
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64e5c408b9f461f30800000000000000
+      internalID: 4545908403168108102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_34"
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 125
+        width: 44
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a8ef8f90846be3b0800000000000000
+      internalID: -5482177617797846873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_35"
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 128
+        width: 35
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffba53d847541e290800000000000000
+      internalID: -7862927107524547585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_36"
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 125
+        width: 41
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966eff2bc045500f0800000000000000
+      internalID: -1151421716203837847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_37"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 23
+        width: 92
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e595fe97d1fe1b0800000000000000
+      internalID: -5625245000018600436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_38"
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 23
+        width: 92
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23b83a72f6e98f130800000000000000
+      internalID: 3600802102326299442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_39"
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 29
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b22d0a120c2272c50800000000000000
+      internalID: 6640314384174338603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_40"
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 29
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5133b135c06b79080800000000000000
+      internalID: -9180669151321312491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Grocery_Store_05 - \u5355\u4F53_41"
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 29
+        width: 41
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aa327353badc1dd0800000000000000
+      internalID: -2513894028245583198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Grocery_Store_05 - \u5355\u4F53_0": -7107229231466770330
+      "Grocery_Store_05 - \u5355\u4F53_1": 2661269359342730338
+      "Grocery_Store_05 - \u5355\u4F53_10": 6649208093745549644
+      "Grocery_Store_05 - \u5355\u4F53_11": 4515195189041237422
+      "Grocery_Store_05 - \u5355\u4F53_12": 1308722559563294206
+      "Grocery_Store_05 - \u5355\u4F53_13": -8747761375064661281
+      "Grocery_Store_05 - \u5355\u4F53_14": 4665860869309688130
+      "Grocery_Store_05 - \u5355\u4F53_15": -2677063299064630058
+      "Grocery_Store_05 - \u5355\u4F53_16": 8013319005475478723
+      "Grocery_Store_05 - \u5355\u4F53_17": -300807588894892222
+      "Grocery_Store_05 - \u5355\u4F53_18": 2642899135981463733
+      "Grocery_Store_05 - \u5355\u4F53_19": 3272446259051478156
+      "Grocery_Store_05 - \u5355\u4F53_2": 372706368986489105
+      "Grocery_Store_05 - \u5355\u4F53_20": -6364321051849420879
+      "Grocery_Store_05 - \u5355\u4F53_21": 7401697014139094323
+      "Grocery_Store_05 - \u5355\u4F53_22": 7673119842598068486
+      "Grocery_Store_05 - \u5355\u4F53_23": -8076812921271380030
+      "Grocery_Store_05 - \u5355\u4F53_24": -6196184053682114730
+      "Grocery_Store_05 - \u5355\u4F53_25": 5755132560345011196
+      "Grocery_Store_05 - \u5355\u4F53_26": 1636023145944416844
+      "Grocery_Store_05 - \u5355\u4F53_27": 8127930053157953882
+      "Grocery_Store_05 - \u5355\u4F53_28": 2290428972566137725
+      "Grocery_Store_05 - \u5355\u4F53_29": 4157252344953895701
+      "Grocery_Store_05 - \u5355\u4F53_3": 3528955689333686888
+      "Grocery_Store_05 - \u5355\u4F53_30": -8471652436614753902
+      "Grocery_Store_05 - \u5355\u4F53_31": 8952753566885332328
+      "Grocery_Store_05 - \u5355\u4F53_32": -9202149703271495318
+      "Grocery_Store_05 - \u5355\u4F53_33": 4545908403168108102
+      "Grocery_Store_05 - \u5355\u4F53_34": -5482177617797846873
+      "Grocery_Store_05 - \u5355\u4F53_35": -7862927107524547585
+      "Grocery_Store_05 - \u5355\u4F53_36": -1151421716203837847
+      "Grocery_Store_05 - \u5355\u4F53_37": -5625245000018600436
+      "Grocery_Store_05 - \u5355\u4F53_38": 3600802102326299442
+      "Grocery_Store_05 - \u5355\u4F53_39": 6640314384174338603
+      "Grocery_Store_05 - \u5355\u4F53_4": 8647502723974984766
+      "Grocery_Store_05 - \u5355\u4F53_40": -9180669151321312491
+      "Grocery_Store_05 - \u5355\u4F53_41": -2513894028245583198
+      "Grocery_Store_05 - \u5355\u4F53_5": -1163350492111038183
+      "Grocery_Store_05 - \u5355\u4F53_6": -7091551901485098473
+      "Grocery_Store_05 - \u5355\u4F53_7": 9142715245535438278
+      "Grocery_Store_05 - \u5355\u4F53_8": -6858138347052377671
+      "Grocery_Store_05 - \u5355\u4F53_9": -7074139735230723189
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
