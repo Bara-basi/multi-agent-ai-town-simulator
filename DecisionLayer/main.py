@@ -28,7 +28,7 @@ from model.definitions.OpenAIModel import LLM
 from model.state.ActorState import Attribute
 from model.state.WorldState import WorldState
 from runtime.build_state import build_state
-from runtime.load_data import load_catalog
+from runtime.load_data import HUMAN_SHOP_ASSISTANT_ACTOR_ID, load_catalog
 from runtime.runtime import AgentRuntime
 
 logger = logging.getLogger(__name__)
@@ -133,6 +133,9 @@ def _build_monitor_payload(world: WorldState, runtime: AgentRuntime, actor_id: A
 
 def _bootstrap_world_state(world: WorldState) -> None:
     for actor in world.actors.values():
+        if actor.id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+            # Human shop assistant actor is intentionally minimal at this stage.
+            continue
         if not isinstance(actor.inventory, Inventory):
             normalized = Inventory()
             raw = actor.inventory
@@ -192,7 +195,14 @@ def _bootstrap_world_state(world: WorldState) -> None:
 async def run(on_update=None) -> None:
     catalog = load_catalog()
     actor_states, location_states = build_state(catalog)
-    actor2agent = {actor_id: f"agent-{i}" for i, actor_id in enumerate(catalog.actors.keys(), start=1)}
+    actor2agent: Dict[ActorId, str] = {}
+    ai_index = 1
+    for actor_id in catalog.actors.keys():
+        if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+            actor2agent[actor_id] = "Agent-X"
+            continue
+        actor2agent[actor_id] = f"Agent-{ai_index}"
+        ai_index += 1
 
     if USE_ACION_LAYER:
         client = WebSocketServer(actor2agent=actor2agent)
@@ -221,6 +231,8 @@ async def run(on_update=None) -> None:
 
     agents: Dict[ActorId, Agent] = {}
     for actor_id, actor in actor_states.items():
+        if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+            continue
         agents[actor_id] = Agent(
             id=actor_id,
             model=LLM(model_name=ACT_MODEL_NAME),

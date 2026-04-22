@@ -1,19 +1,23 @@
-"""从 CSV 读取静态定义，并组装 Catalog。"""
+﻿"""Load static definitions from CSV/JSON and compose Catalog."""
 
-import csv,json
-from typing import Dict,Tuple
-from model.definitions.Catalog import Catalog 
+import csv
+import json
+from typing import Dict, Tuple
+
 from model.definitions.ActorDef import ActorDef
+from model.definitions.Catalog import Catalog
 from model.definitions.ItemDef import ItemDef
 from model.definitions.LocationDef import LocationDef
 
+HUMAN_SHOP_ASSISTANT_ACTOR_ID = "actor:shop_assistant_human"
+HUMAN_SHOP_ASSISTANT_ACTOR_NAME = "ShopAssistant"
+
 
 def load_actors(csv_path: str = "data/actor.csv") -> Dict[str, ActorDef]:
-    # actor.csv -> ActorDef 字典（key 为 actorId）。
     actors: Dict[str, ActorDef] = {}
     with open(csv_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
-        for i,row in enumerate(reader):
+        for row in reader:
             actor_id = row["actorId"]
             if not actor_id:
                 continue
@@ -29,9 +33,8 @@ def load_actors(csv_path: str = "data/actor.csv") -> Dict[str, ActorDef]:
 
 
 def load_items(csv_path: str = "data/item.csv") -> Dict[str, ItemDef]:
-    # item.csv -> ItemDef；effects 字段在这里归并为统一 dict。
-    items : Dict[str, ItemDef] = {}
-    with open(csv_path, newline="",encoding="utf-8") as csvfile:
+    items: Dict[str, ItemDef] = {}
+    with open(csv_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             item_id = row["itemId"]
@@ -50,32 +53,30 @@ def load_items(csv_path: str = "data/item.csv") -> Dict[str, ItemDef]:
                 sell_ratio=float(row["sellRatio"]),
                 description=row["description"],
                 default_quantity=int(row["quantity"]),
-                effects=effects
+                effects=effects,
             )
     return items
 
+
 def load_locations(csv_path: str = "data/location.csv") -> Dict[str, LocationDef]:
-    # location.csv -> LocationDef。
-    location :Dict[str, LocationDef] = {}
+    locations: Dict[str, LocationDef] = {}
     with open(csv_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             location_id = row["locationId"]
             if not location_id:
                 continue
-            
-            location[location_id] = LocationDef(
+
+            locations[location_id] = LocationDef(
                 id=location_id,
                 name=row["name"],
                 description=row["description"],
-                type=row["type"]
+                type=row["type"],
             )
-    return location
+    return locations
 
 
-
-def load_events(json_path:str="data/event.json") -> Tuple:
-    """读取事件定义。"""
+def load_events(json_path: str = "data/event.json") -> Tuple[dict, dict]:
     random_events = {}
     skill_events = {}
     with open(json_path, "r", encoding="utf-8") as f:
@@ -88,13 +89,20 @@ def load_events(json_path:str="data/event.json") -> Tuple:
     return random_events, skill_events
 
 
-
-
-
-
 def load_catalog() -> Catalog:
-    """聚合三个 CSV 的读取结果。"""
     actors = load_actors()
+
+    # Inject human shop assistant actor for Unity/Python identity alignment.
+    if HUMAN_SHOP_ASSISTANT_ACTOR_ID not in actors:
+        actors[HUMAN_SHOP_ASSISTANT_ACTOR_ID] = ActorDef(
+            id=HUMAN_SHOP_ASSISTANT_ACTOR_ID,
+            name=HUMAN_SHOP_ASSISTANT_ACTOR_NAME,
+            gender="",
+            age=0,
+            info="",
+            skill="",
+        )
+
     items = load_items()
     locations = load_locations()
     random_events, skill_events = load_events()

@@ -1,6 +1,8 @@
 import asyncio
+import csv
 import json
 import logging
+import os
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -23,6 +25,7 @@ class WebSocketServer:
     connections: Dict[str, Any] = field(default_factory=dict)
     actor2agent: Dict[str, str] = field(default_factory=dict)
     pending: Dict[str, asyncio.Future] = field(default_factory=dict)
+    _market_info_cache: Dict[str, Any] | None = None
 
     async def _handle(self, ws):
         agent_id = None
@@ -36,12 +39,33 @@ class WebSocketServer:
 
                 msg_type = str(msg.get("type", "")).strip()
                 if msg_type == "hello":
-                    agent_id = msg.get("agent_id")
-                    if not agent_id:
-                        logger.warning("hello message missing agent_id")
+                    single_agent_id = msg.get("agent_id")
+                    agent_ids = msg.get("agent_ids")
+
+                    bound_ids = []
+                    if isinstance(agent_ids, list):
+                        for a in agent_ids:
+                            a = str(a or "").strip()
+                            if a:
+                                self.connections[a] = ws
+                                bound_ids.append(a)
+                    else:
+                        single_agent_id = str(single_agent_id or "").strip()
+                        if single_agent_id:
+                            self.connections[single_agent_id] = ws
+                            bound_ids.append(single_agent_id)
+
+                    if not bound_ids:
+                        logger.warning("hello message missing agent_id/agent_ids")
                         continue
-                    self.connections[agent_id] = ws
+
+                    agent_id = bound_ids[0]
                     await ws.send(json.dumps({"type": "hello_ack", "server_time": int(time.time())}))
+                    await self.send_information(
+                        target="market",
+                        info=self.market_information(),
+                        ws_conn=ws,
+                    )
                 elif msg_type in {"ack", "pong"}:
                     continue
                 elif msg_type == "complete":
@@ -55,9 +79,11 @@ class WebSocketServer:
         except Exception as e:
             logger.error("WebSocket connection error: %s", e)
         finally:
-            if agent_id and self.connections.get(agent_id) == ws:
-                self.connections.pop(agent_id, None)
-                logger.info("WebSocket disconnected: %s", agent_id)
+            disconnected = [aid for aid, conn in list(self.connections.items()) if conn == ws]
+            for aid in disconnected:
+                self.connections.pop(aid, None)
+            if disconnected:
+                logger.info("WebSocket disconnected agent_ids=%s", disconnected)
 
     async def start(self) -> None:
         self._server = await websockets.serve(self._handle, self.host, self.port)
@@ -94,7 +120,7 @@ class WebSocketServer:
         try:
             while True:
                 await asyncio.sleep(self.ping_interval)
-                for ws in list(self.connections.values()):
+                for ws in set(self.connections.values()):
                     try:
                         await ws.send(json.dumps({"type": "ping"}))
                     except Exception:
@@ -153,6 +179,82 @@ class WebSocketServer:
             self.pending.pop(action_id, None)
             logger.warning("WebSocket message timeout: %s", agent_id)
             return None
+
+    def market_information(self) -> Dict[str, Any]:
+        if self._market_info_cache is not None:
+            return self._market_info_cache
+
+        csv_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "item.csv")
+        )
+        items = []
+        try:
+            rows = None
+            for enc in ("utf-8-sig", "gbk"):
+                try:
+                    with open(csv_path, newline="", encoding=enc) as csvfile:
+                        rows = list(csv.DictReader(csvfile))
+                    break
+                except UnicodeDecodeError:
+                    rows = None
+
+            for row in rows or []:
+                name = str(row.get("name", "") or "").strip()
+                if not name:
+                    continue
+                try:
+                    purchase_price = float(
+                        row.get("purchasePrice", row.get("purchase_price", row.get("basePrice", 0))) or 0
+                    )
+                except Exception:
+                    purchase_price = 0.0
+                try:
+                    base_price = float(row.get("basePrice", 0) or 0)
+                except Exception:
+                    base_price = 0.0
+                try:
+                    quantity = int(float(row.get("quantity", 0) or 0))
+                except Exception:
+                    quantity = 0
+                items.append(
+                    {
+                        "name": name,
+                        "purchasePrice": purchase_price,
+                        "basePrice": base_price,
+                        "quantity": quantity,
+                    }
+                )
+        except Exception:
+            logger.exception("Failed to load market info from csv: %s", csv_path)
+            items = []
+
+        self._market_info_cache = {"items": items}
+        return self._market_info_cache
+
+    async def send_information(
+        self,
+        target: str,
+        info: Dict[str, Any],
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        ws = ws_conn or self.connections.get(agent_id or "")
+        if not ws:
+            logger.warning("WebSocket connection not found for information push: %s", agent_id)
+            return False
+        try:
+            payload = {
+                "type": "information",
+                "target": target,
+                "info": json.dumps(info, ensure_ascii=False),
+            }
+            if agent_id:
+                payload["agent_id"] = agent_id
+            await ws.send(json.dumps(payload, ensure_ascii=False))
+            return True
+        except Exception:
+            logger.exception("Failed to push information message to %s", agent_id)
+            return False
 
     async def move(self, actor_id, source, target)->bool:
         agent_id = self.actor2agent.get(actor_id)

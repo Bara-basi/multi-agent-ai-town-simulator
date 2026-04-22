@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,8 +6,8 @@ using UnityEngine.TextCore.LowLevel;
 using UnityEngine.UI;
 
 /// <summary>
-/// Runtime-only mock UI for the human player (ShopAssistant / Display6).
-/// It provides layout and local +/- interactions only, without gameplay data sync.
+/// Runtime UI for ShopAssistant inventory. It accepts market information from backend
+/// and renders products dynamically.
 /// </summary>
 public sealed class ShopAssistantDisplayUI : MonoBehaviour
 {
@@ -37,6 +37,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
     [Header("Product Images")]
     [SerializeField] private List<ProductImageMapping> productImageMappings = new();
+    [SerializeField] private string productImageMappingCsvResourcePath = "ShopAssistant/ProductImageMappings";
 
     private TMP_FontAsset uiFont;
     private TMP_FontAsset runtimeDynamicChineseFont;
@@ -45,7 +46,10 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     private TextMeshProUGUI roundText;
     private TextMeshProUGUI moneyText;
     private TextMeshProUGUI stateText;
+    private RectTransform inventoryContentRoot;
     private readonly Dictionary<string, Sprite> productImageLookup = new();
+    private readonly List<ProductMockData> marketProducts = new();
+    private static string pendingMarketInformationJson;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -63,8 +67,51 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     {
         uiFont = ResolveUiFont();
         BuildProductImageLookup();
+        marketProducts.Clear();
+        marketProducts.AddRange(BuildMockProducts());
         BuildUI();
         RefreshTopLeftStatus(initialRound, initialMoney, initialGameState);
+
+        if (!string.IsNullOrWhiteSpace(pendingMarketInformationJson))
+        {
+            OnMarketInformationReceived(pendingMarketInformationJson);
+            pendingMarketInformationJson = null;
+        }
+    }
+
+    /// <summary>
+    /// Entry for WsAgentClient information push.
+    /// </summary>
+    public static void PushMarketInformationJson(string infoJson)
+    {
+        var ui = FindObjectOfType<ShopAssistantDisplayUI>();
+        if (ui == null)
+        {
+            pendingMarketInformationJson = infoJson;
+            return;
+        }
+
+        ui.OnMarketInformationReceived(infoJson);
+    }
+
+    private void OnMarketInformationReceived(string infoJson)
+    {
+        if (string.IsNullOrWhiteSpace(infoJson))
+        {
+            return;
+        }
+
+        var products = ParseMarketInformation(infoJson);
+        if (products.Count == 0)
+        {
+            Debug.LogWarning("[ShopAssistantUI] Market payload parsed, but no products found.");
+            return;
+        }
+
+        marketProducts.Clear();
+        marketProducts.AddRange(products);
+        RebuildProductCells();
+        Debug.Log($"[ShopAssistantUI] Loaded {products.Count} products from backend market information.");
     }
 
     private TMP_FontAsset ResolveUiFont()
@@ -144,6 +191,8 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     {
         productImageLookup.Clear();
 
+        LoadProductMappingsFromCsv(productImageMappingCsvResourcePath);
+
         if (productImageMappings == null)
         {
             return;
@@ -151,24 +200,67 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         foreach (var item in productImageMappings)
         {
-            if (string.IsNullOrWhiteSpace(item.productName))
+            RegisterProductImage(item);
+        }
+    }
+
+    private void LoadProductMappingsFromCsv(string resourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(resourcePath))
+        {
+            return;
+        }
+
+        var csvAsset = Resources.Load<TextAsset>(resourcePath.Trim());
+        if (csvAsset == null)
+        {
+            Debug.LogWarning($"[ShopAssistantUI] Product mapping CSV not found: Resources/{resourcePath}");
+            return;
+        }
+
+        var lines = csvAsset.text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var cols = lines[i].Split(',');
+            if (cols.Length < 2)
             {
                 continue;
             }
 
-            string key = item.productName.Trim();
-            Sprite sprite = item.sprite;
-
-            if (sprite == null && !string.IsNullOrWhiteSpace(item.imagePath))
+            RegisterProductImage(new ProductImageMapping
             {
-                // imagePath should be a Resources relative path without extension.
-                sprite = Resources.Load<Sprite>(item.imagePath.Trim());
-            }
+                productName = cols[0].Trim(),
+                imagePath = cols[1].Trim(),
+                spriteName = cols.Length > 2 ? cols[2].Trim() : string.Empty,
+                sprite = null
+            });
+        }
+    }
 
-            if (sprite != null)
+    private void RegisterProductImage(ProductImageMapping item)
+    {
+        if (string.IsNullOrWhiteSpace(item.productName))
+        {
+            return;
+        }
+
+        string key = item.productName.Trim();
+        Sprite sprite = item.sprite;
+
+        if (sprite == null && !string.IsNullOrWhiteSpace(item.imagePath))
+        {
+            string path = item.imagePath.Trim();
+            const string pngExt = ".png";
+            if (path.EndsWith(pngExt, StringComparison.OrdinalIgnoreCase))
             {
-                productImageLookup[key] = sprite;
+                path = path.Substring(0, path.Length - pngExt.Length);
             }
+            sprite = ResolveSpriteFromResources(path, item.spriteName, key);
+        }
+
+        if (sprite != null)
+        {
+            productImageLookup[key] = sprite;
         }
     }
 
@@ -181,6 +273,36 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         productImageLookup.TryGetValue(productName.Trim(), out var sprite);
         return sprite;
+    }
+
+    private static Sprite ResolveSpriteFromResources(string resourcePath, string spriteName, string productName)
+    {
+        var sprites = Resources.LoadAll<Sprite>(resourcePath);
+        if (sprites == null || sprites.Length == 0)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(spriteName))
+        {
+            foreach (var s in sprites)
+            {
+                if (s != null && string.Equals(s.name, spriteName.Trim(), StringComparison.Ordinal))
+                {
+                    return s;
+                }
+            }
+        }
+
+        foreach (var s in sprites)
+        {
+            if (s != null && string.Equals(s.name, productName, StringComparison.Ordinal))
+            {
+                return s;
+            }
+        }
+
+        return null;
     }
 
     private TMP_FontAsset TryCreateDynamicChineseFont()
@@ -466,6 +588,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         var content = new GameObject("Content", typeof(RectTransform), typeof(GridLayoutGroup), typeof(ContentSizeFitter));
         content.transform.SetParent(viewport.transform, false);
         var contentRt = (RectTransform)content.transform;
+        inventoryContentRoot = contentRt;
         contentRt.anchorMin = new Vector2(0f, 1f);
         contentRt.anchorMax = new Vector2(1f, 1f);
         contentRt.pivot = new Vector2(0.5f, 1f);
@@ -497,10 +620,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         scrollRect.movementType = ScrollRect.MovementType.Clamped;
         scrollRect.scrollSensitivity = 28f;
 
-        foreach (var product in BuildMockProducts())
-        {
-            CreateProductCell(content.transform, product);
-        }
+        RebuildProductCells();
 
         var stockButton = CreateButtonLikePanel(
             "Btn_StockIn",
@@ -621,6 +741,72 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         button.colors = colors;
 
         return root;
+    }
+
+    private void RebuildProductCells()
+    {
+        if (inventoryContentRoot == null)
+        {
+            return;
+        }
+
+        for (int i = inventoryContentRoot.childCount - 1; i >= 0; i--)
+        {
+            var child = inventoryContentRoot.GetChild(i);
+            if (child != null)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        if (marketProducts.Count == 0)
+        {
+            marketProducts.AddRange(BuildMockProducts());
+        }
+
+        foreach (var product in marketProducts)
+        {
+            CreateProductCell(inventoryContentRoot, product);
+        }
+    }
+
+    private List<ProductMockData> ParseMarketInformation(string infoJson)
+    {
+        try
+        {
+            var payload = JsonUtility.FromJson<MarketInformationPayload>(infoJson);
+            if (payload == null || payload.items == null || payload.items.Length == 0)
+            {
+                return new List<ProductMockData>();
+            }
+
+            var result = new List<ProductMockData>(payload.items.Length);
+            foreach (var item in payload.items)
+            {
+                if (item == null || string.IsNullOrWhiteSpace(item.name))
+                {
+                    continue;
+                }
+
+                result.Add(new ProductMockData(
+                    item.name.Trim(),
+                    RoundToInt(item.purchasePrice),
+                    RoundToInt(item.quantity),
+                    RoundToInt(item.basePrice)));
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[ShopAssistantUI] Failed to parse market info json: {e.Message}");
+            return new List<ProductMockData>();
+        }
+    }
+
+    private static int RoundToInt(float value)
+    {
+        return Mathf.Max(0, Mathf.RoundToInt(value));
     }
 
     private void CreateProductCell(Transform content, ProductMockData data)
@@ -767,24 +953,11 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     {
         return new List<ProductMockData>
         {
-            new("面包", 8, 12, 12),
-            new("牛奶", 10, 10, 15),
-            new("鸡蛋", 6, 20, 9),
-            new("苹果", 5, 25, 8),
-            new("土豆", 4, 28, 7),
-            new("胡萝卜", 4, 24, 7),
-            new("鱼干", 14, 8, 20),
-            new("肉排", 18, 7, 25),
-            new("咖啡豆", 16, 6, 24),
-            new("白糖", 7, 16, 11),
-            new("盐", 5, 18, 8),
-            new("矿泉水", 6, 22, 10),
-            new("方便面", 9, 14, 13),
-            new("木柴", 3, 26, 6),
-            new("药草", 12, 9, 18),
-            new("绷带", 11, 9, 17),
-            new("蜡烛", 4, 15, 8),
-            new("肥皂", 6, 12, 10)
+            new("瓶装水", 4, 40, 5),
+            new("面包", 5, 60, 7),
+            new("烤肉", 13, 30, 15),
+            new("银戒指", 150, 10, 200),
+            new("黄金", 950, 10, 1000),
         };
     }
 
@@ -878,12 +1051,29 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     }
 
     [Serializable]
+    private sealed class MarketInformationPayload
+    {
+        public MarketItem[] items;
+    }
+
+    [Serializable]
+    private sealed class MarketItem
+    {
+        public string name;
+        public float purchasePrice;
+        public float basePrice;
+        public float quantity;
+    }
+
+    [Serializable]
     private struct ProductImageMapping
     {
         public string productName;
-        [Tooltip("Resources 相对路径（不带扩展名），例如 UI/Items/bread")]
+        [Tooltip("Resources relative path without extension, e.g. UI/Item/base_goods")]
         public string imagePath;
-        [Tooltip("可直接拖 Sprite；如果填写则优先于 imagePath")]
+        [Tooltip("Sub-sprite name in atlas, e.g. 面包")]
+        public string spriteName;
+        [Tooltip("Direct sprite assignment; if set, it overrides imagePath/spriteName")]
         public Sprite sprite;
     }
 
@@ -1011,3 +1201,5 @@ public sealed class ShopUiStepper : MonoBehaviour
         }
     }
 }
+
+

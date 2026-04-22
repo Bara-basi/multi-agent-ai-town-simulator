@@ -36,7 +36,7 @@ public class WsAgentClient : MonoBehaviour
 {
     [Header("ws")]
     public string serverUrl = "ws://127.0.0.1:9876";
-    public string agentId = "agent-1";
+    public string agentId = "Agent-1";
 
     [Header("位置字典（名称->坐标）")]
     public List<LocationPair> locationsSerialized = new();
@@ -45,14 +45,8 @@ public class WsAgentClient : MonoBehaviour
     private Dictionary<string, List<string>> locationGraph = new();
     private Dictionary<string, List<Vector2>> locations;
 
-    private ClientWebSocket ws;
-    private CancellationTokenSource cts;
-
     private readonly ConcurrentQueue<Action> mainThreadQueue = new();
 
-    // 防止并发 SendAsync
-    private readonly SemaphoreSlim sendLock = new(1, 1);
-    private Coroutine reconnectCoroutine;
     [Header("Reconnect")]
     public float reconnectDelaySeconds = 2f;
 
@@ -63,11 +57,23 @@ public class WsAgentClient : MonoBehaviour
     [Header("Animation Throttle")]
     public float animationDelaySeconds = 0.5f;
 
-    private readonly List<string> inner_home_place = new() { "床","冰箱","储物柜","锅","茶桌"};
+    private readonly List<string> inner_home_place = new() { "床", "冰箱", "储物柜", "锅", "茶桌" };
     private readonly List<string> inner_market_place = new() { "集市冰箱", "货架" };
     private readonly ConcurrentQueue<AnimationRequest> animationQueue = new();
     private Coroutine animationPumpCoroutine;
     private float lastAnimationPlayTime = float.NegativeInfinity;
+
+    private static readonly object SharedStateLock = new();
+    private static readonly SemaphoreSlim sharedConnectLock = new(1, 1);
+    private static readonly SemaphoreSlim sharedSendLock = new(1, 1);
+    private static readonly Dictionary<string, WsAgentClient> routersByAgentId = new();
+
+    private static ClientWebSocket sharedWs;
+    private static CancellationTokenSource sharedCts;
+    private static bool sharedReceiveLoopRunning;
+    private static string sharedServerUrl;
+    private static WsAgentClient reconnectHost;
+    private static Coroutine sharedReconnectCoroutine;
 
     struct AnimationRequest
     {
@@ -80,7 +86,6 @@ public class WsAgentClient : MonoBehaviour
         locationGraph = new Dictionary<string, List<string>>();
         locations = new Dictionary<string, List<Vector2>>();
 
-        // 构建位置字典
         if (locationsSerialized != null)
         {
             foreach (var pair in locationsSerialized)
@@ -90,7 +95,6 @@ public class WsAgentClient : MonoBehaviour
             }
         }
 
-        // 构建邻接表
         if (locationPaths != null)
         {
             foreach (var p in locationPaths)
@@ -100,75 +104,185 @@ public class WsAgentClient : MonoBehaviour
             }
         }
 
-        navigator = navigatorBehaviour as IAutoNavigator;
-        if (navigator == null)
-            Debug.LogError("navigatorBehaviour 未实现 IAutoNavigator 接口！");
+        ResolveNavigator();
+
+        RegisterSelf();
     }
 
     async void Start()
     {
-        // string json1 = "{\"type\":\"command\",\"cur_location\":\"家\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"go_to\",\"target\":\"收银台\",\"value\":\"0\"}"; 
-        // string json2 = "{\"type\":\"command\",\"value\":\"0.5\",\"agent_id\" : \"" + agentId + "\",\"cmd\":\"pick_up\"}"; 
-        // string animation_json1 = "{\"type\":\"animation\",\"target\":\"item\",\"agent_id\" : \"" + agentId + "\",\"value\":\"5\"}"; 
-        await ConnectAndRun();
+        await EnsureConnectedAndBindSelf();
     }
 
-    async Task ConnectAndRun()
+    void RegisterSelf()
     {
-        // 防止重复连接造成资源泄漏
-        try { cts?.Cancel(); } catch { }
-        try { ws?.Dispose(); } catch { }
+        if (string.IsNullOrWhiteSpace(agentId))
+        {
+            Debug.LogWarning("WsAgentClient agentId 为空，无法注册路由。");
+            return;
+        }
 
-        cts = new CancellationTokenSource();
-        ws = new ClientWebSocket();
+        lock (SharedStateLock)
+        {
+            routersByAgentId[agentId] = this;
+        }
+    }
 
+    void UnregisterSelf()
+    {
+        if (string.IsNullOrWhiteSpace(agentId)) return;
+
+        lock (SharedStateLock)
+        {
+            if (routersByAgentId.TryGetValue(agentId, out var current) && current == this)
+                routersByAgentId.Remove(agentId);
+        }
+    }
+
+    void ResolveNavigator()
+    {
+        navigator = ResolveNavigatorFromBehaviour(navigatorBehaviour);
+        if (navigator != null)
+        {
+            return;
+        }
+
+        navigator = ResolveNavigatorFromBehaviours(GetComponents<MonoBehaviour>());
+        if (navigator == null)
+        {
+            navigator = ResolveNavigatorFromBehaviours(GetComponentsInChildren<MonoBehaviour>(true));
+        }
+        if (navigator == null)
+        {
+            navigator = ResolveNavigatorFromBehaviours(GetComponentsInParent<MonoBehaviour>(true));
+        }
+
+        if (navigator is MonoBehaviour navBehaviour)
+        {
+            navigatorBehaviour = navBehaviour;
+        }
+    }
+
+    static IAutoNavigator ResolveNavigatorFromBehaviour(MonoBehaviour behaviour)
+    {
+        return behaviour as IAutoNavigator;
+    }
+
+    static IAutoNavigator ResolveNavigatorFromBehaviours(MonoBehaviour[] behaviours)
+    {
+        if (behaviours == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            var b = behaviours[i];
+            if (b is IAutoNavigator nav)
+            {
+                return nav;
+            }
+        }
+
+        return null;
+    }
+
+    async Task EnsureConnectedAndBindSelf()
+    {
+        await EnsureSharedConnected(this);
+        await SendHelloForSelf();
+    }
+
+    async Task SendHelloForSelf()
+    {
+        await SendJsonShared(new OutMsgHello
+        {
+            type = "hello",
+            agent_id = agentId,
+            cap = new[] { "waiting" }
+        });
+    }
+
+    static bool IsSharedSocketOpen_NoLock()
+    {
+        return sharedWs != null
+            && sharedCts != null
+            && !sharedCts.IsCancellationRequested
+            && sharedWs.State == WebSocketState.Open;
+    }
+
+    static async Task EnsureSharedConnected(WsAgentClient requester)
+    {
+        await sharedConnectLock.WaitAsync();
         try
         {
-           
-            await ws.ConnectAsync(new Uri(serverUrl), cts.Token);
-
-            // hello
-            await SendJson(new OutMsgHello
+            lock (SharedStateLock)
             {
-                type = "hello",
-                agent_id = agentId,
-                cap = new[] { "waiting" }
-            });
+                if (IsSharedSocketOpen_NoLock()) return;
+            }
 
-            // 启动接收循环（后台线程）
-            _ = Task.Run(ReceiveLoop);
+            ClientWebSocket oldWs = null;
+            CancellationTokenSource oldCts = null;
+
+            lock (SharedStateLock)
+            {
+                oldWs = sharedWs;
+                oldCts = sharedCts;
+
+                sharedServerUrl = requester.serverUrl;
+                sharedCts = new CancellationTokenSource();
+                sharedWs = new ClientWebSocket();
+                reconnectHost = requester;
+            }
+
+            try { oldCts?.Cancel(); } catch { }
+            try { oldWs?.Dispose(); } catch { }
+
+            try
+            {
+                await sharedWs.ConnectAsync(new Uri(sharedServerUrl), sharedCts.Token);
+
+                lock (SharedStateLock)
+                {
+                    if (!sharedReceiveLoopRunning)
+                    {
+                        sharedReceiveLoopRunning = true;
+                        _ = Task.Run(SharedReceiveLoop);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("WS connect failed (backend offline?): " + e.Message);
+                ScheduleSharedReconnect();
+            }
         }
-        catch (Exception e)
+        finally
         {
-            Debug.LogWarning("WS connect failed (backend offline?): " + e.Message);
-            ScheduleReconnect();
+            sharedConnectLock.Release();
         }
     }
 
-    void Retry() => _ = ConnectAndRun();
-
-    void ScheduleReconnect()
-    {
-        if (cts != null && cts.IsCancellationRequested) return;
-        if (reconnectCoroutine != null) return;
-        reconnectCoroutine = StartCoroutine(CoReconnect());
-    }
-
-    IEnumerator CoReconnect()
-    {
-        var wait = Mathf.Max(0.1f, reconnectDelaySeconds);
-        yield return new WaitForSeconds(wait);
-        reconnectCoroutine = null;
-        if (this != null && isActiveAndEnabled)
-            Retry();
-    }
-
-    async Task ReceiveLoop()
+    static async Task SharedReceiveLoop()
     {
         var buffer = new byte[8192];
 
-        while (ws != null && ws.State == WebSocketState.Open && cts != null && !cts.IsCancellationRequested)
+        while (true)
         {
+            ClientWebSocket wsSnapshot;
+            CancellationTokenSource ctsSnapshot;
+
+            lock (SharedStateLock)
+            {
+                wsSnapshot = sharedWs;
+                ctsSnapshot = sharedCts;
+            }
+
+            if (wsSnapshot == null || ctsSnapshot == null || ctsSnapshot.IsCancellationRequested || wsSnapshot.State != WebSocketState.Open)
+            {
+                break;
+            }
+
             try
             {
                 var sb = new StringBuilder();
@@ -176,16 +290,20 @@ public class WsAgentClient : MonoBehaviour
 
                 do
                 {
-                    result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
+                    result = await wsSnapshot.ReceiveAsync(new ArraySegment<byte>(buffer), ctsSnapshot.Token);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
                         try
                         {
-                            await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye", cts.Token);
+                            await wsSnapshot.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye", ctsSnapshot.Token);
                         }
                         catch { }
-                        ScheduleReconnect();
+                        ScheduleSharedReconnect();
+                        lock (SharedStateLock)
+                        {
+                            sharedReceiveLoopRunning = false;
+                        }
                         return;
                     }
 
@@ -193,89 +311,136 @@ public class WsAgentClient : MonoBehaviour
                 }
                 while (!result.EndOfMessage);
 
-                var json = sb.ToString();
-
-                // HandleMessage 现在是同步方法：不 await，避免 CS1998 & 签名连锁爆炸
-                HandleMessage(json);
+                DispatchIncoming(sb.ToString());
             }
             catch (OperationCanceledException)
             {
-                // 正常取消
+                lock (SharedStateLock)
+                {
+                    sharedReceiveLoopRunning = false;
+                }
                 return;
             }
             catch (Exception e)
             {
                 Debug.LogWarning("WS ReceiveLoop error: " + e.Message);
-                ScheduleReconnect();
+                ScheduleSharedReconnect();
+                lock (SharedStateLock)
+                {
+                    sharedReceiveLoopRunning = false;
+                }
                 return;
             }
         }
 
-        ScheduleReconnect();
+        lock (SharedStateLock)
+        {
+            sharedReceiveLoopRunning = false;
+        }
     }
 
-    void HandleMessage(string json)
+    static void DispatchIncoming(string json)
     {
         WSMsg msg = null;
 
         try
         {
             msg = JsonUtility.FromJson<WSMsg>(WSMsg.Fix(json));
-
         }
         catch (Exception e)
         {
             Debug.LogWarning("Json parse failed: " + e.Message + "\nraw: " + json);
-            _ = SendJson(new OutMsg
-            {
-                type = "complete",
-                cmd = null,
-                agent_id = agentId,
-                action_id = null,
-                status = "error",
-                error = "json parse failed"
-            });
             return;
         }
 
         if (msg == null || string.IsNullOrEmpty(msg.type))
         {
-            _ = SendJson(new OutMsg
-            {
-                type = "complete",
-                cmd = null,
-                agent_id = agentId,
-                action_id = null,
-                status = "error",
-                error = "empty msg"
-            });
+            Debug.LogWarning("WS message empty or missing type");
             return;
         }
 
         if (msg.type == "hello_ack")
         {
-            // no-op
             return;
         }
 
         if (msg.type == "ping")
         {
-            _ = SendJson(new OutMsg { type = "pong" });
+            _ = SendJsonShared(new OutMsg { type = "pong" });
+            return;
+        }
+
+        if (msg.type == "information" && msg.target == "market" && string.IsNullOrWhiteSpace(msg.agent_id))
+        {
+            WsAgentClient[] routers;
+            lock (SharedStateLock)
+            {
+                routers = new WsAgentClient[routersByAgentId.Count];
+                routersByAgentId.Values.CopyTo(routers, 0);
+            }
+
+            foreach (var r in routers)
+            {
+                if (r == null) continue;
+                r.mainThreadQueue.Enqueue(() =>
+                {
+                    ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
+                });
+            }
+
+            return;
+        }
+
+        WsAgentClient router = null;
+        lock (SharedStateLock)
+        {
+            if (!string.IsNullOrEmpty(msg.agent_id))
+                routersByAgentId.TryGetValue(msg.agent_id, out router);
+        }
+
+        if (router == null)
+        {
+            Debug.LogWarning("No WsAgentClient router for agent_id=" + msg.agent_id);
+            _ = SendJsonShared(new OutMsg
+            {
+                type = "complete",
+                cmd = msg.cmd,
+                agent_id = msg.agent_id,
+                action_id = msg.action_id,
+                status = "error",
+                error = "agent router not found"
+            });
+            return;
+        }
+
+        router.HandleRoutedMessage(msg);
+    }
+
+    void HandleRoutedMessage(WSMsg msg)
+    {
+        if (msg.type == "information" && msg.target == "market")
+        {
+            mainThreadQueue.Enqueue(() =>
+            {
+                ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
+            });
             return;
         }
 
         if (msg.type == "command" && msg.cmd == "go_to")
         {
-   
-            // ACK
-            _ = SendJson(new OutMsg
+            if (!EnsureNavigatorForCommand(msg))
+            {
+                return;
+            }
+
+            _ = SendJsonShared(new OutMsg
             {
                 type = "ack",
-                agent_id = agentId,
+                agent_id = msg.agent_id,
                 action_id = msg.action_id
             });
 
-            // 主线程队列执行
             mainThreadQueue.Enqueue(() =>
             {
                 if (msg.target == "家")
@@ -283,13 +448,14 @@ public class WsAgentClient : MonoBehaviour
 
                 if (msg.target == "集市")
                     msg.target = inner_market_place[UnityEngine.Random.Range(0, inner_market_place.Count)];
+
                 if (!TryResolveTarget(msg, out var target))
                 {
-                    _ = SendJson(new OutMsg
+                    _ = SendJsonShared(new OutMsg
                     {
                         type = "complete",
                         cmd = msg.cmd,
-                        agent_id = agentId,
+                        agent_id = msg.agent_id,
                         action_id = msg.action_id,
                         status = "error",
                         error = "target not found"
@@ -299,11 +465,11 @@ public class WsAgentClient : MonoBehaviour
 
                 navigator?.AddCommand(msg.value, msg.cmd, target, onArrived: () =>
                 {
-                    _ = SendJson(new OutMsg
+                    _ = SendJsonShared(new OutMsg
                     {
                         type = "complete",
                         cmd = msg.cmd,
-                        agent_id = agentId,
+                        agent_id = msg.agent_id,
                         action_id = msg.action_id,
                         status = "ok"
                     });
@@ -315,15 +481,20 @@ public class WsAgentClient : MonoBehaviour
 
         if (msg.type == "command" && msg.cmd != "go_to")
         {
+            if (!EnsureNavigatorForCommand(msg))
+            {
+                return;
+            }
+
             mainThreadQueue.Enqueue(() =>
             {
                 navigator?.AddCommand(msg.value, msg.cmd, new List<Vector2>(), onArrived: () =>
                 {
-                    _ = SendJson(new OutMsg
+                    _ = SendJsonShared(new OutMsg
                     {
                         type = "complete",
                         cmd = msg.cmd,
-                        agent_id = agentId,
+                        agent_id = msg.agent_id,
                         action_id = msg.action_id,
                         status = "ok"
                     });
@@ -342,11 +513,11 @@ public class WsAgentClient : MonoBehaviour
             });
             mainThreadQueue.Enqueue(TryStartAnimationPump);
 
-            _ = SendJson(new OutMsg
+            _ = SendJsonShared(new OutMsg
             {
                 type = "complete",
                 cmd = msg.cmd,
-                agent_id = agentId,
+                agent_id = msg.agent_id,
                 action_id = msg.action_id,
                 status = "ok"
             });
@@ -354,15 +525,168 @@ public class WsAgentClient : MonoBehaviour
             return;
         }
 
-        _ = SendJson(new OutMsg
+        _ = SendJsonShared(new OutMsg
         {
             type = "complete",
             cmd = msg.cmd,
-            agent_id = agentId,
+            agent_id = msg.agent_id,
             action_id = msg.action_id,
             status = "error",
             error = "unknown command"
         });
+    }
+
+    bool EnsureNavigatorForCommand(WSMsg msg)
+    {
+        if (navigator != null)
+        {
+            return true;
+        }
+
+        ResolveNavigator();
+        if (navigator != null)
+        {
+            return true;
+        }
+
+        string actionId = msg != null ? msg.action_id : null;
+        string cmd = msg != null ? msg.cmd : null;
+        string routedAgentId = msg != null ? msg.agent_id : agentId;
+
+        Debug.LogError($"WsAgentClient cannot execute command '{cmd}' because no IAutoNavigator was found. agentId={agentId}");
+        _ = SendJsonShared(new OutMsg
+        {
+            type = "complete",
+            cmd = cmd,
+            agent_id = routedAgentId,
+            action_id = actionId,
+            status = "error",
+            error = "navigator not found"
+        });
+        return false;
+    }
+
+    static void ScheduleSharedReconnect()
+    {
+        lock (SharedStateLock)
+        {
+            if (sharedCts != null && sharedCts.IsCancellationRequested) return;
+            if (sharedReconnectCoroutine != null) return;
+
+            reconnectHost = PickReconnectHost_NoLock();
+            if (reconnectHost == null) return;
+
+            sharedReconnectCoroutine = reconnectHost.StartCoroutine(reconnectHost.CoSharedReconnect());
+        }
+    }
+
+    static WsAgentClient PickReconnectHost_NoLock()
+    {
+        foreach (var kv in routersByAgentId)
+        {
+            var candidate = kv.Value;
+            if (candidate != null && candidate.isActiveAndEnabled)
+                return candidate;
+        }
+        return null;
+    }
+
+    IEnumerator CoSharedReconnect()
+    {
+        var wait = Mathf.Max(0.1f, reconnectDelaySeconds);
+        yield return new WaitForSeconds(wait);
+
+        lock (SharedStateLock)
+        {
+            sharedReconnectCoroutine = null;
+        }
+
+        if (this != null && isActiveAndEnabled)
+            _ = ReconnectAndRebindAll();
+    }
+
+    static async Task ReconnectAndRebindAll()
+    {
+        WsAgentClient[] clients;
+        lock (SharedStateLock)
+        {
+            clients = new WsAgentClient[routersByAgentId.Count];
+            routersByAgentId.Values.CopyTo(clients, 0);
+        }
+
+        WsAgentClient owner = null;
+        for (int i = 0; i < clients.Length; i++)
+        {
+            var c = clients[i];
+            if (c != null && c.isActiveAndEnabled)
+            {
+                owner = c;
+                break;
+            }
+        }
+
+        if (owner == null) return;
+
+        await EnsureSharedConnected(owner);
+
+        var seen = new HashSet<string>();
+        for (int i = 0; i < clients.Length; i++)
+        {
+            var c = clients[i];
+            if (c == null || !c.isActiveAndEnabled || string.IsNullOrWhiteSpace(c.agentId)) continue;
+            if (!seen.Add(c.agentId)) continue;
+            await c.SendHelloForSelf();
+        }
+    }
+
+    static async Task SendJsonShared(object obj)
+    {
+        ClientWebSocket wsSnapshot;
+        CancellationTokenSource ctsSnapshot;
+
+        lock (SharedStateLock)
+        {
+            wsSnapshot = sharedWs;
+            ctsSnapshot = sharedCts;
+        }
+
+        if (wsSnapshot == null || ctsSnapshot == null || ctsSnapshot.IsCancellationRequested || wsSnapshot.State != WebSocketState.Open)
+            return;
+
+        string json;
+        try
+        {
+            json = JsonUtility.ToJson(obj);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("ToJson failed: " + e.Message);
+            return;
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(json);
+
+        await sharedSendLock.WaitAsync();
+        try
+        {
+            await wsSnapshot.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, ctsSnapshot.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            // ignore
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("SendAsync failed: " + e.Message + "\njson: " + json);
+            if (!(obj is OutMsg outMsg) || outMsg.type != "pong")
+            {
+                ScheduleSharedReconnect();
+            }
+        }
+        finally
+        {
+            sharedSendLock.Release();
+        }
     }
 
     void TryStartAnimationPump()
@@ -378,7 +702,6 @@ public class WsAgentClient : MonoBehaviour
             if (!animationQueue.TryDequeue(out var request))
                 break;
 
-            // 节流：保证任意两次播放开始时间至少间隔 animationDelaySeconds
             if (animationDelaySeconds > 0f && !float.IsNegativeInfinity(lastAnimationPlayTime))
             {
                 float elapsed = Time.time - lastAnimationPlayTime;
@@ -391,7 +714,6 @@ public class WsAgentClient : MonoBehaviour
                 playerHUD.PopStatus(request.target, request.delta);
             lastAnimationPlayTime = Time.time;
 
-            // 让出一帧，避免长队列在同一帧内吞掉过多时间
             yield return null;
         }
 
@@ -430,7 +752,6 @@ public class WsAgentClient : MonoBehaviour
             if (!locations.TryGetValue(name, out var list) || list == null || list.Count == 0)
                 return false;
 
-            // -1,-1 表示“跳过点”
             if (list[0].x == -1 && list[0].y == -1)
                 continue;
 
@@ -444,70 +765,59 @@ public class WsAgentClient : MonoBehaviour
         return true;
     }
 
-    // ✅ 仍然是 async，但内部做了 sendLock 防并发 + try/catch 防火并忘丢异常
-    async Task SendJson(object obj)
-    {
-        if (ws == null || ws.State != WebSocketState.Open || cts == null || cts.IsCancellationRequested) return;
-
-        string json;
-        try
-        {
-            json = JsonUtility.ToJson(obj);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("ToJson failed: " + e.Message);
-            return;
-        }
-
-        var bytes = Encoding.UTF8.GetBytes(json);
-
-        await sendLock.WaitAsync();
-        try
-        {
-            await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            // ignore
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("SendAsync failed: " + e.Message + "\njson: " + json);
-        }
-        finally
-        {
-            sendLock.Release();
-        }
-    }
-
     void OnDestroy()
     {
-        try { cts?.Cancel(); } catch { }
-        if (reconnectCoroutine != null)
+        if (animationPumpCoroutine != null)
         {
-            StopCoroutine(reconnectCoroutine);
-            reconnectCoroutine = null;
+            StopCoroutine(animationPumpCoroutine);
+            animationPumpCoroutine = null;
         }
 
+        UnregisterSelf();
+        ShutdownSharedConnectionIfNoRouters();
+    }
+
+    static void ShutdownSharedConnectionIfNoRouters()
+    {
+        ClientWebSocket wsToClose = null;
+        CancellationTokenSource ctsToCancel = null;
+
+        lock (SharedStateLock)
+        {
+            if (routersByAgentId.Count > 0) return;
+
+            if (sharedReconnectCoroutine != null && reconnectHost != null)
+            {
+                reconnectHost.StopCoroutine(sharedReconnectCoroutine);
+                sharedReconnectCoroutine = null;
+            }
+
+            wsToClose = sharedWs;
+            ctsToCancel = sharedCts;
+
+            sharedWs = null;
+            sharedCts = null;
+            sharedReceiveLoopRunning = false;
+            reconnectHost = null;
+        }
+
+        try { ctsToCancel?.Cancel(); } catch { }
         try
         {
-            if (ws != null)
+            if (wsToClose != null)
             {
-                if (ws.State == WebSocketState.Open)
+                if (wsToClose.State == WebSocketState.Open)
                 {
                     try
                     {
-                        ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "destroy", CancellationToken.None).Wait(100);
+                        wsToClose.CloseAsync(WebSocketCloseStatus.NormalClosure, "destroy", CancellationToken.None).Wait(100);
                     }
                     catch { }
                 }
-                ws.Dispose();
+                wsToClose.Dispose();
             }
         }
         catch { }
-
-        try { sendLock?.Dispose(); } catch { }
     }
 
     [Serializable]
@@ -519,6 +829,7 @@ public class WsAgentClient : MonoBehaviour
         public string action_id;
         public string cmd;
         public string target;
+        public string info;
         public float value;
 
         public static string Fix(string s)
@@ -587,4 +898,6 @@ public class WsAgentClient : MonoBehaviour
 
         return null;
     }
-}          
+}
+
+
