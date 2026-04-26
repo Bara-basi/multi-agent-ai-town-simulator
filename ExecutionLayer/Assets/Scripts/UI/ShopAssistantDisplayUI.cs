@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.TextCore.LowLevel;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Runtime UI for ShopAssistant inventory. It accepts market information from backend
@@ -28,7 +34,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     [SerializeField] [Range(1f, 12f)] private float frameBorderThickness = 5f;
     [SerializeField] [Range(0f, 14f)] private float frameBorderInset = 5f;
     [SerializeField] [Range(1f, 8f)] private float statusRowLineThickness = 2f;
-    [SerializeField] [Range(0.75f, 0.95f)] private float plusButtonAnchorX = 0.90f;
+    [SerializeField] [Range(0.75f, 0.95f)] private float plusButtonAnchorX = 0.92f;
 
     [Header("Mock Data")]
     [SerializeField] private int initialRound = 1;
@@ -39,9 +45,88 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     [SerializeField] private List<ProductImageMapping> productImageMappings = new();
     [SerializeField] private string productImageMappingCsvResourcePath = "ShopAssistant/ProductImageMappings";
 
+    [Header("Inventory Background")]
+    [SerializeField] private string inventoryBackgroundResourcePath = "Art/UI/UI/ShopAssistantUI/背景";
+    [SerializeField] private string inventoryBackgroundAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/背景.png";
+    [SerializeField] private string inventoryBackgroundSpriteName = "背景";
+
+    [Header("Inventory Decorations")]
+    [SerializeField] private string statusPanelResourcePath = "Art/UI/UI/ShopAssistantUI/状态面板";
+    [SerializeField] private string statusPanelAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/状态面板.png";
+    [SerializeField] private string statusPanelSpriteName = "状态面板";
+    [SerializeField] private string inventoryTitleResourcePath = "Art/UI/UI/ShopAssistantUI/商店库存标头";
+    [SerializeField] private string inventoryTitleAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/商店库存标头.png";
+    [SerializeField] private string inventoryTitleSpriteName = "商店库存标头";
+    [SerializeField] private string inventoryOpenButtonResourcePath = "Art/UI/UI/ShopAssistantUI/查看库存";
+    [SerializeField] private string inventoryOpenButtonAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/查看库存.png";
+    [SerializeField] private string inventoryOpenButtonSpriteName = "查看库存";
+    [SerializeField] private string inventoryStockButtonResourcePath = "Art/UI/UI/ShopAssistantUI/进货";
+    [SerializeField] private string inventoryStockButtonAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/进货.png";
+    [SerializeField] private string inventoryStockButtonSpriteName = "进货按钮";
+    [SerializeField] private string inventoryRightPanelResourcePath = "Art/UI/UI/ShopAssistantUI/右侧背景板";
+    [SerializeField] private string inventoryRightPanelAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/右侧背景板.png";
+    [SerializeField] private string inventoryRightPanelSpriteName = "右侧背景板";
+    [SerializeField] private string inventoryShopLogoResourcePath = "Art/UI/UI/ShopAssistantUI/商店图案";
+    [SerializeField] private string inventoryShopLogoAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/商店图案.png";
+    [SerializeField] private string inventoryShopLogoSpriteName = "商店图案";
+    [SerializeField] private string inventoryCoinFeatherResourcePath = "Art/UI/UI/ShopAssistantUI/金币和羽毛";
+    [SerializeField] private string inventoryCoinFeatherAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/金币和羽毛.png";
+    [SerializeField] private string inventoryCoinSpriteName = "金币";
+    [SerializeField] private string inventoryFeatherSpriteName = "羽毛";
+    [SerializeField] private string inventoryHintPanelResourcePath = "Art/UI/UI/ShopAssistantUI/右下提示背景板";
+    [SerializeField] private string inventoryHintPanelAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/右下提示背景板.png";
+    [SerializeField] private string inventoryHintPanelSpriteName = "右下提示背景板";
+    [SerializeField] private string inventoryProductCellBgResourcePath = "Art/UI/UI/ShopAssistantUI/商品背景板";
+    [SerializeField] private string inventoryProductCellBgAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/商品背景板.png";
+    [SerializeField] private string inventoryProductCellBgSpriteName = "商品背景板";
+    [SerializeField] private string inventoryNameBannerResourcePath = "Art/UI/UI/ShopAssistantUI/文字背景框";
+    [SerializeField] private string inventoryNameBannerAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/文字背景框.png";
+    [SerializeField] private string inventoryStepperButtonResourcePath = "Art/UI/UI/ShopAssistantUI/加减按钮";
+    [SerializeField] private string inventoryStepperButtonAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/加减按钮.png";
+    [SerializeField] private string inventoryStepperMinusSpriteName = "减号";
+    [SerializeField] private string inventoryStepperPlusSpriteName = "加号";
+    [SerializeField] private string inventoryCloseButtonResourcePath = "Art/UI/UI/ShopAssistantUI/关闭按钮";
+    [SerializeField] private string inventoryCloseButtonAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/关闭按钮.png";
+    [SerializeField] private string inventoryCloseButtonSpriteName = "关闭按钮";
+
+    [Header("Round Transition")]
+    [SerializeField] private string roundStartResourcePath = "Art/UI/UI/ShopAssistantUI/回合开始";
+    [SerializeField] private string roundStartAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/回合开始.png";
+    [SerializeField] private string roundStartSpriteName = "回合开始";
+    [SerializeField] private Key roundStartDebugKey = Key.B;
+    [SerializeField] private string roundEndResourcePath = "Art/UI/UI/ShopAssistantUI/回合结束";
+    [SerializeField] private string roundEndAssetPath = "Assets/Art/UI/UI/ShopAssistantUI/回合结束.png";
+    [SerializeField] private string roundEndSpriteName = "回合结束";
+    [SerializeField] private Key roundEndDebugKey = Key.E;
+    [SerializeField] private float roundStartIntroSeconds = 0.32f;
+    [SerializeField] private float roundStartHoldSeconds = 1.25f;
+    [SerializeField] private float roundStartOutroSeconds = 0.28f;
+    [SerializeField] private float roundEndCountSeconds = 0.62f;
+    [SerializeField] private string roundStartAudioResourcePath = "Audio/ShopAssistant/round_start_notice";
+    [SerializeField] private string roundEndAudioResourcePath = "Audio/ShopAssistant/round_end_notice";
+    [SerializeField] [Range(0f, 1f)] private float roundTransitionAudioVolume = 1f;
+
     private TMP_FontAsset uiFont;
     private TMP_FontAsset runtimeDynamicChineseFont;
     private GameObject inventoryOverlayRoot;
+    private GameObject roundStartOverlayRoot;
+    private RectTransform roundStartPanel;
+    private CanvasGroup roundStartCanvasGroup;
+    private CanvasGroup roundStartTextCanvasGroup;
+    private TextMeshProUGUI roundStartNumberText;
+    private GameObject roundEndOverlayRoot;
+    private RectTransform roundEndPanel;
+    private RectTransform roundEndIncomeRow;
+    private CanvasGroup roundEndCanvasGroup;
+    private CanvasGroup roundEndTextCanvasGroup;
+    private TextMeshProUGUI roundEndAmountText;
+    private AudioSource roundTransitionAudioSource;
+    private AudioClip roundStartAudioClip;
+    private AudioClip roundEndAudioClip;
+    private AudioClip fallbackRoundStartAudioClip;
+    private AudioClip fallbackRoundEndAudioClip;
+    private Coroutine roundStartRoutine;
+    private Coroutine roundEndRoutine;
     private Button openInventoryButton;
     private TextMeshProUGUI roundText;
     private TextMeshProUGUI moneyText;
@@ -49,7 +134,18 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     private RectTransform inventoryContentRoot;
     private readonly Dictionary<string, Sprite> productImageLookup = new();
     private readonly List<ProductMockData> marketProducts = new();
+    private static readonly Color StatusStaticTextColor = new(0.03f, 0.035f, 0.04f, 1f);
+    private static readonly Color StatusDynamicTextColor = new(0.08f, 0.23f, 0.49f, 1f);
+    private static readonly Color StatusSettlementTextColor = new(0.75f, 0.08f, 0.08f, 1f);
     private static string pendingMarketInformationJson;
+    private static readonly string[] ProductNameBannerSpriteCycle =
+    {
+        "文字背景框_蓝",
+        "文字背景框_褐",
+        "文字背景框_棕",
+        "文字背景框_紫",
+        "文字背景框_橙"
+    };
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -366,6 +462,26 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         BuildTopLeftStatusPanel(uiRoot.transform);
         BuildOpenInventoryButton(uiRoot.transform);
         BuildInventoryOverlay(uiRoot.transform);
+        BuildRoundStartTransition(uiRoot.transform);
+        BuildRoundEndTransition(uiRoot.transform);
+    }
+
+    private void Update()
+    {
+        var keyboard = Keyboard.current;
+        if (keyboard != null && keyboard[roundStartDebugKey].wasPressedThisFrame)
+        {
+            Debug.Log($"[ShopAssistantUI] Debug key {roundStartDebugKey} pressed; showing round start transition and playing notice sound.");
+            ShowRoundStartTransition(initialRound);
+        }
+
+        if (keyboard != null && keyboard[roundEndDebugKey].wasPressedThisFrame)
+        {
+            int debugAmount = UnityEngine.Random.Range(0, 10001);
+            int debugDelta = UnityEngine.Random.value >= 0.5f ? debugAmount : -debugAmount;
+            Debug.Log($"[ShopAssistantUI] Debug key {roundEndDebugKey} pressed; showing round end transition, today delta={debugDelta}.");
+            ShowRoundEndTransition(debugDelta);
+        }
     }
 
     private Canvas ResolveOrCreateHostCanvas()
@@ -482,48 +598,733 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
     private void BuildTopLeftStatusPanel(Transform parent)
     {
-        var panel = CreatePanel("TopLeft_StatusPanel", parent, paperColor, woodColor, new Vector2(430f, 205f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(30f, -28f));
+        var panelGo = new GameObject("TopLeft_StatusPanel", typeof(RectTransform), typeof(Image));
+        panelGo.transform.SetParent(parent, false);
+        var panel = (RectTransform)panelGo.transform;
+        panel.anchorMin = new Vector2(0f, 1f);
+        panel.anchorMax = new Vector2(0f, 1f);
         panel.pivot = new Vector2(0f, 1f);
-        AddFrameBorder(panel, frameBorderInset, new Color(0.55f, 0.39f, 0.12f, 1f), frameBorderThickness);
+        panel.sizeDelta = new Vector2(430f, 236f);
+        panel.anchoredPosition = new Vector2(30f, -28f);
 
-        var layout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
-        layout.padding = new RectOffset(14, 14, 14, 14);
-        layout.spacing = 5f;
-        layout.childControlWidth = true;
-        layout.childControlHeight = true;
-        layout.childForceExpandWidth = true;
-        layout.childForceExpandHeight = false;
+        var panelImage = panelGo.GetComponent<Image>();
+        var panelSprite = ResolveUiDecorationSprite(statusPanelResourcePath, statusPanelAssetPath, statusPanelSpriteName);
+        if (panelSprite != null)
+        {
+            panelImage.sprite = panelSprite;
+            panelImage.type = Image.Type.Simple;
+            panelImage.preserveAspect = true;
+            panelImage.color = Color.white;
+        }
+        else
+        {
+            panelImage.color = paperColor;
+            Debug.LogWarning("[ShopAssistantUI] Status panel sprite missing, fallback color panel is used.");
+        }
+        panelImage.raycastTarget = false;
 
-        var rowRound = CreateStatusRow("RowRound", panel, 80f);
-        var rowMoney = CreateStatusRow("RowMoney", panel, 42f);
-        var rowState = CreateStatusRow("RowState", panel, 42f);
+        var rowRound = CreateStatusTextArea("RowRound", panel, 0.635f, 0.855f);
+        var rowMoney = CreateStatusTextArea("RowMoney", panel, 0.385f, 0.575f);
+        var rowState = CreateStatusTextArea("RowState", panel, 0.125f, 0.315f);
 
-        roundText = CreateTMPText("Round", rowRound, "第 1 回合", 50, FontStyles.Bold, TextAlignmentOptions.Left);
-        moneyText = CreateTMPText("Money", rowMoney, "当前金钱: 1000", 28, FontStyles.Normal, TextAlignmentOptions.Left);
-        stateText = CreateTMPText("State", rowState, "游戏状态: 回合进行中", 28, FontStyles.Normal, TextAlignmentOptions.Left);
+        var roundPrefix = CreateStatusText("RoundPrefix", rowRound, "第", 35f, FontStyles.Bold, TextAlignmentOptions.Right, StatusStaticTextColor);
+        SetAnchoredRect(roundPrefix.rectTransform, 0.01f, 0f, 0.12f, 1f);
+        roundText = CreateStatusText("RoundValue", rowRound, "1", 35f, FontStyles.Bold, TextAlignmentOptions.Center, StatusDynamicTextColor);
+        ApplyTextFaceDilate(roundText, 0.42f);
+        SetAnchoredRect(roundText.rectTransform, 0.12f, 0f, 0.30f, 1f);
+        var roundSuffix = CreateStatusText("RoundSuffix", rowRound, "回合", 35f, FontStyles.Bold, TextAlignmentOptions.Left, StatusStaticTextColor);
+        SetAnchoredRect(roundSuffix.rectTransform, 0.30f, 0f, 0.53f, 1f);
 
-        StretchText(roundText);
-        StretchText(moneyText);
-        StretchText(stateText);
+        var moneyPrefix = CreateStatusText("MoneyPrefix", rowMoney, "当前金钱：", 27f, FontStyles.Bold, TextAlignmentOptions.Left, StatusStaticTextColor);
+        SetAnchoredRect(moneyPrefix.rectTransform, 0f, 0f, 0.44f, 1f);
+        moneyText = CreateStatusText("MoneyValue", rowMoney, "1000", 30f, FontStyles.Bold, TextAlignmentOptions.Left, StatusDynamicTextColor);
+        ApplyTextFaceDilate(moneyText, 0.42f);
+        SetAnchoredRect(moneyText.rectTransform, 0.44f, 0f, 1f, 1f);
+
+        var statePrefix = CreateStatusText("StatePrefix", rowState, "游戏状态：", 27f, FontStyles.Bold, TextAlignmentOptions.Left, StatusStaticTextColor);
+        SetAnchoredRect(statePrefix.rectTransform, 0f, 0f, 0.44f, 1f);
+        stateText = CreateStatusText("StateValue", rowState, "回合进行中", 30f, FontStyles.Bold, TextAlignmentOptions.Left, StatusDynamicTextColor);
+        ApplyTextFaceDilate(stateText, 0.42f);
+        SetAnchoredRect(stateText.rectTransform, 0.44f, 0f, 1f, 1f);
     }
 
     private void BuildOpenInventoryButton(Transform parent)
     {
-        var buttonRoot = CreateButtonLikePanel(
-            "Btn_OpenInventory",
-            parent,
-            new Vector2(220f, 72f),
-            new Vector2(1f, 0f),
-            new Vector2(1f, 0f),
-            new Vector2(-36f, 30f),
-            "查看库存",
-            34f
-        );
-
-        ((RectTransform)buttonRoot.transform).pivot = new Vector2(1f, 0f);
-
-        openInventoryButton = buttonRoot.GetComponent<Button>();
+        openInventoryButton = CreateOpenInventorySpriteButton(parent);
         openInventoryButton.onClick.AddListener(() => SetInventoryVisible(true));
+    }
+
+    private Button CreateOpenInventorySpriteButton(Transform parent)
+    {
+        var buttonRoot = new GameObject("Btn_OpenInventory", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonRoot.transform.SetParent(parent, false);
+
+        var rt = (RectTransform)buttonRoot.transform;
+        rt.anchorMin = new Vector2(1f, 0f);
+        rt.anchorMax = new Vector2(1f, 0f);
+        rt.pivot = new Vector2(1f, 0f);
+        rt.sizeDelta = new Vector2(220f, 72f);
+        rt.anchoredPosition = new Vector2(-36f, 30f);
+
+        var buttonImage = buttonRoot.GetComponent<Image>();
+        var buttonSprite = ResolveUiDecorationSprite(inventoryOpenButtonResourcePath, inventoryOpenButtonAssetPath, inventoryOpenButtonSpriteName);
+        if (buttonSprite != null)
+        {
+            buttonImage.sprite = buttonSprite;
+            buttonImage.type = Image.Type.Simple;
+            buttonImage.preserveAspect = true;
+            buttonImage.color = Color.white;
+        }
+        else
+        {
+            buttonImage.color = woodColor;
+            Debug.LogWarning("[ShopAssistantUI] Inventory open button sprite missing, fallback color button is used.");
+        }
+
+        var button = buttonRoot.GetComponent<Button>();
+        button.targetGraphic = buttonImage;
+        var colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = new Color(0.92f, 0.92f, 0.92f, 1f);
+        colors.disabledColor = new Color(1f, 1f, 1f, 0.6f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+        return button;
+    }
+
+    private void BuildRoundStartTransition(Transform parent)
+    {
+        roundStartOverlayRoot = new GameObject("RoundStartTransitionOverlay", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+        roundStartOverlayRoot.transform.SetParent(parent, false);
+        roundStartOverlayRoot.transform.SetAsLastSibling();
+
+        var overlayRt = (RectTransform)roundStartOverlayRoot.transform;
+        overlayRt.anchorMin = Vector2.zero;
+        overlayRt.anchorMax = Vector2.one;
+        overlayRt.offsetMin = Vector2.zero;
+        overlayRt.offsetMax = Vector2.zero;
+
+        roundStartCanvasGroup = roundStartOverlayRoot.GetComponent<CanvasGroup>();
+        roundStartCanvasGroup.alpha = 0f;
+        roundStartCanvasGroup.blocksRaycasts = false;
+        roundStartCanvasGroup.interactable = false;
+
+        roundTransitionAudioSource = roundStartOverlayRoot.AddComponent<AudioSource>();
+        roundTransitionAudioSource.playOnAwake = false;
+        roundTransitionAudioSource.loop = false;
+        roundTransitionAudioSource.spatialBlend = 0f;
+        roundTransitionAudioSource.ignoreListenerPause = true;
+        roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+        roundStartAudioClip = LoadRoundTransitionAudio(roundStartAudioResourcePath);
+        roundEndAudioClip = LoadRoundTransitionAudio(roundEndAudioResourcePath);
+        fallbackRoundStartAudioClip = CreateRoundTransitionClip("Runtime_RoundStartNotice", new[] { 659.25f, 880f, 1174.66f }, 0.105f, 0.018f);
+        fallbackRoundEndAudioClip = CreateRoundTransitionClip("Runtime_RoundEndNotice", new[] { 987.77f, 783.99f, 523.25f }, 0.12f, 0.018f);
+        PreloadRoundTransitionAudio(roundStartAudioClip);
+        PreloadRoundTransitionAudio(roundEndAudioClip);
+
+        var overlayImage = roundStartOverlayRoot.GetComponent<Image>();
+        overlayImage.color = new Color(0.02f, 0.025f, 0.035f, 0.28f);
+        overlayImage.raycastTarget = false;
+
+        var panelObj = new GameObject("RoundStartPanel", typeof(RectTransform), typeof(Image));
+        panelObj.transform.SetParent(roundStartOverlayRoot.transform, false);
+        roundStartPanel = (RectTransform)panelObj.transform;
+        roundStartPanel.anchorMin = new Vector2(0.5f, 0.5f);
+        roundStartPanel.anchorMax = new Vector2(0.5f, 0.5f);
+        roundStartPanel.pivot = new Vector2(0.5f, 0.5f);
+        roundStartPanel.sizeDelta = new Vector2(842f, 495f);
+        roundStartPanel.anchoredPosition = Vector2.zero;
+
+        var panelImage = panelObj.GetComponent<Image>();
+        var panelSprite = ResolveUiDecorationSprite(roundStartResourcePath, roundStartAssetPath, roundStartSpriteName);
+        if (panelSprite != null)
+        {
+            panelImage.sprite = panelSprite;
+            panelImage.type = Image.Type.Simple;
+            panelImage.preserveAspect = true;
+            panelImage.color = Color.white;
+        }
+        else
+        {
+            panelImage.color = new Color(1f, 1f, 1f, 0.96f);
+            Debug.LogWarning("[ShopAssistantUI] Round start sprite missing, fallback color panel is used.");
+        }
+        panelImage.raycastTarget = false;
+
+        var textRoot = new GameObject("RoundStartTextRoot", typeof(RectTransform), typeof(CanvasGroup));
+        textRoot.transform.SetParent(roundStartPanel, false);
+        var textRootRt = (RectTransform)textRoot.transform;
+        textRootRt.anchorMin = Vector2.zero;
+        textRootRt.anchorMax = Vector2.one;
+        textRootRt.offsetMin = Vector2.zero;
+        textRootRt.offsetMax = Vector2.zero;
+        roundStartTextCanvasGroup = textRoot.GetComponent<CanvasGroup>();
+        roundStartTextCanvasGroup.alpha = 0f;
+        roundStartTextCanvasGroup.blocksRaycasts = false;
+        roundStartTextCanvasGroup.interactable = false;
+
+        BuildRoundStartFirstLine(textRootRt);
+
+        var secondLine = CreateRoundTransitionText("BusinessStart", textRootRt, "开始营业", 55f, TextAlignmentOptions.Center, StatusStaticTextColor, 0.06f);
+        secondLine.characterSpacing = 5f;
+        secondLine.rectTransform.anchorMin = new Vector2(0.25f, 0.155f);
+        secondLine.rectTransform.anchorMax = new Vector2(0.75f, 0.305f);
+        secondLine.rectTransform.offsetMin = Vector2.zero;
+        secondLine.rectTransform.offsetMax = Vector2.zero;
+
+        roundStartOverlayRoot.SetActive(false);
+    }
+
+    private void BuildRoundEndTransition(Transform parent)
+    {
+        roundEndOverlayRoot = new GameObject("RoundEndTransitionOverlay", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+        roundEndOverlayRoot.transform.SetParent(parent, false);
+        roundEndOverlayRoot.transform.SetAsLastSibling();
+
+        var overlayRt = (RectTransform)roundEndOverlayRoot.transform;
+        overlayRt.anchorMin = Vector2.zero;
+        overlayRt.anchorMax = Vector2.one;
+        overlayRt.offsetMin = Vector2.zero;
+        overlayRt.offsetMax = Vector2.zero;
+
+        roundEndCanvasGroup = roundEndOverlayRoot.GetComponent<CanvasGroup>();
+        roundEndCanvasGroup.alpha = 0f;
+        roundEndCanvasGroup.blocksRaycasts = false;
+        roundEndCanvasGroup.interactable = false;
+
+        var overlayImage = roundEndOverlayRoot.GetComponent<Image>();
+        overlayImage.color = new Color(0.02f, 0.025f, 0.035f, 0.28f);
+        overlayImage.raycastTarget = false;
+
+        var panelObj = new GameObject("RoundEndPanel", typeof(RectTransform), typeof(Image));
+        panelObj.transform.SetParent(roundEndOverlayRoot.transform, false);
+        roundEndPanel = (RectTransform)panelObj.transform;
+        roundEndPanel.anchorMin = new Vector2(0.5f, 0.5f);
+        roundEndPanel.anchorMax = new Vector2(0.5f, 0.5f);
+        roundEndPanel.pivot = new Vector2(0.5f, 0.5f);
+        roundEndPanel.sizeDelta = new Vector2(842f, 299f);
+        roundEndPanel.anchoredPosition = Vector2.zero;
+
+        var panelImage = panelObj.GetComponent<Image>();
+        var panelSprite = ResolveUiDecorationSprite(roundEndResourcePath, roundEndAssetPath, roundEndSpriteName);
+        if (panelSprite != null)
+        {
+            panelImage.sprite = panelSprite;
+            panelImage.type = Image.Type.Simple;
+            panelImage.preserveAspect = true;
+            panelImage.color = Color.white;
+        }
+        else
+        {
+            panelImage.color = new Color(1f, 1f, 1f, 0.96f);
+            Debug.LogWarning("[ShopAssistantUI] Round end sprite missing, fallback color panel is used.");
+        }
+        panelImage.raycastTarget = false;
+
+        var textRoot = new GameObject("RoundEndTextRoot", typeof(RectTransform), typeof(CanvasGroup));
+        textRoot.transform.SetParent(roundEndPanel, false);
+        var textRootRt = (RectTransform)textRoot.transform;
+        textRootRt.anchorMin = Vector2.zero;
+        textRootRt.anchorMax = Vector2.one;
+        textRootRt.offsetMin = Vector2.zero;
+        textRootRt.offsetMax = Vector2.zero;
+        roundEndTextCanvasGroup = textRoot.GetComponent<CanvasGroup>();
+        roundEndTextCanvasGroup.alpha = 0f;
+        roundEndTextCanvasGroup.blocksRaycasts = false;
+        roundEndTextCanvasGroup.interactable = false;
+
+        BuildRoundEndIncomeRow(textRootRt);
+
+        roundEndOverlayRoot.SetActive(false);
+    }
+
+    private void BuildRoundEndIncomeRow(RectTransform parent)
+    {
+        var row = new GameObject("RoundEndIncomeRow", typeof(RectTransform));
+        row.transform.SetParent(parent, false);
+        roundEndIncomeRow = (RectTransform)row.transform;
+        roundEndIncomeRow.anchorMin = new Vector2(0.5f, 0.5f);
+        roundEndIncomeRow.anchorMax = new Vector2(0.5f, 0.5f);
+        roundEndIncomeRow.pivot = new Vector2(0.5f, 0.5f);
+        roundEndIncomeRow.sizeDelta = new Vector2(560f, 78f);
+        roundEndIncomeRow.anchoredPosition = new Vector2(34f, -72f);
+
+        var label = CreateRoundTransitionText("TodayLabel", roundEndIncomeRow, "今日", 48f, TextAlignmentOptions.Center, Color.black, 0.045f);
+        SetFixedRowItem(label.rectTransform, -170f, 130f, 72f);
+
+        var coinObj = new GameObject("CoinIcon", typeof(RectTransform), typeof(Image));
+        coinObj.transform.SetParent(roundEndIncomeRow, false);
+        var coinRt = (RectTransform)coinObj.transform;
+        SetLeftRowItem(coinRt, -78f, 58f, 58f);
+
+        var coinImage = coinObj.GetComponent<Image>();
+        var coinSprite = ResolveUiDecorationSprite(inventoryCoinFeatherResourcePath, inventoryCoinFeatherAssetPath, inventoryCoinSpriteName);
+        coinImage.sprite = coinSprite;
+        coinImage.type = Image.Type.Simple;
+        coinImage.preserveAspect = true;
+        coinImage.color = coinSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        coinImage.raycastTarget = false;
+
+        roundEndAmountText = CreateRoundTransitionText("TodayAmount", roundEndIncomeRow, "+0", 52f, TextAlignmentOptions.Left, new Color(0.08f, 0.50f, 0.16f, 1f), 0.06f);
+        roundEndAmountText.enableAutoSizing = true;
+        roundEndAmountText.fontSizeMin = 42f;
+        roundEndAmountText.fontSizeMax = 52f;
+        SetLeftRowItem(roundEndAmountText.rectTransform, -4f, 260f, 72f);
+    }
+
+    private AudioClip LoadRoundTransitionAudio(string resourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(resourcePath))
+        {
+            return null;
+        }
+
+        var clip = Resources.Load<AudioClip>(resourcePath.Trim());
+        if (clip == null)
+        {
+            Debug.LogWarning($"[ShopAssistantUI] Round transition audio not found: Resources/{resourcePath}");
+            clip = resourcePath.IndexOf("end", StringComparison.OrdinalIgnoreCase) >= 0
+                ? CreateRoundTransitionClip("Runtime_RoundEndNotice", new[] { 987.77f, 783.99f, 523.25f }, 0.12f, 0.018f)
+                : CreateRoundTransitionClip("Runtime_RoundStartNotice", new[] { 659.25f, 880f, 1174.66f }, 0.105f, 0.018f);
+        }
+
+        return clip;
+    }
+
+    private static AudioClip CreateRoundTransitionClip(string name, float[] frequencies, float noteSeconds, float gapSeconds)
+    {
+        const int sampleRate = 44100;
+        int noteSamples = Mathf.Max(1, Mathf.RoundToInt(sampleRate * noteSeconds));
+        int gapSamples = Mathf.Max(0, Mathf.RoundToInt(sampleRate * gapSeconds));
+        int totalSamples = frequencies.Length * (noteSamples + gapSamples);
+        var data = new float[totalSamples];
+        int writeIndex = 0;
+
+        for (int noteIndex = 0; noteIndex < frequencies.Length; noteIndex++)
+        {
+            float frequency = frequencies[noteIndex];
+            for (int i = 0; i < noteSamples; i++)
+            {
+                float t = i / (float)sampleRate;
+                float env = RoundTransitionEnvelope(t, noteSeconds);
+                float sample =
+                    Mathf.Sin(2f * Mathf.PI * frequency * t) * 0.68f +
+                    Mathf.Sin(2f * Mathf.PI * frequency * 2f * t) * 0.18f +
+                    Mathf.Sin(2f * Mathf.PI * frequency * 3f * t) * 0.07f;
+                data[writeIndex++] = sample * env * 0.55f;
+            }
+
+            writeIndex += gapSamples;
+        }
+
+        var clip = AudioClip.Create(name, totalSamples, 1, sampleRate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
+
+    private static float RoundTransitionEnvelope(float time, float duration)
+    {
+        const float attack = 0.01f;
+        const float release = 0.08f;
+        if (time < attack)
+        {
+            return Mathf.Clamp01(time / attack);
+        }
+
+        if (time > duration - release)
+        {
+            return Mathf.Clamp01((duration - time) / release);
+        }
+
+        return 1f;
+    }
+
+    private static void PreloadRoundTransitionAudio(AudioClip clip)
+    {
+        if (clip != null && clip.loadState == AudioDataLoadState.Unloaded)
+        {
+            clip.LoadAudioData();
+        }
+    }
+
+    private void BuildRoundStartFirstLine(RectTransform parent)
+    {
+        var row = new GameObject("RoundStartLine", typeof(RectTransform));
+        row.transform.SetParent(parent, false);
+        var rowRt = (RectTransform)row.transform;
+        rowRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rowRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rowRt.pivot = new Vector2(0.5f, 0.5f);
+        rowRt.sizeDelta = new Vector2(360f, 86f);
+        rowRt.anchoredPosition = new Vector2(0f, -24f);
+
+        var prefix = CreateRoundTransitionText("RoundPrefix", rowRt, "第", 64f, TextAlignmentOptions.Center, StatusStaticTextColor, 0.06f);
+        SetFixedRowItem(prefix.rectTransform, -118f, 54f, 86f);
+
+        roundStartNumberText = CreateRoundTransitionText("RoundNumber", rowRt, "128", 76f, TextAlignmentOptions.Center, StatusDynamicTextColor, 0.08f);
+        roundStartNumberText.enableAutoSizing = true;
+        roundStartNumberText.fontSizeMin = 58f;
+        roundStartNumberText.fontSizeMax = 76f;
+        SetFixedRowItem(roundStartNumberText.rectTransform, -24f, 132f, 86f);
+
+        var suffix = CreateRoundTransitionText("RoundSuffix", rowRt, "回合", 64f, TextAlignmentOptions.Center, StatusStaticTextColor, 0.06f);
+        SetFixedRowItem(suffix.rectTransform, 106f, 122f, 86f);
+    }
+
+    private TextMeshProUGUI CreateRoundTransitionText(
+        string name,
+        Transform parent,
+        string content,
+        float fontSize,
+        TextAlignmentOptions align,
+        Color color,
+        float faceDilate)
+    {
+        var text = CreateTMPText(name, parent, content, fontSize, FontStyles.Bold, align);
+        text.color = color;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.margin = Vector4.zero;
+        ApplyTextFaceDilate(text, faceDilate);
+        return text;
+    }
+
+    private static void AddFixedLayout(GameObject go, float preferredWidth)
+    {
+        var element = go.AddComponent<LayoutElement>();
+        element.minWidth = preferredWidth;
+        element.preferredWidth = preferredWidth;
+        element.flexibleWidth = 0f;
+    }
+
+    private static void SetFixedRowItem(RectTransform rt, float x, float width, float height)
+    {
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(width, height);
+        rt.anchoredPosition = new Vector2(x, 0f);
+    }
+
+    private static void SetLeftRowItem(RectTransform rt, float x, float width, float height)
+    {
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0f, 0.5f);
+        rt.sizeDelta = new Vector2(width, height);
+        rt.anchoredPosition = new Vector2(x, 0f);
+    }
+
+    public void ShowRoundStartTransition(int round)
+    {
+        if (roundStartOverlayRoot == null)
+        {
+            return;
+        }
+
+        if (roundStartRoutine != null)
+        {
+            StopCoroutine(roundStartRoutine);
+        }
+
+        if (roundEndRoutine != null)
+        {
+            StopCoroutine(roundEndRoutine);
+            roundEndRoutine = null;
+        }
+        if (roundEndOverlayRoot != null)
+        {
+            roundEndOverlayRoot.SetActive(false);
+        }
+
+        roundStartRoutine = StartCoroutine(PlayRoundStartTransition(Mathf.Clamp(round, 0, 999)));
+    }
+
+    public void ShowRoundEndTransition(int todayMoneyDelta)
+    {
+        if (roundEndOverlayRoot == null)
+        {
+            return;
+        }
+
+        if (roundEndRoutine != null)
+        {
+            StopCoroutine(roundEndRoutine);
+        }
+
+        if (roundStartRoutine != null)
+        {
+            StopCoroutine(roundStartRoutine);
+            roundStartRoutine = null;
+        }
+        if (roundStartOverlayRoot != null)
+        {
+            roundStartOverlayRoot.SetActive(false);
+        }
+
+        roundEndRoutine = StartCoroutine(PlayRoundEndTransition(Mathf.Clamp(todayMoneyDelta, -10000, 10000)));
+    }
+
+    public void PlayRoundEndNoticeSound()
+    {
+        PlayRoundTransitionSound(roundEndAudioClip, fallbackRoundEndAudioClip);
+    }
+
+    private IEnumerator PlayRoundStartTransition(int round)
+    {
+        roundStartOverlayRoot.SetActive(true);
+        roundStartOverlayRoot.transform.SetAsLastSibling();
+        PlayRoundTransitionSound(roundStartAudioClip, fallbackRoundStartAudioClip);
+
+        if (roundStartNumberText != null)
+        {
+            roundStartNumberText.text = round.ToString();
+        }
+
+        if (roundStartCanvasGroup != null)
+        {
+            roundStartCanvasGroup.alpha = 0f;
+        }
+
+        if (roundStartTextCanvasGroup != null)
+        {
+            roundStartTextCanvasGroup.alpha = 0f;
+        }
+
+        Vector2 startPos = new Vector2(0f, 46f);
+        Vector2 restPos = Vector2.zero;
+        roundStartPanel.anchoredPosition = startPos;
+        roundStartPanel.localScale = Vector3.one * 0.92f;
+
+        float intro = Mathf.Max(0.01f, roundStartIntroSeconds);
+        float elapsed = 0f;
+        while (elapsed < intro)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / intro);
+            float eased = EaseOutBack(t);
+            roundStartCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            roundStartTextCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.28f, 1f, t));
+            roundStartPanel.anchoredPosition = Vector2.LerpUnclamped(startPos, restPos, eased);
+            roundStartPanel.localScale = Vector3.one * Mathf.LerpUnclamped(0.92f, 1f, eased);
+            yield return null;
+        }
+
+        roundStartCanvasGroup.alpha = 1f;
+        roundStartTextCanvasGroup.alpha = 1f;
+        roundStartPanel.anchoredPosition = restPos;
+        roundStartPanel.localScale = Vector3.one;
+
+        float holdUntil = Time.unscaledTime + Mathf.Max(0f, roundStartHoldSeconds);
+        while (Time.unscaledTime < holdUntil)
+        {
+            yield return null;
+        }
+
+        float outro = Mathf.Max(0.01f, roundStartOutroSeconds);
+        elapsed = 0f;
+        while (elapsed < outro)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / outro);
+            float eased = t * t;
+            roundStartCanvasGroup.alpha = 1f - t;
+            roundStartPanel.anchoredPosition = Vector2.Lerp(restPos, new Vector2(0f, -28f), eased);
+            roundStartPanel.localScale = Vector3.one * Mathf.Lerp(1f, 0.985f, t);
+            yield return null;
+        }
+
+        roundStartCanvasGroup.alpha = 0f;
+        roundStartOverlayRoot.SetActive(false);
+        roundStartRoutine = null;
+    }
+
+    private IEnumerator PlayRoundEndTransition(int todayMoneyDelta)
+    {
+        roundEndOverlayRoot.SetActive(true);
+        roundEndOverlayRoot.transform.SetAsLastSibling();
+
+        int amount = Mathf.Abs(todayMoneyDelta);
+        bool isIncrease = todayMoneyDelta >= 0;
+        Color amountColor = isIncrease ? new Color(0.08f, 0.50f, 0.16f, 1f) : new Color(0.74f, 0.08f, 0.08f, 1f);
+        UpdateRoundEndAmountText(isIncrease, 0, amountColor);
+
+        if (roundEndCanvasGroup != null)
+        {
+            roundEndCanvasGroup.alpha = 0f;
+        }
+
+        if (roundEndTextCanvasGroup != null)
+        {
+            roundEndTextCanvasGroup.alpha = 0f;
+        }
+
+        Vector2 startPos = new Vector2(0f, 46f);
+        Vector2 restPos = Vector2.zero;
+        roundEndPanel.anchoredPosition = startPos;
+        roundEndPanel.localScale = Vector3.one * 0.92f;
+        if (roundEndIncomeRow != null)
+        {
+            roundEndIncomeRow.localScale = Vector3.one;
+        }
+
+        float intro = Mathf.Max(0.01f, roundStartIntroSeconds);
+        float elapsed = 0f;
+        while (elapsed < intro)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / intro);
+            float eased = EaseOutBack(t);
+            roundEndCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            roundEndTextCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.28f, 1f, t));
+            roundEndPanel.anchoredPosition = Vector2.LerpUnclamped(startPos, restPos, eased);
+            roundEndPanel.localScale = Vector3.one * Mathf.LerpUnclamped(0.92f, 1f, eased);
+            yield return null;
+        }
+
+        roundEndCanvasGroup.alpha = 1f;
+        roundEndTextCanvasGroup.alpha = 1f;
+        roundEndPanel.anchoredPosition = restPos;
+        roundEndPanel.localScale = Vector3.one;
+
+        float countDuration = Mathf.Max(0.01f, roundEndCountSeconds);
+        elapsed = 0f;
+        while (elapsed < countDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / countDuration);
+            int displayedAmount = Mathf.RoundToInt(Mathf.Lerp(0f, amount, Mathf.SmoothStep(0f, 1f, t)));
+            UpdateRoundEndAmountText(isIncrease, displayedAmount, amountColor);
+            yield return null;
+        }
+
+        UpdateRoundEndAmountText(isIncrease, amount, amountColor);
+
+        const float emphasizeSeconds = 0.22f;
+        elapsed = 0f;
+        while (elapsed < emphasizeSeconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / emphasizeSeconds);
+            float pulse = Mathf.Sin(t * Mathf.PI);
+            if (roundEndIncomeRow != null)
+            {
+                roundEndIncomeRow.localScale = Vector3.one * Mathf.Lerp(1f, 1.12f, pulse);
+            }
+            yield return null;
+        }
+
+        if (roundEndIncomeRow != null)
+        {
+            roundEndIncomeRow.localScale = Vector3.one;
+        }
+
+        float holdUntil = Time.unscaledTime + Mathf.Max(0f, roundStartHoldSeconds);
+        while (Time.unscaledTime < holdUntil)
+        {
+            yield return null;
+        }
+
+        float outro = Mathf.Max(0.01f, roundStartOutroSeconds);
+        elapsed = 0f;
+        while (elapsed < outro)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / outro);
+            float eased = t * t;
+            roundEndCanvasGroup.alpha = 1f - t;
+            roundEndPanel.anchoredPosition = Vector2.Lerp(restPos, new Vector2(0f, -28f), eased);
+            roundEndPanel.localScale = Vector3.one * Mathf.Lerp(1f, 0.985f, t);
+            yield return null;
+        }
+
+        roundEndCanvasGroup.alpha = 0f;
+        roundEndOverlayRoot.SetActive(false);
+        roundEndRoutine = null;
+    }
+
+    private void UpdateRoundEndAmountText(bool isIncrease, int amount, Color amountColor)
+    {
+        if (roundEndAmountText == null)
+        {
+            return;
+        }
+
+        roundEndAmountText.color = amountColor;
+        roundEndAmountText.text = $"{(isIncrease ? "+" : "-")}{Mathf.Clamp(amount, 0, 10000)}";
+    }
+
+    private void PlayRoundTransitionSound(AudioClip clip, AudioClip fallbackClip)
+    {
+        if (clip == null || roundTransitionAudioSource == null)
+        {
+            Debug.LogWarning($"[ShopAssistantUI] Round transition audio skipped. clip={(clip == null ? "null" : clip.name)}, source={(roundTransitionAudioSource == null ? "null" : "ok")}");
+            if (roundTransitionAudioSource != null && fallbackClip != null)
+            {
+                roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+                roundTransitionAudioSource.PlayOneShot(fallbackClip, 1f);
+                Debug.Log($"[ShopAssistantUI] Round transition fallback audio played: {fallbackClip.name}, volume={roundTransitionAudioVolume}");
+            }
+            return;
+        }
+
+        if (clip.loadState == AudioDataLoadState.Unloaded)
+        {
+            clip.LoadAudioData();
+        }
+
+        if (clip.loadState == AudioDataLoadState.Loading)
+        {
+            StartCoroutine(PlayRoundTransitionSoundWhenLoaded(clip, fallbackClip));
+            return;
+        }
+
+        if (clip.loadState != AudioDataLoadState.Loaded)
+        {
+            Debug.LogWarning($"[ShopAssistantUI] Round transition audio not ready: {clip.name}, loadState={clip.loadState}");
+            if (fallbackClip != null)
+            {
+                roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+                roundTransitionAudioSource.PlayOneShot(fallbackClip, 1f);
+                Debug.Log($"[ShopAssistantUI] Round transition fallback audio played: {fallbackClip.name}, volume={roundTransitionAudioVolume}");
+            }
+            return;
+        }
+
+        roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+        roundTransitionAudioSource.PlayOneShot(clip, 1f);
+        Debug.Log($"[ShopAssistantUI] Round transition audio played: {clip.name}, volume={roundTransitionAudioVolume}, listeners={FindObjectsOfType<AudioListener>(true).Length}");
+    }
+
+    private IEnumerator PlayRoundTransitionSoundWhenLoaded(AudioClip clip, AudioClip fallbackClip)
+    {
+        float deadline = Time.realtimeSinceStartup + 0.25f;
+        while (clip != null && clip.loadState == AudioDataLoadState.Loading && Time.realtimeSinceStartup < deadline)
+        {
+            yield return null;
+        }
+
+        if (clip != null && clip.loadState == AudioDataLoadState.Loaded && roundTransitionAudioSource != null)
+        {
+            roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+            roundTransitionAudioSource.PlayOneShot(clip, 1f);
+        }
+        else if (fallbackClip != null && roundTransitionAudioSource != null)
+        {
+            roundTransitionAudioSource.volume = roundTransitionAudioVolume;
+            roundTransitionAudioSource.PlayOneShot(fallbackClip, 1f);
+            Debug.Log($"[ShopAssistantUI] Round transition fallback audio played after load timeout: {fallbackClip.name}, volume={roundTransitionAudioVolume}");
+        }
+    }
+
+    private static float EaseOutBack(float t)
+    {
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1f;
+        float p = t - 1f;
+        return 1f + c3 * p * p * p + c1 * p * p;
     }
 
     private void BuildInventoryOverlay(Transform parent)
@@ -540,33 +1341,22 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         var overlayBg = inventoryOverlayRoot.GetComponent<Image>();
         overlayBg.color = new Color(0.17f, 0.12f, 0.04f, 0.45f);
 
-        var window = CreatePanel("InventoryWindow", inventoryOverlayRoot.transform, paperColor, woodColor, new Vector2(1520f, 860f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero);
-        AddFrameBorder(window, frameBorderInset + 1f, new Color(0.55f, 0.39f, 0.12f, 1f), frameBorderThickness + 1f);
+        // Match the background sprite aspect (1360x998) to avoid content overflowing visible paper area.
+        var window = CreatePanel("InventoryWindow", inventoryOverlayRoot.transform, paperColor, woodColor, new Vector2(1505, 1055), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero);
+        ApplyInventoryWindowBackground(window);
 
-        var title = CreateTMPText("Title", window, "商店库存", 54, FontStyles.Bold, TextAlignmentOptions.Center);
-        var titleRt = (RectTransform)title.transform;
-        titleRt.anchorMin = new Vector2(0f, 1f);
-        titleRt.anchorMax = new Vector2(1f, 1f);
-        titleRt.offsetMin = new Vector2(20f, -90f);
-        titleRt.offsetMax = new Vector2(-20f, -20f);
+        CreateInventoryTitleSprite(window);
 
-        var closeButton = CreateButtonLikePanel(
-            "Btn_CloseInventory",
-            window,
-            new Vector2(72f, 72f),
-            new Vector2(1f, 1f),
-            new Vector2(1f, 1f),
-            new Vector2(-20f, -20f),
-            "X",
-            38f
-        );
-        closeButton.GetComponent<Button>().onClick.AddListener(() => SetInventoryVisible(false));
+        var closeButton = CreateInventoryCloseSpriteButton(window);
+        closeButton.onClick.AddListener(() => SetInventoryVisible(false));
+
+        CreateInventoryRightPanelSprite(window);
 
         var scrollRoot = new GameObject("GoodsScroll", typeof(RectTransform), typeof(Image), typeof(Mask), typeof(ScrollRect));
         scrollRoot.transform.SetParent(window, false);
         var scrollRt = (RectTransform)scrollRoot.transform;
-        scrollRt.anchorMin = new Vector2(0.03f, 0.16f);
-        scrollRt.anchorMax = new Vector2(0.97f, 0.86f);
+        scrollRt.anchorMin = new Vector2(0.04f, 0.16f);
+        scrollRt.anchorMax = new Vector2(0.78f, 0.86f);
         scrollRt.offsetMin = Vector2.zero;
         scrollRt.offsetMax = Vector2.zero;
 
@@ -596,17 +1386,17 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         contentRt.sizeDelta = new Vector2(0f, 1200f);
 
         var grid = content.GetComponent<GridLayoutGroup>();
-        grid.cellSize = new Vector2(210f, 266f);
+        grid.cellSize = new Vector2(210f, 336f);
         grid.spacing = new Vector2(14f, 14f);
         grid.padding = new RectOffset(14, 14, 14, 14);
         grid.startAxis = GridLayoutGroup.Axis.Horizontal;
         grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
         grid.childAlignment = TextAnchor.UpperLeft;
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = 5;
+        grid.constraintCount = 4;
 
         var autoColumns = content.AddComponent<InventoryGridAutoColumns>();
-        autoColumns.Bind(grid, viewportRt, 4, 7);
+        autoColumns.Bind(grid, viewportRt, 4, 4);
 
         var fitter = content.GetComponent<ContentSizeFitter>();
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -622,17 +1412,8 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         RebuildProductCells();
 
-        var stockButton = CreateButtonLikePanel(
-            "Btn_StockIn",
-            window,
-            new Vector2(360f, 82f),
-            new Vector2(0.5f, 0f),
-            new Vector2(0.5f, 0f),
-            new Vector2(0f, 28f),
-            "进货！",
-            42f
-        );
-        stockButton.GetComponent<Button>().onClick.AddListener(() =>
+        var stockButton = CreateInventoryStockSpriteButton(window);
+        stockButton.onClick.AddListener(() =>
         {
             // Placeholder only: no data sync or gameplay effect.
             Debug.Log("[ShopAssistantUI] 进货按钮点击（占位逻辑）");
@@ -764,9 +1545,9 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
             marketProducts.AddRange(BuildMockProducts());
         }
 
-        foreach (var product in marketProducts)
+        for (int i = 0; i < marketProducts.Count; i++)
         {
-            CreateProductCell(inventoryContentRoot, product);
+            CreateProductCell(inventoryContentRoot, marketProducts[i], i);
         }
     }
 
@@ -792,7 +1573,8 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
                     item.name.Trim(),
                     RoundToInt(item.purchasePrice),
                     RoundToInt(item.quantity),
-                    RoundToInt(item.basePrice)));
+                    RoundToInt(item.basePrice),
+                    RoundToInt(item.quantity)));
             }
 
             return result;
@@ -809,20 +1591,39 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         return Mathf.Max(0, Mathf.RoundToInt(value));
     }
 
-    private void CreateProductCell(Transform content, ProductMockData data)
+    private void CreateProductCell(Transform content, ProductMockData data, int cellIndex)
     {
         var cell = CreatePanel(
             $"Cell_{data.productName}",
             content,
             new Color(1f, 1f, 1f, 0.45f),
             woodColor,
-            new Vector2(210f, 248f),
+            new Vector2(210f, 320f),
             new Vector2(0.5f, 0.5f),
             new Vector2(0.5f, 0.5f),
             Vector2.zero
         );
-        cell.GetComponent<Outline>().effectDistance = new Vector2(2f, -2f);
-        AddFrameBorder(cell, Mathf.Max(1f, frameBorderInset - 3f), new Color(0.55f, 0.39f, 0.12f, 0.95f), Mathf.Max(2f, frameBorderThickness - 1f));
+        var cellSprite = ResolveUiDecorationSprite(inventoryProductCellBgResourcePath, inventoryProductCellBgAssetPath, inventoryProductCellBgSpriteName);
+        var cellImage = cell.GetComponent<Image>();
+        if (cellSprite != null)
+        {
+            cellImage.sprite = cellSprite;
+            cellImage.type = Image.Type.Simple;
+            cellImage.preserveAspect = false;
+            cellImage.color = Color.white;
+        }
+
+        var cellOutline = cell.GetComponent<Outline>();
+        if (cellOutline != null)
+        {
+            cellOutline.enabled = false;
+        }
+
+        var cellShadow = cell.GetComponent<Shadow>();
+        if (cellShadow != null)
+        {
+            cellShadow.enabled = false;
+        }
 
         var iconBg = new GameObject("IconBG", typeof(RectTransform), typeof(Image));
         iconBg.transform.SetParent(cell, false);
@@ -832,7 +1633,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         iconRt.pivot = new Vector2(0.5f, 1f);
         iconRt.sizeDelta = new Vector2(0f, 76f);
         iconRt.anchoredPosition = new Vector2(0f, -14f);
-        iconBg.GetComponent<Image>().color = new Color(0.93f, 0.92f, 0.85f, 0.95f);
+        iconBg.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
 
         var iconImageObj = new GameObject("IconImage", typeof(RectTransform), typeof(Image));
         iconImageObj.transform.SetParent(iconBg.transform, false);
@@ -857,24 +1658,51 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
             StretchText(iconText, 0f);
         }
 
-        var nameText = CreateTMPText("Name", cell, data.productName, 26, FontStyles.Bold, TextAlignmentOptions.Center);
-        var nameRt = (RectTransform)nameText.transform;
-        nameRt.anchorMin = new Vector2(0.05f, 1f);
-        nameRt.anchorMax = new Vector2(0.95f, 1f);
-        nameRt.pivot = new Vector2(0.5f, 1f);
-        nameRt.sizeDelta = new Vector2(0f, 30f);
-        nameRt.anchoredPosition = new Vector2(0f, -96f);
+        var nameBannerObj = new GameObject("NameBanner", typeof(RectTransform), typeof(Image));
+        nameBannerObj.transform.SetParent(cell, false);
+        var nameBannerRt = (RectTransform)nameBannerObj.transform;
+        nameBannerRt.anchorMin = new Vector2(0.07f, 1f);
+        nameBannerRt.anchorMax = new Vector2(0.93f, 1f);
+        nameBannerRt.pivot = new Vector2(0.5f, 1f);
+        nameBannerRt.sizeDelta = new Vector2(0f, 34f);
+        nameBannerRt.anchoredPosition = new Vector2(0f, -95f);
+        var nameBannerImage = nameBannerObj.GetComponent<Image>();
+        var nameBannerSprite = ResolveProductNameBannerSprite(cellIndex);
+        nameBannerImage.sprite = nameBannerSprite;
+        nameBannerImage.type = Image.Type.Simple;
+        nameBannerImage.preserveAspect = false;
+        nameBannerImage.color = nameBannerSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        nameBannerImage.raycastTarget = false;
 
-        var buyPrice = CreateTMPText("BuyPrice", cell, $"进货价: {data.buyPrice}", 22, FontStyles.Normal, TextAlignmentOptions.Left);
+        var nameText = CreateTMPText("Name", nameBannerObj.transform, data.productName, 26, FontStyles.Bold, TextAlignmentOptions.Center);
+        nameText.color = Color.white;
+        var nameRt = (RectTransform)nameText.transform;
+        nameRt.anchorMin = Vector2.zero;
+        nameRt.anchorMax = Vector2.one;
+        nameRt.offsetMin = Vector2.zero;
+        nameRt.offsetMax = Vector2.zero;
+
+        var buyPrice = CreateTMPText("BuyPrice", cell, $"进货价：{data.buyPrice}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
         var buyRt = (RectTransform)buyPrice.transform;
         buyRt.anchorMin = new Vector2(0.08f, 1f);
         buyRt.anchorMax = new Vector2(0.92f, 1f);
         buyRt.pivot = new Vector2(0.5f, 1f);
         buyRt.sizeDelta = new Vector2(0f, 26f);
-        buyRt.anchoredPosition = new Vector2(0f, -128f);
+        buyRt.anchoredPosition = new Vector2(0f, -136f);
 
-        CreateStepperRow(cell, "进货\n数量", 0, -158f, data.buyCount);
-        CreateStepperRow(cell, "出售\n价格", 1, -204f, data.sellPrice);
+        CreateProductCellDivider(cell, -164f);
+        var currentStock = CreateTMPText("CurrentStock", cell, $"当前储量：{data.currentStock}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
+        var stockRt = (RectTransform)currentStock.transform;
+        stockRt.anchorMin = new Vector2(0.08f, 1f);
+        stockRt.anchorMax = new Vector2(0.92f, 1f);
+        stockRt.pivot = new Vector2(0.5f, 1f);
+        stockRt.sizeDelta = new Vector2(0f, 24f);
+        stockRt.anchoredPosition = new Vector2(0f, -186f);
+
+        CreateProductCellDivider(cell, -210f);
+
+        CreateStepperRow(cell, "进货\n数量", 0, -218f, data.buyCount);
+        CreateStepperRow(cell, "出售\n价格", 1, -264f, data.sellPrice);
     }
 
     private void CreateStepperRow(RectTransform parent, string label, int rowId, float topOffset, int initialValue)
@@ -888,22 +1716,27 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         rowRt.sizeDelta = new Vector2(0f, 38f);
         rowRt.anchoredPosition = new Vector2(0f, topOffset);
 
-        var lbl = CreateTMPText("Label", row.transform, $"{label}:", 20, FontStyles.Normal, TextAlignmentOptions.Left);
+        var lbl = CreateTMPText("Label", row.transform, $"{label}:", 20, FontStyles.Bold, TextAlignmentOptions.Left);
         var lblRt = (RectTransform)lbl.transform;
         lblRt.anchorMin = new Vector2(0f, 0f);
         lblRt.anchorMax = new Vector2(0.42f, 1f);
         lblRt.offsetMin = Vector2.zero;
         lblRt.offsetMax = Vector2.zero;
 
-        var minus = CreateMiniButton(row.transform, "-", new Vector2(0.45f, 0.5f));
+        var minus = CreateMiniButton(row.transform, "-", new Vector2(0.43f, 0.5f));
         var plus = CreateMiniButton(row.transform, "+", new Vector2(plusButtonAnchorX, 0.5f));
 
         var valueText = CreateTMPText("Value", row.transform, initialValue.ToString(), 22, FontStyles.Bold, TextAlignmentOptions.Center);
         var valueRt = (RectTransform)valueText.transform;
-        valueRt.anchorMin = new Vector2(0.58f, 0f);
-        valueRt.anchorMax = new Vector2(0.86f, 1f);
+        valueRt.anchorMin = new Vector2(0.54f, 0f);
+        valueRt.anchorMax = new Vector2(0.82f, 1f);
         valueRt.offsetMin = Vector2.zero;
         valueRt.offsetMax = Vector2.zero;
+        valueText.enableAutoSizing = true;
+        valueText.fontSizeMin = 16f;
+        valueText.fontSizeMax = 22f;
+        valueText.enableWordWrapping = false;
+        valueText.overflowMode = TextOverflowModes.Overflow;
 
         var stepper = row.AddComponent<ShopUiStepper>();
         stepper.Bind(minus, plus, valueText, initialValue);
@@ -921,14 +1754,56 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         rt.sizeDelta = new Vector2(30f, 30f);
 
         var img = btn.GetComponent<Image>();
-        img.color = woodEdgeFade;
+        var spriteName = sign == "+" ? inventoryStepperPlusSpriteName : inventoryStepperMinusSpriteName;
+        var btnSprite = ResolveUiDecorationSprite(inventoryStepperButtonResourcePath, inventoryStepperButtonAssetPath, spriteName);
+        if (btnSprite != null)
+        {
+            img.sprite = btnSprite;
+            img.type = Image.Type.Simple;
+            img.preserveAspect = true;
+            img.color = Color.white;
+        }
+        else
+        {
+            img.color = woodEdgeFade;
+        }
 
-        var text = CreateTMPText("Sign", btn.transform, sign, 24, FontStyles.Bold, TextAlignmentOptions.Center);
-        StretchText(text, 0f);
+        if (btnSprite == null)
+        {
+            var text = CreateTMPText("Sign", btn.transform, sign, 24, FontStyles.Bold, TextAlignmentOptions.Center);
+            StretchText(text, 0f);
+        }
 
         var button = btn.GetComponent<Button>();
         button.targetGraphic = img;
         return button;
+    }
+
+    private Sprite ResolveProductNameBannerSprite(int index)
+    {
+        if (ProductNameBannerSpriteCycle.Length == 0)
+        {
+            return null;
+        }
+
+        int spriteIndex = Mathf.Abs(index) % ProductNameBannerSpriteCycle.Length;
+        return ResolveUiDecorationSprite(inventoryNameBannerResourcePath, inventoryNameBannerAssetPath, ProductNameBannerSpriteCycle[spriteIndex]);
+    }
+
+    private void CreateProductCellDivider(RectTransform parent, float topOffset)
+    {
+        var divider = new GameObject("CellDivider", typeof(RectTransform), typeof(Image));
+        divider.transform.SetParent(parent, false);
+        var rt = (RectTransform)divider.transform;
+        rt.anchorMin = new Vector2(0.14f, 1f);
+        rt.anchorMax = new Vector2(0.86f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.sizeDelta = new Vector2(0f, 1f);
+        rt.anchoredPosition = new Vector2(0f, topOffset);
+
+        var image = divider.GetComponent<Image>();
+        image.color = new Color(0.42f, 0.30f, 0.15f, 0.22f);
+        image.raycastTarget = false;
     }
 
     private TextMeshProUGUI CreateTMPText(string name, Transform parent, string content, float fontSize, FontStyles style, TextAlignmentOptions align)
@@ -953,11 +1828,11 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     {
         return new List<ProductMockData>
         {
-            new("瓶装水", 4, 40, 5),
-            new("面包", 5, 60, 7),
-            new("烤肉", 13, 30, 15),
-            new("银戒指", 150, 10, 200),
-            new("黄金", 950, 10, 1000),
+            new("瓶装水", 4, 40, 5, 40),
+            new("面包", 5, 60, 7, 60),
+            new("烤肉", 13, 30, 15, 30),
+            new("银戒指", 150, 10, 200, 10),
+            new("黄金", 950, 10, 1000, 10),
         };
     }
 
@@ -976,9 +1851,69 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
     private void RefreshTopLeftStatus(int round, int money, string state)
     {
-        if (roundText != null) roundText.text = $"第 {round} 回合";
-        if (moneyText != null) moneyText.text = $"当前金钱: {money}";
-        if (stateText != null) stateText.text = $"游戏状态: {state}";
+        int clampedRound = Mathf.Clamp(round, 0, 999);
+        string stateValue = string.IsNullOrWhiteSpace(state) ? "回合进行中" : state.Trim();
+
+        if (roundText != null) roundText.text = clampedRound.ToString();
+        if (moneyText != null) moneyText.text = money.ToString();
+        if (stateText != null)
+        {
+            stateText.text = stateValue;
+            stateText.color = stateValue.IndexOf("结算", StringComparison.Ordinal) >= 0
+                ? StatusSettlementTextColor
+                : StatusDynamicTextColor;
+        }
+    }
+
+    private RectTransform CreateStatusTextArea(string name, RectTransform parent, float yMin, float yMax)
+    {
+        var row = new GameObject(name, typeof(RectTransform));
+        row.transform.SetParent(parent, false);
+        var rt = (RectTransform)row.transform;
+        rt.anchorMin = new Vector2(0.265f, yMin);
+        rt.anchorMax = new Vector2(0.955f, yMax);
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+        return rt;
+    }
+
+    private TextMeshProUGUI CreateStatusText(string name, RectTransform parent, string content, float fontSize, FontStyles style, TextAlignmentOptions align, Color color)
+    {
+        var text = CreateTMPText(name, parent, content, fontSize, style, align);
+        text.color = color;
+        text.enableWordWrapping = false;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.margin = Vector4.zero;
+        ApplyTextFaceDilate(text, 0.30f);
+        return text;
+    }
+
+    private static void ApplyTextFaceDilate(TextMeshProUGUI text, float dilate)
+    {
+        if (text == null || text.fontMaterial == null)
+        {
+            return;
+        }
+
+        var material = new Material(text.fontMaterial)
+        {
+            name = $"{text.fontMaterial.name}_Thick"
+        };
+
+        if (material.HasProperty(ShaderUtilities.ID_FaceDilate))
+        {
+            material.SetFloat(ShaderUtilities.ID_FaceDilate, dilate);
+        }
+
+        text.fontMaterial = material;
+    }
+
+    private static void SetAnchoredRect(RectTransform rt, float xMin, float yMin, float xMax, float yMax)
+    {
+        rt.anchorMin = new Vector2(xMin, yMin);
+        rt.anchorMax = new Vector2(xMax, yMax);
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
     }
 
     private RectTransform CreateStatusRow(string name, Transform parent, float height)
@@ -1050,6 +1985,370 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         image.raycastTarget = false;
     }
 
+    private void ApplyInventoryWindowBackground(RectTransform window)
+    {
+        if (window == null)
+        {
+            return;
+        }
+
+        var windowImage = window.GetComponent<Image>();
+        if (windowImage == null)
+        {
+            return;
+        }
+
+        var bgSprite = ResolveInventoryBackgroundSprite();
+        if (bgSprite == null)
+        {
+            windowImage.color = paperColor;
+            return;
+        }
+
+        windowImage.sprite = bgSprite;
+        windowImage.type = Image.Type.Simple;
+        windowImage.preserveAspect = true;
+        windowImage.color = Color.white;
+
+        var outline = window.GetComponent<Outline>();
+        if (outline != null)
+        {
+            outline.enabled = false;
+        }
+
+        var shadow = window.GetComponent<Shadow>();
+        if (shadow != null)
+        {
+            shadow.enabled = false;
+        }
+    }
+
+    private Sprite ResolveInventoryBackgroundSprite()
+    {
+        return ResolveUiDecorationSprite(inventoryBackgroundResourcePath, inventoryBackgroundAssetPath, inventoryBackgroundSpriteName);
+    }
+
+    private void CreateInventoryTitleSprite(RectTransform window)
+    {
+        var titleSprite = ResolveUiDecorationSprite(inventoryTitleResourcePath, inventoryTitleAssetPath, inventoryTitleSpriteName);
+        if (titleSprite == null)
+        {
+            Debug.LogWarning("[ShopAssistantUI] Inventory title sprite missing, title image will be hidden.");
+        }
+
+        var titleObj = new GameObject("TitleSprite", typeof(RectTransform), typeof(Image));
+        titleObj.transform.SetParent(window, false);
+
+        var titleRt = (RectTransform)titleObj.transform;
+        titleRt.anchorMin = new Vector2(0.5f, 1f);
+        titleRt.anchorMax = new Vector2(0.5f, 1f);
+        titleRt.pivot = new Vector2(0.5f, 1f);
+        titleRt.sizeDelta = new Vector2(520f, 88f);
+        titleRt.anchoredPosition = new Vector2(0f, -20f);
+
+        var titleImage = titleObj.GetComponent<Image>();
+        titleImage.sprite = titleSprite;
+        titleImage.type = Image.Type.Simple;
+        titleImage.preserveAspect = true;
+        titleImage.color = titleSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        titleImage.raycastTarget = false;
+    }
+
+    private Button CreateInventoryStockSpriteButton(RectTransform window)
+    {
+        var buttonRoot = new GameObject("Btn_StockIn", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonRoot.transform.SetParent(window, false);
+
+        var rt = (RectTransform)buttonRoot.transform;
+        rt.anchorMin = new Vector2(0.5f, 0f);
+        rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot = new Vector2(0.5f, 0f);
+        rt.sizeDelta = new Vector2(392f, 96f);
+        rt.anchoredPosition = new Vector2(0f, 20f);
+
+        var buttonImage = buttonRoot.GetComponent<Image>();
+        var buttonSprite = ResolveUiDecorationSprite(inventoryStockButtonResourcePath, inventoryStockButtonAssetPath, inventoryStockButtonSpriteName);
+        if (buttonSprite != null)
+        {
+            buttonImage.sprite = buttonSprite;
+            buttonImage.type = Image.Type.Simple;
+            buttonImage.preserveAspect = true;
+            buttonImage.color = Color.white;
+        }
+        else
+        {
+            buttonImage.color = woodColor;
+            Debug.LogWarning("[ShopAssistantUI] Inventory stock button sprite missing, fallback color button is used.");
+        }
+
+        var button = buttonRoot.GetComponent<Button>();
+        button.targetGraphic = buttonImage;
+        var colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = new Color(0.92f, 0.92f, 0.92f, 1f);
+        colors.disabledColor = new Color(1f, 1f, 1f, 0.6f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+        return button;
+    }
+
+    private Button CreateInventoryCloseSpriteButton(RectTransform window)
+    {
+        var buttonRoot = new GameObject("Btn_CloseInventory", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonRoot.transform.SetParent(window, false);
+
+        var rt = (RectTransform)buttonRoot.transform;
+        rt.anchorMin = new Vector2(1f, 1f);
+        rt.anchorMax = new Vector2(1f, 1f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(72f, 72f);
+        rt.anchoredPosition = new Vector2(-48f, -44f);
+
+        var buttonImage = buttonRoot.GetComponent<Image>();
+        var buttonSprite = ResolveUiDecorationSprite(inventoryCloseButtonResourcePath, inventoryCloseButtonAssetPath, inventoryCloseButtonSpriteName);
+        if (buttonSprite != null)
+        {
+            buttonImage.sprite = buttonSprite;
+            buttonImage.type = Image.Type.Simple;
+            buttonImage.preserveAspect = true;
+            buttonImage.color = Color.white;
+        }
+        else
+        {
+            buttonImage.color = woodColor;
+            Debug.LogWarning("[ShopAssistantUI] Inventory close button sprite missing, fallback color button is used.");
+        }
+
+        var button = buttonRoot.GetComponent<Button>();
+        button.targetGraphic = buttonImage;
+        var colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = new Color(0.92f, 0.92f, 0.92f, 1f);
+        colors.disabledColor = new Color(1f, 1f, 1f, 0.6f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+        return button;
+    }
+
+    private void CreateInventoryRightPanelSprite(RectTransform window)
+    {
+        var panelSprite = ResolveUiDecorationSprite(inventoryRightPanelResourcePath, inventoryRightPanelAssetPath, inventoryRightPanelSpriteName);
+        if (panelSprite == null)
+        {
+            Debug.LogWarning("[ShopAssistantUI] Inventory right panel sprite missing, right panel image will be hidden.");
+        }
+
+        var panelObj = new GameObject("RightInfoPanel", typeof(RectTransform), typeof(Image));
+        panelObj.transform.SetParent(window, false);
+
+        var panelRt = (RectTransform)panelObj.transform;
+        panelRt.anchorMin = new Vector2(0.745f, 0.11f);
+        panelRt.anchorMax = new Vector2(0.955f, 0.865f);
+        panelRt.offsetMin = Vector2.zero;
+        panelRt.offsetMax = Vector2.zero;
+
+        var panelImage = panelObj.GetComponent<Image>();
+        panelImage.sprite = panelSprite;
+        panelImage.type = Image.Type.Simple;
+        // Keep height controlled by anchors; preserveAspect shrinks visible height unexpectedly here.
+        panelImage.preserveAspect = false;
+        panelImage.color = panelSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        panelImage.raycastTarget = false;
+
+        BuildRightInfoPanelContent(panelRt);
+    }
+
+    private void BuildRightInfoPanelContent(RectTransform panelRt)
+    {
+        if (panelRt == null)
+        {
+            return;
+        }
+
+        var content = new GameObject("Content", typeof(RectTransform));
+        content.transform.SetParent(panelRt, false);
+        var contentRt = (RectTransform)content.transform;
+        contentRt.anchorMin = Vector2.zero;
+        contentRt.anchorMax = Vector2.one;
+        contentRt.offsetMin = new Vector2(12f, 18f);
+        contentRt.offsetMax = new Vector2(-16f, -18f);
+
+        var logoSprite = ResolveUiDecorationSprite(inventoryShopLogoResourcePath, inventoryShopLogoAssetPath, inventoryShopLogoSpriteName);
+        var logoObj = new GameObject("Logo", typeof(RectTransform), typeof(Image));
+        logoObj.transform.SetParent(contentRt, false);
+        var logoRt = (RectTransform)logoObj.transform;
+        logoRt.anchorMin = new Vector2(0.10f, 0.73f);
+        logoRt.anchorMax = new Vector2(0.90f, 0.96f);
+        logoRt.offsetMin = Vector2.zero;
+        logoRt.offsetMax = Vector2.zero;
+        var logoImage = logoObj.GetComponent<Image>();
+        logoImage.sprite = logoSprite;
+        logoImage.type = Image.Type.Simple;
+        logoImage.preserveAspect = true;
+        logoImage.color = logoSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        logoImage.raycastTarget = false;
+
+        var header = CreateTMPText("InfoHeader", contentRt, "-◆商店信息◆-", 26, FontStyles.Bold, TextAlignmentOptions.Center);
+        var headerRt = (RectTransform)header.transform;
+        headerRt.anchorMin = new Vector2(0.02f, 0.63f);
+        headerRt.anchorMax = new Vector2(0.98f, 0.70f);
+        headerRt.offsetMin = Vector2.zero;
+        headerRt.offsetMax = Vector2.zero;
+        header.enableWordWrapping = false;
+
+        var ownerText = CreateTMPText("OwnerText", contentRt, "店主：Barabasi", 23, FontStyles.Bold, TextAlignmentOptions.Left);
+        var ownerRt = (RectTransform)ownerText.transform;
+        ownerRt.anchorMin = new Vector2(0.08f, 0.57f);
+        ownerRt.anchorMax = new Vector2(0.94f, 0.62f);
+        ownerRt.offsetMin = Vector2.zero;
+        ownerRt.offsetMax = Vector2.zero;
+        ownerText.enableWordWrapping = false;
+
+        CreateRightPanelDivider(contentRt, 0.545f);
+
+        var moneyRow = new GameObject("MoneyRow", typeof(RectTransform));
+        moneyRow.transform.SetParent(contentRt, false);
+        var moneyRt = (RectTransform)moneyRow.transform;
+        moneyRt.anchorMin = new Vector2(0.08f, 0.485f);
+        moneyRt.anchorMax = new Vector2(0.94f, 0.535f);
+        moneyRt.offsetMin = Vector2.zero;
+        moneyRt.offsetMax = Vector2.zero;
+
+        var moneyTextLabel = CreateTMPText("MoneyText", moneyRt, "资金：1250", 23, FontStyles.Bold, TextAlignmentOptions.Left);
+        var moneyTextRt = (RectTransform)moneyTextLabel.transform;
+        moneyTextRt.anchorMin = new Vector2(0f, 0f);
+        moneyTextRt.anchorMax = new Vector2(0.80f, 1f);
+        moneyTextRt.offsetMin = Vector2.zero;
+        moneyTextRt.offsetMax = Vector2.zero;
+        moneyTextLabel.enableWordWrapping = false;
+
+        var coinSprite = ResolveUiDecorationSprite(inventoryCoinFeatherResourcePath, inventoryCoinFeatherAssetPath, inventoryCoinSpriteName);
+        var coinObj = new GameObject("CoinIcon", typeof(RectTransform), typeof(Image));
+        coinObj.transform.SetParent(moneyRt, false);
+        var coinRt = (RectTransform)coinObj.transform;
+        coinRt.anchorMin = new Vector2(0.84f, 0.15f);
+        coinRt.anchorMax = new Vector2(0.99f, 0.85f);
+        coinRt.offsetMin = Vector2.zero;
+        coinRt.offsetMax = Vector2.zero;
+        var coinImage = coinObj.GetComponent<Image>();
+        coinImage.sprite = coinSprite;
+        coinImage.type = Image.Type.Simple;
+        coinImage.preserveAspect = true;
+        coinImage.color = coinSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        coinImage.raycastTarget = false;
+
+        CreateRightPanelDivider(contentRt, 0.465f);
+
+        var openingLabel = CreateTMPText("OpeningLabel", contentRt, "营业时间：", 23, FontStyles.Bold, TextAlignmentOptions.Left);
+        var openingLabelRt = (RectTransform)openingLabel.transform;
+        openingLabelRt.anchorMin = new Vector2(0.08f, 0.41f);
+        openingLabelRt.anchorMax = new Vector2(0.94f, 0.46f);
+        openingLabelRt.offsetMin = Vector2.zero;
+        openingLabelRt.offsetMax = Vector2.zero;
+        openingLabel.enableWordWrapping = false;
+
+        var openingTime = CreateTMPText("OpeningTime", contentRt, "08:00 - 22:00", 23, FontStyles.Bold, TextAlignmentOptions.Left);
+        var openingTimeRt = (RectTransform)openingTime.transform;
+        openingTimeRt.anchorMin = new Vector2(0.08f, 0.36f);
+        openingTimeRt.anchorMax = new Vector2(0.94f, 0.41f);
+        openingTimeRt.offsetMin = Vector2.zero;
+        openingTimeRt.offsetMax = Vector2.zero;
+        openingTime.enableWordWrapping = false;
+
+        CreateRightPanelDivider(contentRt, 0.34f);
+
+        var hintSprite = ResolveUiDecorationSprite(inventoryHintPanelResourcePath, inventoryHintPanelAssetPath, inventoryHintPanelSpriteName);
+        var hintObj = new GameObject("HintPanel", typeof(RectTransform), typeof(Image));
+        hintObj.transform.SetParent(contentRt, false);
+        var hintRt = (RectTransform)hintObj.transform;
+        hintRt.anchorMin = new Vector2(0.06f, 0.02f);
+        hintRt.anchorMax = new Vector2(0.94f, 0.02f);
+        hintRt.pivot = new Vector2(0.5f, 0f);
+        hintRt.sizeDelta = new Vector2(0f, 10f);
+        var hintAspect = hintObj.AddComponent<AspectRatioFitter>();
+        hintAspect.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+        hintAspect.aspectRatio = 947f / 847f; // Match sprite rect ratio from meta.
+        var hintImage = hintObj.GetComponent<Image>();
+        hintImage.sprite = hintSprite;
+        hintImage.type = Image.Type.Simple;
+        hintImage.preserveAspect = true;
+        hintImage.color = hintSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        hintImage.raycastTarget = false;
+
+    }
+
+    private void CreateRightPanelDivider(RectTransform parent, float yAnchor)
+    {
+        var divider = new GameObject("Divider", typeof(RectTransform), typeof(Image));
+        divider.transform.SetParent(parent, false);
+        var dividerRt = (RectTransform)divider.transform;
+        dividerRt.anchorMin = new Vector2(0.14f, yAnchor);
+        dividerRt.anchorMax = new Vector2(0.86f, yAnchor);
+        dividerRt.sizeDelta = new Vector2(0f, 1f);
+        dividerRt.anchoredPosition = Vector2.zero;
+
+        var dividerImage = divider.GetComponent<Image>();
+        dividerImage.color = new Color(0.42f, 0.30f, 0.15f, 0.22f);
+        dividerImage.raycastTarget = false;
+    }
+
+    private Sprite ResolveUiDecorationSprite(string resourcePath, string assetPath, string spriteName)
+    {
+        if (!string.IsNullOrWhiteSpace(resourcePath))
+        {
+            var primaryName = string.IsNullOrWhiteSpace(spriteName) ? string.Empty : spriteName.Trim();
+            if (!string.IsNullOrEmpty(primaryName))
+            {
+                var sprite = ResolveSpriteFromResources(resourcePath.Trim(), primaryName, primaryName);
+                if (sprite != null)
+                {
+                    return sprite;
+                }
+            }
+            else
+            {
+                var sprites = Resources.LoadAll<Sprite>(resourcePath.Trim());
+                if (sprites != null && sprites.Length > 0)
+                {
+                    return sprites[0];
+                }
+            }
+        }
+
+#if UNITY_EDITOR
+        if (!string.IsNullOrWhiteSpace(assetPath))
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath.Trim());
+            foreach (var asset in assets)
+            {
+                var s = asset as Sprite;
+                if (s == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(spriteName))
+                {
+                    return s;
+                }
+
+                var trimmed = spriteName.Trim();
+                if (string.Equals(s.name, trimmed, StringComparison.Ordinal))
+                {
+                    return s;
+                }
+            }
+        }
+#endif
+
+        Debug.LogWarning($"[ShopAssistantUI] UI sprite not found: {assetPath} ({spriteName})");
+        return null;
+    }
+
     [Serializable]
     private sealed class MarketInformationPayload
     {
@@ -1084,13 +2383,15 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         public int buyPrice;
         public int buyCount;
         public int sellPrice;
+        public int currentStock;
 
-        public ProductMockData(string productName, int buyPrice, int buyCount, int sellPrice)
+        public ProductMockData(string productName, int buyPrice, int buyCount, int sellPrice, int currentStock)
         {
             this.productName = productName;
             this.buyPrice = buyPrice;
             this.buyCount = buyCount;
             this.sellPrice = sellPrice;
+            this.currentStock = currentStock;
         }
     }
 }
@@ -1146,6 +2447,8 @@ public sealed class ShopUiStepper : MonoBehaviour
 {
     private Button minusButton;
     private Button plusButton;
+    private ShopUiPressRepeater minusRepeater;
+    private ShopUiPressRepeater plusRepeater;
     private TextMeshProUGUI valueText;
     private int value;
 
@@ -1159,25 +2462,35 @@ public sealed class ShopUiStepper : MonoBehaviour
 
         if (minusButton != null)
         {
-            minusButton.onClick.AddListener(Decrease);
+            minusRepeater = minusButton.GetComponent<ShopUiPressRepeater>();
+            if (minusRepeater == null)
+            {
+                minusRepeater = minusButton.gameObject.AddComponent<ShopUiPressRepeater>();
+            }
+            minusRepeater.Bind(Decrease);
         }
 
         if (plusButton != null)
         {
-            plusButton.onClick.AddListener(Increase);
+            plusRepeater = plusButton.GetComponent<ShopUiPressRepeater>();
+            if (plusRepeater == null)
+            {
+                plusRepeater = plusButton.gameObject.AddComponent<ShopUiPressRepeater>();
+            }
+            plusRepeater.Bind(Increase);
         }
     }
 
     private void OnDestroy()
     {
-        if (minusButton != null)
+        if (minusRepeater != null)
         {
-            minusButton.onClick.RemoveListener(Decrease);
+            minusRepeater.Unbind();
         }
 
-        if (plusButton != null)
+        if (plusRepeater != null)
         {
-            plusButton.onClick.RemoveListener(Increase);
+            plusRepeater.Unbind();
         }
     }
 
@@ -1202,4 +2515,83 @@ public sealed class ShopUiStepper : MonoBehaviour
     }
 }
 
+public sealed class ShopUiPressRepeater : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerClickHandler
+{
+    [SerializeField] private float holdDelaySeconds = 0.35f;
+    [SerializeField] private float fastModeHoldSeconds = 1.5f;
+    [SerializeField] private float repeatIntervalSeconds = 0.06f;
+    [SerializeField] private int fastRepeatStepCount = 5;
 
+    private Action onStep;
+    private bool isHolding;
+    private bool hasRepeated;
+    private float holdElapsed;
+    private float repeatElapsed;
+
+    public void Bind(Action onStepAction)
+    {
+        onStep = onStepAction;
+    }
+
+    public void Unbind()
+    {
+        onStep = null;
+        isHolding = false;
+        hasRepeated = false;
+        holdElapsed = 0f;
+        repeatElapsed = 0f;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        isHolding = true;
+        hasRepeated = false;
+        holdElapsed = 0f;
+        repeatElapsed = 0f;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        isHolding = false;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isHolding = false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Keep single-click as exactly one step; suppress extra click when hold-repeat already triggered.
+        if (!hasRepeated)
+        {
+            onStep?.Invoke();
+        }
+    }
+
+    private void Update()
+    {
+        if (!isHolding || onStep == null)
+        {
+            return;
+        }
+
+        holdElapsed += Time.unscaledDeltaTime;
+        if (holdElapsed < holdDelaySeconds)
+        {
+            return;
+        }
+
+        hasRepeated = true;
+        repeatElapsed += Time.unscaledDeltaTime;
+        while (repeatElapsed >= repeatIntervalSeconds)
+        {
+            repeatElapsed -= repeatIntervalSeconds;
+            int stepCount = holdElapsed >= fastModeHoldSeconds ? Mathf.Max(1, fastRepeatStepCount) : 1;
+            for (int i = 0; i < stepCount; i++)
+            {
+                onStep.Invoke();
+            }
+        }
+    }
+}

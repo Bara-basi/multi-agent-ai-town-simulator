@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: cf0598b4f0018764cb27f24be5e9085c
+guid: 5c6e0a28c9eceb54eb7a13a46c9a5f10
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -361543748622313544
-    second: "\u5173\u95ED\u6309\u94AE_0"
+      213: 5432218266709958146
+    second: "\u5173\u95ED\u6309\u94AE 1_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -47,8 +47,8 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
-  spriteExtrude: 1
-  spriteMeshType: 1
+  spriteExtrude: 2
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u5173\u95ED\u6309\u94AE_0"
+      name: "\u5173\u95ED\u6309\u94AE"
       rect:
         serializedVersion: 2
-        x: 211
-        y: 205
-        width: 854
-        height: 874
+        x: 231
+        y: 271
+        width: 788
+        height: 776
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8b79a9c40e98bfaf0800000000000000
-      internalID: -361543748622313544
+      spriteID: 20e92a18bbd136b40800000000000000
+      internalID: 5432218266709958146
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ca5fe08485af7714fa1f83a6f25dbc1d
+    spriteID: deecc9de23b32bd43958b69a7cec6ec9
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u5173\u95ED\u6309\u94AE_0": -361543748622313544
+      "\u5173\u95ED\u6309\u94AE": 5432218266709958146
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

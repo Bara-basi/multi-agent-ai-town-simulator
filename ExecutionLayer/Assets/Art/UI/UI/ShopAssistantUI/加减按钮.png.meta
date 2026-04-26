@@ -47,7 +47,7 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
-  spriteExtrude: 1
+  spriteExtrude: 2
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u52A0\u51CF\u6309\u94AE_0"
+      name: "\u51CF\u53F7"
       rect:
         serializedVersion: 2
         x: 515
@@ -108,7 +108,7 @@ TextureImporter:
         width: 271
         height: 287
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -122,7 +122,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u52A0\u51CF\u6309\u94AE_1"
+      name: "\u52A0\u53F7"
       rect:
         serializedVersion: 2
         x: 984
@@ -130,7 +130,7 @@ TextureImporter:
         width: 274
         height: 287
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,8 +157,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u52A0\u51CF\u6309\u94AE_0": 374075795819011301
-      "\u52A0\u51CF\u6309\u94AE_1": -1463467799
+      "\u51CF\u53F7": 374075795819011301
+      "\u52A0\u53F7": -1463467799
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
