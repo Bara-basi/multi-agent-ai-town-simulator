@@ -341,7 +341,26 @@ public class WsAgentClient : MonoBehaviour
 
     static void DispatchIncoming(string json)
     {
-        WSMsg msg = null;
+        if (!TryParseIncoming(json, out var msg))
+        {
+            return;
+        }
+
+        if (TryHandleSharedMessage(msg)) return;
+        if (TryHandleBroadcastMessage(msg)) return;
+
+        if (!TryGetRouter(msg.agent_id, out var router))
+        {
+            SendRouterNotFound(msg);
+            return;
+        }
+
+        router.HandleRoutedMessage(msg);
+    }
+
+    static bool TryParseIncoming(string json, out WSMsg msg)
+    {
+        msg = null;
 
         try
         {
@@ -350,70 +369,87 @@ public class WsAgentClient : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogWarning("Json parse failed: " + e.Message + "\nraw: " + json);
-            return;
+            return false;
         }
 
-        if (msg == null || string.IsNullOrEmpty(msg.type))
+        if (msg != null && !string.IsNullOrEmpty(msg.type))
         {
-            Debug.LogWarning("WS message empty or missing type");
-            return;
+            return true;
         }
 
-        if (msg.type == "hello_ack")
+        Debug.LogWarning("WS message empty or missing type");
+        return false;
+    }
+
+    static bool TryHandleSharedMessage(WSMsg msg)
+    {
+        switch (msg.type)
         {
-            return;
+            case "hello_ack":
+                return true;
+            case "ping":
+                _ = SendJsonShared(new OutMsg { type = "pong" });
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static bool TryHandleBroadcastMessage(WSMsg msg)
+    {
+        if (msg.type != "information" || msg.target != "market" || !string.IsNullOrWhiteSpace(msg.agent_id))
+        {
+            return false;
         }
 
-        if (msg.type == "ping")
+        foreach (var router in SnapshotRouters())
         {
-            _ = SendJsonShared(new OutMsg { type = "pong" });
-            return;
-        }
-
-        if (msg.type == "information" && msg.target == "market" && string.IsNullOrWhiteSpace(msg.agent_id))
-        {
-            WsAgentClient[] routers;
-            lock (SharedStateLock)
+            if (router == null) continue;
+            router.mainThreadQueue.Enqueue(() =>
             {
-                routers = new WsAgentClient[routersByAgentId.Count];
-                routersByAgentId.Values.CopyTo(routers, 0);
-            }
-
-            foreach (var r in routers)
-            {
-                if (r == null) continue;
-                r.mainThreadQueue.Enqueue(() =>
-                {
-                    ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
-                });
-            }
-
-            return;
+                ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
+            });
         }
 
-        WsAgentClient router = null;
+        return true;
+    }
+
+    static WsAgentClient[] SnapshotRouters()
+    {
         lock (SharedStateLock)
         {
-            if (!string.IsNullOrEmpty(msg.agent_id))
-                routersByAgentId.TryGetValue(msg.agent_id, out router);
+            var routers = new WsAgentClient[routersByAgentId.Count];
+            routersByAgentId.Values.CopyTo(routers, 0);
+            return routers;
         }
+    }
 
-        if (router == null)
+    static bool TryGetRouter(string routedAgentId, out WsAgentClient router)
+    {
+        router = null;
+        if (string.IsNullOrEmpty(routedAgentId))
         {
-            Debug.LogWarning("No WsAgentClient router for agent_id=" + msg.agent_id);
-            _ = SendJsonShared(new OutMsg
-            {
-                type = "complete",
-                cmd = msg.cmd,
-                agent_id = msg.agent_id,
-                action_id = msg.action_id,
-                status = "error",
-                error = "agent router not found"
-            });
-            return;
+            return false;
         }
 
-        router.HandleRoutedMessage(msg);
+        lock (SharedStateLock)
+        {
+            return routersByAgentId.TryGetValue(routedAgentId, out router);
+        }
+    }
+
+    static void SendRouterNotFound(WSMsg msg)
+    {
+        Debug.LogWarning("No WsAgentClient router for agent_id=" + msg.agent_id);
+        _ = SendJsonShared(new OutMsg
+        {
+            type = "complete",
+            cmd = msg.cmd,
+            agent_id = msg.agent_id,
+            action_id = msg.action_id,
+            status = "error",
+            error = "agent router not found"
+        });
     }
 
     void HandleRoutedMessage(WSMsg msg)
@@ -424,6 +460,55 @@ public class WsAgentClient : MonoBehaviour
             {
                 ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
             });
+            return;
+        }
+
+        if (msg.type == "command" && (msg.cmd == "round_start" || msg.cmd == "round_end"))
+        {
+            _ = SendJsonShared(new OutMsg
+            {
+                type = "ack",
+                cmd = msg.cmd,
+                agent_id = msg.agent_id,
+                action_id = msg.action_id
+            });
+
+            mainThreadQueue.Enqueue(() =>
+            {
+                var ui = FindObjectOfType<ShopAssistantDisplayUI>();
+                if (ui == null)
+                {
+                    _ = SendJsonShared(new OutMsg
+                    {
+                        type = "complete",
+                        cmd = msg.cmd,
+                        agent_id = msg.agent_id,
+                        action_id = msg.action_id,
+                        status = "error",
+                        error = "ShopAssistantDisplayUI not found"
+                    });
+                    return;
+                }
+
+                if (msg.cmd == "round_start")
+                {
+                    ui.ShowRoundStartTransitionThenOpenInventory(Mathf.RoundToInt(msg.value), 1f);
+                }
+                else
+                {
+                    ui.ShowRoundEndTransition(Mathf.RoundToInt(msg.value));
+                }
+
+                _ = SendJsonShared(new OutMsg
+                {
+                    type = "complete",
+                    cmd = msg.cmd,
+                    agent_id = msg.agent_id,
+                    action_id = msg.action_id,
+                    status = "ok"
+                });
+            });
+
             return;
         }
 
@@ -689,6 +774,35 @@ public class WsAgentClient : MonoBehaviour
         }
     }
 
+    public static void SubmitShopStockUpdateJson(string infoJson)
+    {
+        WsAgentClient sender = null;
+        lock (SharedStateLock)
+        {
+            foreach (var candidate in routersByAgentId.Values)
+            {
+                if (candidate != null && candidate.isActiveAndEnabled)
+                {
+                    sender = candidate;
+                    break;
+                }
+            }
+        }
+
+        if (sender == null)
+        {
+            Debug.LogWarning("Shop stock update skipped: no active WsAgentClient router.");
+            return;
+        }
+
+        _ = SendJsonShared(new OutMsgShopStockUpdate
+        {
+            type = "shop_stock_update",
+            agent_id = sender.agentId,
+            info = string.IsNullOrEmpty(infoJson) ? "{}" : infoJson
+        });
+    }
+
     void TryStartAnimationPump()
     {
         if (animationPumpCoroutine == null)
@@ -855,6 +969,14 @@ public class WsAgentClient : MonoBehaviour
         public string type;
         public string agent_id;
         public string[] cap;
+    }
+
+    [Serializable]
+    class OutMsgShopStockUpdate
+    {
+        public string type;
+        public string agent_id;
+        public string info;
     }
 
     List<string> FindPath(string start, string goal, Dictionary<string, List<string>> graph)

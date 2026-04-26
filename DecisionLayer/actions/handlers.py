@@ -14,6 +14,7 @@ from config.config import (
     THIRST_DECAY_PER_DAY,
 )
 from model.state.actionResult import ActionResult
+from runtime.load_data import HUMAN_SHOP_ASSISTANT_ACTOR_ID
 
 SkillHandler = Callable[[Any, Any], ActionResult]
 _SKILL_REGISTRY: Dict[str, SkillHandler] = {}
@@ -24,6 +25,10 @@ def _norm_item_id(raw: Any) -> str:
     if not s:
         return ""
     return s if s.startswith("item:") else f"item:{s}"
+
+
+def _shop_assistant_actor(ctx: Any):
+    return ctx.world.actors.get(HUMAN_SHOP_ASSISTANT_ACTOR_ID)
 
 
 def register_skill(skill_name: str):
@@ -151,6 +156,9 @@ async def handle_buy(ctx, act) -> ActionResult:
     actor.inventory.add(item_id, qty)
     actor.money -= total
     market.remove_stock(item_id, qty)
+    shop_assistant = _shop_assistant_actor(ctx)
+    if shop_assistant is not None:
+        shop_assistant.money += total
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
     return ActionResult(status=True, message=f"你购买了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
@@ -165,14 +173,24 @@ async def handle_sell(ctx, act) -> ActionResult:
     qty = int(getattr(act, "qty", 1) or 1)
     market = ctx.world.locations["location:market"].market()
     unit_price = market.price(item_id) * ctx.world.catalog.item(item_id).sell_ratio
+    total = unit_price * qty
+    shop_assistant = _shop_assistant_actor(ctx)
+    if shop_assistant is not None and float(getattr(shop_assistant, "money", 0.0) or 0.0) < total:
+        return ActionResult(
+            status=False,
+            code="FORBIDDEN",
+            message=f"动作sell执行失败,商店资金不足，无法收购 `{ctx.world.catalog.item(item_id).name}` x {qty}",
+        )
 
-    result = await ctx.world.client.sell(actor.id, qty, unit_price * qty, ctx.catalog.loc(actor.location).name)
+    result = await ctx.world.client.sell(actor.id, qty, total, ctx.catalog.loc(actor.location).name)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 出售{ctx.world.catalog.item(item_id).name}")
 
     actor.inventory.remove(item_id, qty)
-    actor.money += unit_price * qty
+    actor.money += total
     market.add_stock(item_id, qty)
+    if shop_assistant is not None:
+        shop_assistant.money -= total
     fatigue = actor.attrs.get("fatigue")
     fatigue.current -= FATIGUE_DECAY_PER_ACTION
     return ActionResult(status=True, message=f"你出售了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")

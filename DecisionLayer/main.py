@@ -220,7 +220,11 @@ async def run(on_update=None) -> None:
         locations=location_states,
         client=client,
     )
+    bind_world = getattr(client, "bind_world", None)
+    if callable(bind_world):
+        bind_world(world)
     _bootstrap_world_state(world)
+    await world.run_player_market_phase(advance_prices=False)
 
     executor = ActionExecutor(
         world=world,

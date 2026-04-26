@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -32,6 +32,31 @@ class NoopActionLayerClient:
     async def show_animation(self, actor_id, animation, value) -> bool:
         _ = actor_id, animation, value
         return True
+
+    async def round_start(self, actor_id, round_index: int) -> bool:
+        _ = actor_id, round_index
+        return True
+
+    async def round_end(self, actor_id, today_money_delta: int) -> bool:
+        _ = actor_id, today_money_delta
+        return True
+
+    async def send_information(
+        self,
+        target: str,
+        info: Dict[str, Any],
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        _ = target, info, agent_id, ws_conn
+        return True
+
+    async def wait_shop_stock_update(self, timeout_s: float = 120.0) -> Dict[str, Any] | None:
+        _ = timeout_s
+        return None
+
+    def clear_stock_updates(self) -> None:
+        return None
 
     async def consume(self, actor_id, item, value) -> bool:
         _ = actor_id, item, value

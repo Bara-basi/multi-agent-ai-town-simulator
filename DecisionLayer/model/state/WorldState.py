@@ -15,6 +15,7 @@ from model.definitions.Catalog import Catalog
 from model.definitions.LocationDef import LocationId
 from model.state.ActorState import ActorState
 from model.state.LocationState import LocationState
+from runtime.load_data import HUMAN_SHOP_ASSISTANT_ACTOR_ID
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class WorldState:
     actors: Dict[ActorId, ActorState] = field(default_factory=dict)
     locations: Dict[LocationId, LocationState] = field(default_factory=dict)
     client: Any = None
+    shop_assistant_last_money: float = 1000.0
 
     def actor(self, actor_id: ActorId) -> ActorState:
         return self.actors[actor_id]
@@ -45,16 +47,25 @@ class WorldState:
         return self.actor(actor_id=actor_id).money >= WIN_CONDITION
     async def update_day(self) -> None:
         """尝试进入下一回合，如果有任何 Actor 仍在执行，则不推进。"""
-        for actor in self.actors.values():
+        for actor_id, actor in self.actors.items():
+            if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+                continue
             if actor.running:
                 return
 
-        # 顺序：day+1 -> 地点刷新 -> 角色刷新 -> 随机事件判定 -> 日结算 hook。
+        human_actor = self.actors.get(HUMAN_SHOP_ASSISTANT_ACTOR_ID)
+        if human_actor is not None and self.client is not None:
+            today_income = int(round(float(human_actor.money) - float(self.shop_assistant_last_money)))
+            round_end = getattr(self.client, "round_end", None)
+            if callable(round_end):
+                result = round_end(HUMAN_SHOP_ASSISTANT_ACTOR_ID, today_income)
+                if inspect.isawaitable(result):
+                    await result
+            self.shop_assistant_last_money = float(human_actor.money)
+
+        # 顺序：回合结束动画 -> day+1 -> 玩家商店阶段 -> 角色刷新 -> 随机事件判定 -> 日结算 hook。
         self.day += 1
-        for location in self.locations.values():
-            update_fn = getattr(location, "update_day", None)
-            if callable(update_fn):
-                update_fn(self.catalog)
+        await self.run_player_market_phase(advance_prices=True)
         for actor in self.actors.values():
             actor.update_day()
 
@@ -64,6 +75,24 @@ class WorldState:
             ON_DAILY_SETTLE("on_end_of_round", event=self.events, actor=self.actor(actor_id))
 
         logger.info("回合结算成功,进入回合%s", self.day)
+
+    async def run_player_market_phase(self, *, advance_prices: bool) -> None:
+        human_actor = self.actors.get(HUMAN_SHOP_ASSISTANT_ACTOR_ID)
+        for location in self.locations.values():
+            update_fn = getattr(location, "update_day", None)
+            if callable(update_fn):
+                result = update_fn(
+                    self.catalog,
+                    client=self.client,
+                    day=self.day,
+                    human_actor=human_actor,
+                    actors=self.actors.values(),
+                    advance_prices=advance_prices,
+                )
+                if inspect.isawaitable(result):
+                    await result
+        if human_actor is not None:
+            self.shop_assistant_last_money = float(human_actor.money)
 
     def invalidate_intel_for_locked_item(self, item_short_id: str) -> None:
         target = str(item_short_id or "").strip()

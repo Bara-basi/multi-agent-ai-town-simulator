@@ -25,7 +25,13 @@ class WebSocketServer:
     connections: Dict[str, Any] = field(default_factory=dict)
     actor2agent: Dict[str, str] = field(default_factory=dict)
     pending: Dict[str, asyncio.Future] = field(default_factory=dict)
+    stock_updates: asyncio.Queue = field(default_factory=asyncio.Queue)
     _market_info_cache: Dict[str, Any] | None = None
+    world: Any = None
+
+    def bind_world(self, world: Any) -> None:
+        self.world = world
+        self._market_info_cache = None
 
     async def _handle(self, ws):
         agent_id = None
@@ -74,6 +80,15 @@ class WebSocketServer:
                     if fut and not fut.done():
                         fut.set_result(msg)
                     logger.info("[%s] complete action=%s status=%s", msg.get("agent_id"), action_id, msg.get("status"))
+                elif msg_type == "shop_stock_update":
+                    info = msg.get("info")
+                    try:
+                        msg["parsed_info"] = json.loads(info) if isinstance(info, str) else info
+                    except Exception:
+                        logger.exception("Failed to parse shop stock update info: %s", info)
+                        msg["parsed_info"] = info
+                    await self.stock_updates.put(msg)
+                    logger.info("[%s] shop stock update received", msg.get("agent_id"))
                 else:
                     logger.warning("Unknown message type: %s", msg_type)
         except Exception as e:
@@ -181,6 +196,25 @@ class WebSocketServer:
             return None
 
     def market_information(self) -> Dict[str, Any]:
+        if self.world is not None:
+            try:
+                market = self.world.locations["location:market"].market()
+                items = []
+                for item_id, item_def in self.world.catalog.items.items():
+                    items.append(
+                        {
+                            "itemId": item_id,
+                            "name": item_def.name,
+                            "purchasePrice": float(item_def.base_price),
+                            "basePrice": float(market.price(item_id)),
+                            "quantity": int(market.stock(item_id)),
+                            "priceLocked": bool(market.is_price_locked_today(item_id)),
+                        }
+                    )
+                return {"items": items}
+            except Exception:
+                logger.exception("Failed to build market info from world state; falling back to csv")
+
         if self._market_info_cache is not None:
             return self._market_info_cache
 
@@ -222,6 +256,7 @@ class WebSocketServer:
                         "purchasePrice": purchase_price,
                         "basePrice": base_price,
                         "quantity": quantity,
+                        "priceLocked": False,
                     }
                 )
         except Exception:
@@ -296,6 +331,32 @@ class WebSocketServer:
             value=value,
         )
         return self.is_success(result)
+
+    async def round_start(self, actor_id, round_index: int) -> bool:
+        agent_id = self.actor2agent.get(actor_id)
+        if not agent_id:
+            logger.warning("Actor is not bound to agent_id: %s", actor_id)
+            return False
+        result = await self.send(
+            type="command",
+            agent_id=agent_id,
+            cmd="round_start",
+            value=max(0, int(round_index)),
+        )
+        return self.is_success(result)
+
+    async def round_end(self, actor_id, today_money_delta: int) -> bool:
+        agent_id = self.actor2agent.get(actor_id)
+        if not agent_id:
+            logger.warning("Actor is not bound to agent_id: %s", actor_id)
+            return False
+        result = await self.send(
+            type="command",
+            agent_id=agent_id,
+            cmd="round_end",
+            value=max(-10000, min(10000, int(today_money_delta))),
+        )
+        return self.is_success(result)
     
     async def consume(self, actor_id,item,value):
         result = await self.show_animation(actor_id=actor_id, animation="item", value=-value)
@@ -335,6 +396,20 @@ class WebSocketServer:
 
     def connected_ids(self):
         return list(self.connections.keys())
+
+    async def wait_shop_stock_update(self, timeout_s: float = 120.0) -> Dict[str, Any] | None:
+        try:
+            return await asyncio.wait_for(self.stock_updates.get(), timeout=timeout_s)
+        except asyncio.TimeoutError:
+            logger.warning("Timed out waiting for shop stock update")
+            return None
+
+    def clear_stock_updates(self) -> None:
+        while True:
+            try:
+                self.stock_updates.get_nowait()
+            except asyncio.QueueEmpty:
+                break
 
 
 async def _wait_agent_connected(server: WebSocketServer, agent_id: str, timeout_s: float = 60.0) -> None:
@@ -398,9 +473,45 @@ async def run_smoke_test_main() -> None:
         await server.stop()
 
 
+async def main() -> None:
+    """
+    Start the websocket server, send market info, start a round, then wait for shop stock submission.
+    Unity's WsAgentClient default agent_id is "Agent-1"; override with WS_TEST_AGENT_ID if needed.
+    """
+    catalog = load_catalog()
+    actor_id = next(iter(catalog.actors.keys()))
+    agent_id = os.getenv("WS_TEST_AGENT_ID", "Agent-1")
+    server = WebSocketServer(actor2agent={actor_id: agent_id})
+
+    logger.info("Shop stock update test starting. actor_id=%s agent_id=%s", actor_id, agent_id)
+    logger.info("Start Unity client and wait for hello with agent_id=%s", agent_id)
+
+    await server.start()
+    try:
+        await _wait_agent_connected(server, agent_id, timeout_s=120.0)
+        logger.info("Agent connected: %s", agent_id)
+
+        logger.info("[TEST] sending market information")
+        await server.send_information(
+            target="market",
+            info=server.market_information(),
+            agent_id=agent_id,
+        )
+
+        logger.info("[TEST] sending round_start")
+        await server.round_start(actor_id=actor_id, round_index=1)
+
+        logger.info("[TEST] waiting for player stock submission")
+        update = await server.wait_shop_stock_update(timeout_s=300.0)
+        if update is not None:
+            print(json.dumps(update.get("parsed_info", update), ensure_ascii=False, indent=2))
+    finally:
+        await server.stop()
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
     )
-    asyncio.run(run_smoke_test_main())
+    asyncio.run(main())

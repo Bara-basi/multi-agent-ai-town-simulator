@@ -17,6 +17,8 @@ using UnityEditor;
 /// </summary>
 public sealed class ShopAssistantDisplayUI : MonoBehaviour
 {
+    private const int FirstRoundIndex = 1;
+
     [Header("Display")]
     [SerializeField] [Range(0, 7)] private int targetDisplay = 5; // Display6 (0-based index)
     [SerializeField] private string displayCanvasNameHint = "Display6";
@@ -127,13 +129,21 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
     private AudioClip fallbackRoundEndAudioClip;
     private Coroutine roundStartRoutine;
     private Coroutine roundEndRoutine;
+    private Coroutine openInventoryAfterRoundStartRoutine;
     private Button openInventoryButton;
+    private Button stockInventoryButton;
     private TextMeshProUGUI roundText;
     private TextMeshProUGUI moneyText;
+    private TextMeshProUGUI rightPanelMoneyText;
     private TextMeshProUGUI stateText;
     private RectTransform inventoryContentRoot;
+    private readonly ShopAssistantPlayerModel playerModel = new();
     private readonly Dictionary<string, Sprite> productImageLookup = new();
-    private readonly List<ProductMockData> marketProducts = new();
+    private readonly List<ShopProductModel> marketProducts = new();
+    private readonly List<ShopUiStepper> inventorySteppers = new();
+    private bool canEditStockPlan;
+    private int currentRoundValue;
+    private string currentGameStateValue;
     private static readonly Color StatusStaticTextColor = new(0.03f, 0.035f, 0.04f, 1f);
     private static readonly Color StatusDynamicTextColor = new(0.08f, 0.23f, 0.49f, 1f);
     private static readonly Color StatusSettlementTextColor = new(0.75f, 0.08f, 0.08f, 1f);
@@ -1042,12 +1052,55 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         roundStartRoutine = StartCoroutine(PlayRoundStartTransition(Mathf.Clamp(round, 0, 999)));
     }
 
+    public void ShowRoundStartTransitionThenOpenInventory(int round, float extraDelaySeconds = 1f)
+    {
+        BeginStockPlanningRound(round);
+        ShowRoundStartTransition(round);
+
+        if (openInventoryAfterRoundStartRoutine != null)
+        {
+            StopCoroutine(openInventoryAfterRoundStartRoutine);
+        }
+
+        openInventoryAfterRoundStartRoutine = StartCoroutine(OpenInventoryAfterRoundStart(extraDelaySeconds));
+    }
+
+    private IEnumerator OpenInventoryAfterRoundStart(float extraDelaySeconds)
+    {
+        float waitSeconds =
+            Mathf.Max(0f, roundStartIntroSeconds) +
+            Mathf.Max(0f, roundStartHoldSeconds) +
+            Mathf.Max(0f, roundStartOutroSeconds) +
+            Mathf.Max(0f, extraDelaySeconds);
+
+        yield return new WaitForSecondsRealtime(waitSeconds);
+        OpenInventory();
+        openInventoryAfterRoundStartRoutine = null;
+    }
+
+    private void BeginStockPlanningRound(int round)
+    {
+        if (Mathf.Max(FirstRoundIndex, round) == FirstRoundIndex)
+        {
+            foreach (var product in marketProducts)
+            {
+                product.PurchaseQuantity = 0;
+            }
+        }
+
+        canEditStockPlan = true;
+        RebuildProductCells();
+        RefreshStockControlsInteractable();
+    }
+
     public void ShowRoundEndTransition(int todayMoneyDelta)
     {
         if (roundEndOverlayRoot == null)
         {
             return;
         }
+
+        playerModel.TodayIncome = Mathf.Clamp(todayMoneyDelta, -10000, 10000);
 
         if (roundEndRoutine != null)
         {
@@ -1064,7 +1117,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
             roundStartOverlayRoot.SetActive(false);
         }
 
-        roundEndRoutine = StartCoroutine(PlayRoundEndTransition(Mathf.Clamp(todayMoneyDelta, -10000, 10000)));
+        roundEndRoutine = StartCoroutine(PlayRoundEndTransition(playerModel.TodayIncome));
     }
 
     public void PlayRoundEndNoticeSound()
@@ -1412,12 +1465,9 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         RebuildProductCells();
 
-        var stockButton = CreateInventoryStockSpriteButton(window);
-        stockButton.onClick.AddListener(() =>
-        {
-            // Placeholder only: no data sync or gameplay effect.
-            Debug.Log("[ShopAssistantUI] 进货按钮点击（占位逻辑）");
-        });
+        stockInventoryButton = CreateInventoryStockSpriteButton(window);
+        stockInventoryButton.onClick.AddListener(SubmitStockPlan);
+        RefreshStockControlsInteractable();
 
         SetInventoryVisible(false);
     }
@@ -1531,6 +1581,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
             return;
         }
 
+        inventorySteppers.Clear();
         for (int i = inventoryContentRoot.childCount - 1; i >= 0; i--)
         {
             var child = inventoryContentRoot.GetChild(i);
@@ -1551,17 +1602,17 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         }
     }
 
-    private List<ProductMockData> ParseMarketInformation(string infoJson)
+    private List<ShopProductModel> ParseMarketInformation(string infoJson)
     {
         try
         {
             var payload = JsonUtility.FromJson<MarketInformationPayload>(infoJson);
             if (payload == null || payload.items == null || payload.items.Length == 0)
             {
-                return new List<ProductMockData>();
+                return new List<ShopProductModel>();
             }
 
-            var result = new List<ProductMockData>(payload.items.Length);
+            var result = new List<ShopProductModel>(payload.items.Length);
             foreach (var item in payload.items)
             {
                 if (item == null || string.IsNullOrWhiteSpace(item.name))
@@ -1569,12 +1620,23 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
                     continue;
                 }
 
-                result.Add(new ProductMockData(
+                int cachedPurchaseQuantity = 0;
+                foreach (var existing in marketProducts)
+                {
+                    if (existing != null && string.Equals(existing.ProductName, item.name.Trim(), StringComparison.Ordinal))
+                    {
+                        cachedPurchaseQuantity = existing.PurchaseQuantity;
+                        break;
+                    }
+                }
+
+                result.Add(new ShopProductModel(
                     item.name.Trim(),
                     RoundToInt(item.purchasePrice),
-                    RoundToInt(item.quantity),
+                    cachedPurchaseQuantity,
                     RoundToInt(item.basePrice),
-                    RoundToInt(item.quantity)));
+                    RoundToInt(item.quantity),
+                    item.priceLocked));
             }
 
             return result;
@@ -1582,7 +1644,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogWarning($"[ShopAssistantUI] Failed to parse market info json: {e.Message}");
-            return new List<ProductMockData>();
+            return new List<ShopProductModel>();
         }
     }
 
@@ -1591,10 +1653,12 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         return Mathf.Max(0, Mathf.RoundToInt(value));
     }
 
-    private void CreateProductCell(Transform content, ProductMockData data, int cellIndex)
+    private void CreateProductCell(Transform content, ShopProductModel data, int cellIndex)
     {
+        data.TodayPrice = Mathf.Min(data.TodayPrice, MaxProductTodayPrice(data));
+
         var cell = CreatePanel(
-            $"Cell_{data.productName}",
+            $"Cell_{data.ProductName}",
             content,
             new Color(1f, 1f, 1f, 0.45f),
             woodColor,
@@ -1645,7 +1709,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         var iconImage = iconImageObj.GetComponent<Image>();
         iconImage.preserveAspect = true;
 
-        var sprite = TryResolveProductSprite(data.productName);
+        var sprite = TryResolveProductSprite(data.ProductName);
         if (sprite != null)
         {
             iconImage.sprite = sprite;
@@ -1674,7 +1738,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         nameBannerImage.color = nameBannerSprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
         nameBannerImage.raycastTarget = false;
 
-        var nameText = CreateTMPText("Name", nameBannerObj.transform, data.productName, 26, FontStyles.Bold, TextAlignmentOptions.Center);
+        var nameText = CreateTMPText("Name", nameBannerObj.transform, data.ProductName, 26, FontStyles.Bold, TextAlignmentOptions.Center);
         nameText.color = Color.white;
         var nameRt = (RectTransform)nameText.transform;
         nameRt.anchorMin = Vector2.zero;
@@ -1682,7 +1746,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         nameRt.offsetMin = Vector2.zero;
         nameRt.offsetMax = Vector2.zero;
 
-        var buyPrice = CreateTMPText("BuyPrice", cell, $"进货价：{data.buyPrice}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
+        var buyPrice = CreateTMPText("BuyPrice", cell, $"进货价：{data.CostPrice}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
         var buyRt = (RectTransform)buyPrice.transform;
         buyRt.anchorMin = new Vector2(0.08f, 1f);
         buyRt.anchorMax = new Vector2(0.92f, 1f);
@@ -1691,7 +1755,7 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         buyRt.anchoredPosition = new Vector2(0f, -136f);
 
         CreateProductCellDivider(cell, -164f);
-        var currentStock = CreateTMPText("CurrentStock", cell, $"当前储量：{data.currentStock}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
+        var currentStock = CreateTMPText("CurrentStock", cell, $"当前储量：{data.CurrentStock}", 22, FontStyles.Bold, TextAlignmentOptions.Left);
         var stockRt = (RectTransform)currentStock.transform;
         stockRt.anchorMin = new Vector2(0.08f, 1f);
         stockRt.anchorMax = new Vector2(0.92f, 1f);
@@ -1701,11 +1765,42 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         CreateProductCellDivider(cell, -210f);
 
-        CreateStepperRow(cell, "进货\n数量", 0, -218f, data.buyCount);
-        CreateStepperRow(cell, "出售\n价格", 1, -264f, data.sellPrice);
+        CreateStepperRow(
+            cell,
+            "进货\n数量",
+            0,
+            -218f,
+            data.PurchaseQuantity,
+            value =>
+            {
+                data.PurchaseQuantity = value;
+                RefreshMoneyDisplays();
+                RefreshStockControlsInteractable();
+            },
+            () => CanAffordAdditionalPurchase(data));
+
+        CreateStepperRow(
+            cell,
+            "出售\n价格",
+            1,
+            -264f,
+            data.TodayPrice,
+            value => data.TodayPrice = value,
+            null,
+            MaxProductTodayPrice(data),
+            !data.PriceLocked);
     }
 
-    private void CreateStepperRow(RectTransform parent, string label, int rowId, float topOffset, int initialValue)
+    private void CreateStepperRow(
+        RectTransform parent,
+        string label,
+        int rowId,
+        float topOffset,
+        int initialValue,
+        Action<int> onValueChanged = null,
+        Func<bool> canIncrease = null,
+        int maxValue = int.MaxValue,
+        bool canEditThisStepper = true)
     {
         var row = new GameObject($"StepperRow_{rowId}", typeof(RectTransform));
         row.transform.SetParent(parent, false);
@@ -1739,7 +1834,9 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         valueText.overflowMode = TextOverflowModes.Overflow;
 
         var stepper = row.AddComponent<ShopUiStepper>();
-        stepper.Bind(minus, plus, valueText, initialValue);
+        stepper.Bind(minus, plus, valueText, initialValue, onValueChanged, canIncrease, maxValue, canEditThisStepper);
+        stepper.SetInteractable(canEditStockPlan);
+        inventorySteppers.Add(stepper);
     }
 
     private Button CreateMiniButton(Transform parent, string sign, Vector2 anchor)
@@ -1776,6 +1873,14 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
 
         var button = btn.GetComponent<Button>();
         button.targetGraphic = img;
+        var colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = new Color(0.78f, 0.78f, 0.78f, 1f);
+        colors.disabledColor = new Color(0.78f, 0.78f, 0.78f, 1f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
         return button;
     }
 
@@ -1824,9 +1929,9 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         return txt;
     }
 
-    private List<ProductMockData> BuildMockProducts()
+    private List<ShopProductModel> BuildMockProducts()
     {
-        return new List<ProductMockData>
+        return new List<ShopProductModel>
         {
             new("瓶装水", 4, 40, 5, 40),
             new("面包", 5, 60, 7, 60),
@@ -1849,13 +1954,149 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         }
     }
 
+    public void OpenInventory()
+    {
+        SetInventoryVisible(true);
+        RefreshStockControlsInteractable();
+    }
+
+    private void SubmitStockPlan()
+    {
+        if (!canEditStockPlan)
+        {
+            return;
+        }
+
+        int plannedCost = CalculatePlannedPurchaseCost();
+        if (plannedCost > playerModel.CurrentMoney)
+        {
+            RefreshMoneyDisplays();
+            RefreshStockControlsInteractable();
+            Debug.LogWarning("[ShopAssistantUI] Stock plan rejected: not enough money.");
+            return;
+        }
+
+        foreach (var product in marketProducts)
+        {
+            product.CurrentStock += product.PurchaseQuantity;
+        }
+        playerModel.CurrentMoney -= plannedCost;
+
+        canEditStockPlan = false;
+        RebuildProductCells();
+        RefreshTopLeftStatus(currentRoundValue, playerModel.CurrentMoney, currentGameStateValue);
+        RefreshStockControlsInteractable();
+
+        string payload = BuildStockPlanUpdateJson();
+        WsAgentClient.SubmitShopStockUpdateJson(payload);
+        Debug.Log($"[ShopAssistantUI] Stock plan submitted: {payload}");
+    }
+
+    private void RefreshStockControlsInteractable()
+    {
+        bool canSubmit = canEditStockPlan && CalculatePreviewMoney() >= 0;
+        if (stockInventoryButton != null)
+        {
+            stockInventoryButton.interactable = canSubmit;
+            if (stockInventoryButton.targetGraphic != null)
+            {
+                stockInventoryButton.targetGraphic.color = canEditStockPlan ? Color.white : new Color(1f, 1f, 1f, 0f);
+            }
+        }
+
+        foreach (var stepper in inventorySteppers)
+        {
+            if (stepper != null)
+            {
+                stepper.SetInteractable(canEditStockPlan);
+            }
+        }
+    }
+
+    private int CalculatePreviewMoney()
+    {
+        return playerModel.CurrentMoney - CalculatePlannedPurchaseCost();
+    }
+
+    private int CalculatePlannedPurchaseCost()
+    {
+        int total = 0;
+        foreach (var product in marketProducts)
+        {
+            total += Mathf.Max(0, product.CostPrice) * Mathf.Max(0, product.PurchaseQuantity);
+        }
+        return total;
+    }
+
+    private bool CanAffordAdditionalPurchase(ShopProductModel product)
+    {
+        if (product == null)
+        {
+            return false;
+        }
+
+        int extraCost = Mathf.Max(0, product.CostPrice);
+        return extraCost <= 0 || CalculatePreviewMoney() >= extraCost;
+    }
+
+    private static int MaxProductTodayPrice(ShopProductModel product)
+    {
+        if (product == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, product.CostPrice * 2);
+    }
+
+    private void RefreshMoneyDisplays()
+    {
+        int displayMoney = canEditStockPlan ? CalculatePreviewMoney() : playerModel.CurrentMoney;
+        if (moneyText != null)
+        {
+            moneyText.text = displayMoney.ToString();
+        }
+        if (rightPanelMoneyText != null)
+        {
+            rightPanelMoneyText.text = $"资金：{displayMoney}";
+        }
+    }
+
+    private string BuildStockPlanUpdateJson()
+    {
+        var payload = new ShopStockUpdatePayload
+        {
+            currentMoney = playerModel.CurrentMoney,
+            todayIncome = playerModel.TodayIncome,
+            items = new ShopStockUpdateItem[marketProducts.Count]
+        };
+
+        for (int i = 0; i < marketProducts.Count; i++)
+        {
+            var product = marketProducts[i];
+            payload.items[i] = new ShopStockUpdateItem
+            {
+                name = product.ProductName,
+                currentStock = product.CurrentStock,
+                purchaseQuantity = product.PurchaseQuantity,
+                todayPrice = product.TodayPrice,
+                costPrice = product.CostPrice
+            };
+        }
+
+        return JsonUtility.ToJson(payload);
+    }
+
     private void RefreshTopLeftStatus(int round, int money, string state)
     {
         int clampedRound = Mathf.Clamp(round, 0, 999);
         string stateValue = string.IsNullOrWhiteSpace(state) ? "回合进行中" : state.Trim();
+        currentRoundValue = clampedRound;
+        currentGameStateValue = stateValue;
+        playerModel.CurrentMoney = money;
 
         if (roundText != null) roundText.text = clampedRound.ToString();
-        if (moneyText != null) moneyText.text = money.ToString();
+        RefreshMoneyDisplays();
         if (stateText != null)
         {
             stateText.text = stateValue;
@@ -2218,13 +2459,13 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         moneyRt.offsetMin = Vector2.zero;
         moneyRt.offsetMax = Vector2.zero;
 
-        var moneyTextLabel = CreateTMPText("MoneyText", moneyRt, "资金：1250", 23, FontStyles.Bold, TextAlignmentOptions.Left);
-        var moneyTextRt = (RectTransform)moneyTextLabel.transform;
+        rightPanelMoneyText = CreateTMPText("MoneyText", moneyRt, $"资金：{playerModel.CurrentMoney}", 23, FontStyles.Bold, TextAlignmentOptions.Left);
+        var moneyTextRt = (RectTransform)rightPanelMoneyText.transform;
         moneyTextRt.anchorMin = new Vector2(0f, 0f);
         moneyTextRt.anchorMax = new Vector2(0.80f, 1f);
         moneyTextRt.offsetMin = Vector2.zero;
         moneyTextRt.offsetMax = Vector2.zero;
-        moneyTextLabel.enableWordWrapping = false;
+        rightPanelMoneyText.enableWordWrapping = false;
 
         var coinSprite = ResolveUiDecorationSprite(inventoryCoinFeatherResourcePath, inventoryCoinFeatherAssetPath, inventoryCoinSpriteName);
         var coinObj = new GameObject("CoinIcon", typeof(RectTransform), typeof(Image));
@@ -2362,6 +2603,25 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         public float purchasePrice;
         public float basePrice;
         public float quantity;
+        public bool priceLocked;
+    }
+
+    [Serializable]
+    private sealed class ShopStockUpdatePayload
+    {
+        public int currentMoney;
+        public int todayIncome;
+        public ShopStockUpdateItem[] items;
+    }
+
+    [Serializable]
+    private sealed class ShopStockUpdateItem
+    {
+        public string name;
+        public int currentStock;
+        public int purchaseQuantity;
+        public int todayPrice;
+        public int costPrice;
     }
 
     [Serializable]
@@ -2376,24 +2636,6 @@ public sealed class ShopAssistantDisplayUI : MonoBehaviour
         public Sprite sprite;
     }
 
-    [Serializable]
-    private struct ProductMockData
-    {
-        public string productName;
-        public int buyPrice;
-        public int buyCount;
-        public int sellPrice;
-        public int currentStock;
-
-        public ProductMockData(string productName, int buyPrice, int buyCount, int sellPrice, int currentStock)
-        {
-            this.productName = productName;
-            this.buyPrice = buyPrice;
-            this.buyCount = buyCount;
-            this.sellPrice = sellPrice;
-            this.currentStock = currentStock;
-        }
-    }
 }
 
 public sealed class InventoryGridAutoColumns : MonoBehaviour
@@ -2450,14 +2692,31 @@ public sealed class ShopUiStepper : MonoBehaviour
     private ShopUiPressRepeater minusRepeater;
     private ShopUiPressRepeater plusRepeater;
     private TextMeshProUGUI valueText;
+    private Action<int> onValueChanged;
+    private Func<bool> canIncrease;
+    private int maxValue = int.MaxValue;
+    private bool baseInteractable = true;
+    private bool editAllowed = true;
     private int value;
 
-    public void Bind(Button minus, Button plus, TextMeshProUGUI valueLabel, int initialValue)
+    public void Bind(
+        Button minus,
+        Button plus,
+        TextMeshProUGUI valueLabel,
+        int initialValue,
+        Action<int> valueChanged = null,
+        Func<bool> canIncreaseValue = null,
+        int maxAllowedValue = int.MaxValue,
+        bool canEdit = true)
     {
         minusButton = minus;
         plusButton = plus;
         valueText = valueLabel;
-        value = Mathf.Max(0, initialValue);
+        onValueChanged = valueChanged;
+        canIncrease = canIncreaseValue;
+        maxValue = Mathf.Max(0, maxAllowedValue);
+        editAllowed = canEdit;
+        value = Mathf.Clamp(initialValue, 0, maxValue);
         UpdateLabel();
 
         if (minusButton != null)
@@ -2479,6 +2738,8 @@ public sealed class ShopUiStepper : MonoBehaviour
             }
             plusRepeater.Bind(Increase);
         }
+
+        RefreshButtons();
     }
 
     private void OnDestroy()
@@ -2496,13 +2757,25 @@ public sealed class ShopUiStepper : MonoBehaviour
 
     private void Decrease()
     {
+        if (!baseInteractable || value <= 0)
+        {
+            RefreshButtons();
+            return;
+        }
+
         value = Mathf.Max(0, value - 1);
         UpdateLabel();
     }
 
     private void Increase()
     {
-        value += 1;
+        if (!baseInteractable || value >= maxValue || (canIncrease != null && !canIncrease.Invoke()))
+        {
+            RefreshButtons();
+            return;
+        }
+
+        value = Mathf.Min(maxValue, value + 1);
         UpdateLabel();
     }
 
@@ -2511,6 +2784,34 @@ public sealed class ShopUiStepper : MonoBehaviour
         if (valueText != null)
         {
             valueText.text = value.ToString();
+        }
+        onValueChanged?.Invoke(value);
+        RefreshButtons();
+    }
+
+    public void SetInteractable(bool interactable)
+    {
+        baseInteractable = interactable && editAllowed;
+        RefreshButtons();
+    }
+
+    private void RefreshButtons()
+    {
+        SetButtonVisual(minusButton, baseInteractable && value > 0);
+        SetButtonVisual(plusButton, baseInteractable && value < maxValue && (canIncrease == null || canIncrease.Invoke()));
+    }
+
+    private static void SetButtonVisual(Button button, bool interactable)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        button.interactable = interactable;
+        if (button.targetGraphic != null)
+        {
+            button.targetGraphic.color = interactable ? Color.white : new Color(0.78f, 0.78f, 0.78f, 1f);
         }
     }
 }

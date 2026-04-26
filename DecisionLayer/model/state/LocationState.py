@@ -3,7 +3,8 @@
 """Location runtime state and dynamic components (currently market-focused)."""
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, Set, Tuple
+import inspect
+from typing import Any, Dict, Iterable, Set, Tuple
 
 import numpy as np
 
@@ -30,6 +31,7 @@ class MarketComponent:
     _next_price: Dict[ItemId, Tuple[float, float]] = field(default_factory=dict)
     # Locked items apply to next-day price generation and are consumed after one update_day.
     _locked_next_day_items: Set[ItemId] = field(default_factory=set)
+    _locked_today_items: Set[ItemId] = field(default_factory=set)
 
     def init_stock(self, catalog: Catalog) -> None:
         self._stock = {item_id: item_def.default_quantity for item_id, item_def in catalog.items.items()}
@@ -44,6 +46,7 @@ class MarketComponent:
             "stock": self._stock,
             "price": self._price,
             "next_price": self._next_price,
+            "locked_today": list(self._locked_today_items),
         }
 
     def stock(self, item_id: ItemId) -> int:
@@ -67,6 +70,9 @@ class MarketComponent:
 
     def is_price_locked_for_next_day(self, item_id: ItemId) -> bool:
         return item_id in self._locked_next_day_items
+
+    def is_price_locked_today(self, item_id: ItemId) -> bool:
+        return item_id in self._locked_today_items
 
     def lock_price_for_next_day(self, item_id: ItemId) -> bool:
         if item_id not in self._stock:
@@ -112,26 +118,152 @@ class MarketComponent:
 
         self._next_price = next_price
 
-    def update_day(self, catalog: Catalog) -> None:
-        # Daily restock.
-        for item_id in list(self._stock.keys()):
-            self._stock[item_id] = min(
-                catalog.item(item_id).default_quantity,
-                self.stock(item_id) + DEFAULT_MARKET_STOCK_INCREASE,
-            )
+    def _short_item_id(self, item_id: str) -> str:
+        if isinstance(item_id, str) and item_id.startswith("item:"):
+            return item_id.split(":", 1)[1]
+        return str(item_id)
 
-        # Today's price takes previous next_price.
+    def _normalize_item_id(self, item_id: str) -> str:
+        if isinstance(item_id, str) and item_id.startswith("item:"):
+            return item_id
+        return f"item:{item_id}"
+
+    def _resolve_update_item_id(self, catalog: Catalog, raw: Any) -> ItemId | None:
+        key = str(raw or "").strip()
+        if not key:
+            return None
+        if key in catalog.items:
+            return key
+        normalized = self._normalize_item_id(key)
+        if normalized in catalog.items:
+            return normalized
+        for item_id, item_def in catalog.items.items():
+            if str(item_def.name).strip() == key:
+                return item_id
+        return None
+
+    def _apply_decision_price_effects(self, catalog: Catalog, actors: Iterable[Any] | None) -> Set[ItemId]:
+        locked_items: Set[ItemId] = set()
+
+        for item_id in list(self._locked_next_day_items):
+            if item_id in self._stock:
+                cur = self.price(item_id)
+                _old_next, acc = self._next_price.get(item_id, (cur, 1.0))
+                self._next_price[item_id] = (cur, acc)
+                locked_items.add(item_id)
+
+        for actor in actors or []:
+            for row in list(getattr(actor, "decision_intel", []) or []):
+                if not bool(row.get("valid", False)):
+                    continue
+                item_id = self._resolve_update_item_id(catalog, row.get("item"))
+                if not item_id or item_id in locked_items:
+                    continue
+                try:
+                    intel_price = float(row.get("intel_price"))
+                except Exception:
+                    continue
+                if intel_price <= 0:
+                    continue
+                _old_next, acc = self._next_price.get(item_id, (self.price(item_id), 1.0))
+                self._next_price[item_id] = (float(intel_price), acc)
+                locked_items.add(item_id)
+
+        return locked_items
+
+    async def update_day(
+        self,
+        catalog: Catalog,
+        *,
+        client: Any = None,
+        day: int = 1,
+        human_actor: Any = None,
+        actors: Iterable[Any] | None = None,
+        advance_prices: bool = True,
+    ) -> None:
+        locked_items = self._apply_decision_price_effects(catalog, actors)
+
+        # Old simulated daily restock/price fluctuation logic, kept for reference:
+        # for item_id in list(self._stock.keys()):
+        #     self._stock[item_id] = min(
+        #         catalog.item(item_id).default_quantity,
+        #         self.stock(item_id) + DEFAULT_MARKET_STOCK_INCREASE,
+        #     )
+        #
+        # new_price: Dict[ItemId, float] = {}
+        # for item_id in self._stock.keys():
+        #     next_val, _acc = self._next_price.get(item_id, (self.price(item_id), 1.0))
+        #     new_price[item_id] = float(next_val)
+        # self._price = new_price
+        # self._locked_next_day_items.clear()
+        # self.generate_price(catalog)
+
         new_price: Dict[ItemId, float] = {}
-        for item_id in self._stock.keys():
-            next_val, _acc = self._next_price.get(item_id, (self.price(item_id), 1.0))
-            new_price[item_id] = float(next_val)
-        self._price = new_price
+        if advance_prices:
+            for item_id in self._stock.keys():
+                next_val, _acc = self._next_price.get(item_id, (self.price(item_id), 1.0))
+                new_price[item_id] = float(next_val)
+            self._price = new_price
 
-        # Lock applies to N->N+1 only; clear before generating N+2.
+        self._locked_today_items = {
+            item_id for item_id in locked_items
+            if item_id in self._stock
+        }
         self._locked_next_day_items.clear()
 
-        # Generate tomorrow's prices with probability-based fluctuation.
+        if client is not None:
+            clear_updates = getattr(client, "clear_stock_updates", None)
+            if callable(clear_updates):
+                clear_updates()
+
+            send_info = getattr(client, "send_information", None)
+            if callable(send_info):
+                info = client.market_information() if callable(getattr(client, "market_information", None)) else {}
+                result = send_info(target="market", info=info)
+                if inspect.isawaitable(result):
+                    await result
+
+            round_start = getattr(client, "round_start", None)
+            if callable(round_start) and human_actor is not None:
+                result = round_start(human_actor.id, day)
+                if inspect.isawaitable(result):
+                    await result
+
+            wait_update = getattr(client, "wait_shop_stock_update", None)
+            if callable(wait_update):
+                update_msg = await wait_update(timeout_s=300.0)
+                self.apply_shop_stock_update(catalog, update_msg, human_actor=human_actor)
+
         self.generate_price(catalog)
+
+    def apply_shop_stock_update(self, catalog: Catalog, update_msg: Any, *, human_actor: Any = None) -> None:
+        if not update_msg:
+            return
+        payload = update_msg.get("parsed_info", update_msg) if isinstance(update_msg, dict) else update_msg
+        if not isinstance(payload, dict):
+            return
+
+        if human_actor is not None and "currentMoney" in payload:
+            try:
+                human_actor.money = float(payload.get("currentMoney", human_actor.money))
+            except Exception:
+                pass
+
+        for row in payload.get("items", []) or []:
+            if not isinstance(row, dict):
+                continue
+            item_id = self._resolve_update_item_id(catalog, row.get("itemId") or row.get("name"))
+            if not item_id:
+                continue
+            try:
+                self._stock[item_id] = max(0, int(row.get("currentStock", self.stock(item_id))))
+            except Exception:
+                pass
+            if item_id not in self._locked_today_items:
+                try:
+                    self._price[item_id] = max(0.0, float(row.get("todayPrice", self.price(item_id))))
+                except Exception:
+                    pass
 
     @classmethod
     def get_instance(cls) -> "MarketComponent":
@@ -161,7 +293,25 @@ class LocationState:
                 obs[name] = comp.observe()
         return obs
 
-    def update_day(self, catalog: Catalog) -> None:
+    async def update_day(
+        self,
+        catalog: Catalog,
+        *,
+        client: Any = None,
+        day: int = 1,
+        human_actor: Any = None,
+        actors: Iterable[Any] | None = None,
+        advance_prices: bool = True,
+    ) -> None:
         for name, comp in self.component.items():
             if hasattr(comp, "update_day"):
-                comp.update_day(catalog)
+                result = comp.update_day(
+                    catalog,
+                    client=client,
+                    day=day,
+                    human_actor=human_actor,
+                    actors=actors,
+                    advance_prices=advance_prices,
+                )
+                if inspect.isawaitable(result):
+                    await result
