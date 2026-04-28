@@ -8,7 +8,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict
 from config.config import FATIGUE_DECAY_PER_DAY,HUNGER_DECAY_PER_DAY,THIRST_DECAY_PER_DAY
-from runtime.load_data import load_catalog
+from runtime.load_data import HUMAN_SHOP_ASSISTANT_ACTOR_ID, load_catalog
 
 import websockets
 
@@ -27,11 +27,13 @@ class WebSocketServer:
     pending: Dict[str, asyncio.Future] = field(default_factory=dict)
     stock_updates: asyncio.Queue = field(default_factory=asyncio.Queue)
     _market_info_cache: Dict[str, Any] | None = None
+    _agent_info_cache: Dict[str, Any] | None = None
     world: Any = None
 
     def bind_world(self, world: Any) -> None:
         self.world = world
         self._market_info_cache = None
+        self._agent_info_cache = None
 
     async def _handle(self, ws):
         agent_id = None
@@ -72,6 +74,8 @@ class WebSocketServer:
                         info=self.market_information(),
                         ws_conn=ws,
                     )
+                    if self.world is not None:
+                        await self.broadcast_agent_information(ws_conn=ws)
                 elif msg_type in {"ack", "pong"}:
                     continue
                 elif msg_type == "complete":
@@ -211,7 +215,16 @@ class WebSocketServer:
                             "priceLocked": bool(market.is_price_locked_today(item_id)),
                         }
                     )
-                return {"items": items}
+                player = {}
+                human_actor = self.world.actors.get(HUMAN_SHOP_ASSISTANT_ACTOR_ID)
+                if human_actor is not None:
+                    current_money = float(getattr(human_actor, "money", 0.0) or 0.0)
+                    last_money = float(getattr(self.world, "shop_assistant_last_money", current_money) or current_money)
+                    player = {
+                        "currentMoney": current_money,
+                        "todayIncome": current_money - last_money,
+                    }
+                return {"items": items, "player": player}
             except Exception:
                 logger.exception("Failed to build market info from world state; falling back to csv")
 
@@ -263,8 +276,92 @@ class WebSocketServer:
             logger.exception("Failed to load market info from csv: %s", csv_path)
             items = []
 
-        self._market_info_cache = {"items": items}
+        self._market_info_cache = {
+            "items": items,
+            "player": {
+                "currentMoney": 1000,
+                "todayIncome": 0,
+            },
+        }
         return self._market_info_cache
+
+    @staticmethod
+    def _actor_attr_value(actor: Any, attr_name: str) -> float:
+        attrs = getattr(actor, "attrs", None) or {}
+        attr = attrs.get(attr_name) if isinstance(attrs, dict) else None
+        if attr is None:
+            return 0.0
+        try:
+            return float(getattr(attr, "current", 0.0) or 0.0)
+        except Exception:
+            return 0.0
+
+    def agent_information(self) -> Dict[str, Any]:
+        if self.world is not None:
+            try:
+                agents = []
+                for actor_id, agent_code in self.actor2agent.items():
+                    if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+                        continue
+                    actor = self.world.actors.get(actor_id)
+                    if actor is None:
+                        continue
+
+                    actor_def = None
+                    try:
+                        actor_def = self.world.catalog.actor(actor_id)
+                    except Exception:
+                        actor_def = None
+
+                    agent_name = str(getattr(actor_def, "name", "") or actor_id)
+                    money = float(getattr(actor, "money", 0.0) or 0.0)
+                    hunger = self._actor_attr_value(actor, "hunger")
+                    fatigue = self._actor_attr_value(actor, "fatigue")
+                    thirst = self._actor_attr_value(actor, "thirst")
+                    agents.append(
+                        {
+                            "actorId": actor_id,
+                            "agentCode": agent_code,
+                            "agentName": agent_name,
+                            "hungerValue": hunger,
+                            "fatigueValue": fatigue,
+                            "waterValue": thirst,
+                            "money": money,
+                            # Backend field aliases for future consumers.
+                            "hunger": hunger,
+                            "fatigue": fatigue,
+                            "thirst": thirst,
+                        }
+                    )
+
+                self._agent_info_cache = {"agents": agents}
+                return self._agent_info_cache
+            except Exception:
+                logger.exception("Failed to build agent info from world state; falling back to cache")
+
+        if self._agent_info_cache is not None:
+            return self._agent_info_cache
+
+        agents = []
+        for actor_id, agent_code in self.actor2agent.items():
+            if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+                continue
+            agents.append(
+                {
+                    "actorId": actor_id,
+                    "agentCode": agent_code,
+                    "agentName": actor_id,
+                    "hungerValue": 80,
+                    "fatigueValue": 80,
+                    "waterValue": 80,
+                    "money": 1000,
+                    "hunger": 80,
+                    "fatigue": 80,
+                    "thirst": 80,
+                }
+            )
+        self._agent_info_cache = {"agents": agents}
+        return self._agent_info_cache
 
     async def send_information(
         self,
@@ -273,10 +370,6 @@ class WebSocketServer:
         agent_id: str | None = None,
         ws_conn: Any | None = None,
     ) -> bool:
-        ws = ws_conn or self.connections.get(agent_id or "")
-        if not ws:
-            logger.warning("WebSocket connection not found for information push: %s", agent_id)
-            return False
         try:
             payload = {
                 "type": "information",
@@ -285,11 +378,41 @@ class WebSocketServer:
             }
             if agent_id:
                 payload["agent_id"] = agent_id
-            await ws.send(json.dumps(payload, ensure_ascii=False))
+
+            if ws_conn is not None:
+                await ws_conn.send(json.dumps(payload, ensure_ascii=False))
+                return True
+
+            if agent_id:
+                ws = self.connections.get(agent_id)
+                if not ws:
+                    logger.warning("WebSocket connection not found for information push: %s", agent_id)
+                    return False
+                await ws.send(json.dumps(payload, ensure_ascii=False))
+                return True
+
+            targets = set(self.connections.values())
+            if not targets:
+                logger.warning("WebSocket connection not found for information broadcast")
+                return False
+            for ws in targets:
+                await ws.send(json.dumps(payload, ensure_ascii=False))
             return True
         except Exception:
             logger.exception("Failed to push information message to %s", agent_id)
             return False
+
+    async def broadcast_agent_information(
+        self,
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        return await self.send_information(
+            target="agents",
+            info=self.agent_information(),
+            agent_id=agent_id,
+            ws_conn=ws_conn,
+        )
 
     async def move(self, actor_id, source, target)->bool:
         agent_id = self.actor2agent.get(actor_id)

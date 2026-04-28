@@ -316,4 +316,4 @@ class ActorState:
         self.decision_action_log = []
 
         for attr in self.attrs.values():
-            attr.current = min(attr.current - attr.decay_per_day, 100)
+            attr.current = max(0.0, min(attr.current - attr.decay_per_day, attr.max_value))

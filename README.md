@@ -1,24 +1,21 @@
-# AITown: A Multi-Agent Survival & Trading Simulations
-**多Agent驱动的生存与贸易小镇模拟游戏**
+# AITown: Agent 驱动的 2D 商店经营与生存博弈
+
+**一个由 LLM Agent 驱动、由人类玩家经营商店的 Unity 2D 小镇模拟游戏。**
 
 ## 项目背景
 
-AITown 是一个由 LLM 驱动的多智能体经济模拟游戏。
-我希望把LLM从“能聊天”推进到“能在持续运行的世界里做决策、执行动作并承受结果”。
-因此我用一个可视化的小镇模拟场景，搭建了一套多 Agent 的完整闭环：角色会基于自身属性、记忆、位置、金钱、物品和环境事件进行规划，再把动作落实到游戏世界中，并根据执行结果继续调整后续行为。
+AITown 最初是一个多 Agent 生存与交易模拟：四个 AI 角色在小镇中移动、观察市场、买卖物品并努力存活，率先积累到目标资金的角色获胜。随着玩法迭代，项目的重心已经从“观察 AI 之间的市场竞争”转向“人类玩家与 AI Agent 之间的经营博弈”。
 
-整个系统采用双层架构：`DecisionLayer` 负责决策，使用 Python 组织世界状态、Prompt 构建、记忆管理、动作校验、执行调度与反思总结；`ExecutionLayer` 负责执行，使用 Unity 承载场景表现、角色移动、交互动画和前端反馈。两层通过 WebSocket 通信，形成“观察世界 -> 生成计划 -> 执行动作 -> 接收回执 -> 重新规划”的运行链路。
+当前版本中，人类玩家扮演商店店主，AI Agent 仍然是小镇中的自主行动者。玩家可以调整商品价格、决定进货数量、管理商店现金流，并通过市场供给影响 AI 的生存与收益。玩家的目标不是简单地赚得越多越好，而是在维持 AI 不死亡的同时，阻止任何 AI 过早达到胜利资金。玩家自己赚取到目标金额则胜利，资金破产则失败。
 
-我并不想只做一个调用模型API的 Demo，而是想验证一套更接近真实 Agent 系统的工程方案：一方面让智能体具备长期运行能力，另一方面让它的行为真正受到世界规则约束。为此，我在系统中加入了多种机制：
-- 数据驱动的世界建模
-- 回合制状态推进
-- 市场交易系统
-- 随机事件
-- 动作合法性校验
-- 重复行为保护
-- 失败重规划
-- 记忆记录和反思机制。
-最终这个项目既是一个 AI 小镇模拟原型，也是一个“LLM + 多智能体”游戏系统。
+这个设计让项目保留了原本的 Agent 主线：AI 仍然会基于状态、记忆、市场、库存、价格和事件进行决策；同时加入了一个可被人类操控的经济节点，使玩家不再只是旁观者，而是市场规则的一部分。AI 还可以通过决策点机制对玩家的操作形成限制，例如影响下一日价格、锁定商品价格或获得市场情报，从而把经营玩法变成双向博弈。
+
+系统仍采用双层架构：
+
+- `DecisionLayer`：Python 后端，负责世界状态、Agent 决策、回合推进、市场结算、动作校验、记忆与反思。
+- `ExecutionLayer`：Unity 2D 前端，负责场景实体、角色移动、商店交互、大量 UI 展示、回合动画与玩家操作。
+
+两层通过 WebSocket 通信，形成“后端生成世界与 Agent 决策，Unity 展示并收集玩家经营操作，再回传后端结算”的闭环。
 
 <p align="center">
   <img src="docs/demo.gif" width="700">
@@ -26,180 +23,238 @@ AITown 是一个由 LLM 驱动的多智能体经济模拟游戏。
 
 ## 核心玩法
 
-你受邀参加一场神秘游戏，被带到一座偏僻的小镇。这里没有明确的新手引导，只有一条最核心的规则：
-> 在保证生存的前提下，尽可能快地把资金积累到 `10000`。
+你经营小镇中唯一的商店。四个 AI Agent 会在小镇中自主生存、消费、交易、投机并尝试积累资金。你的任务是在每一回合中调整商店策略，让自己赚到足够的钱，同时维持整个小镇的微妙平衡。
 
-率先达成目标的角色获胜。
-小镇中的每一天都是一个独立回合。你需要在不同地点之间移动，观察物价变化，购买、出售或使用物品，并决定何时休息、何时继续行动。行动并不是没有代价的，角色会持续消耗饱食度、水分值和精神值；一旦其中任意一项归零，游戏立即失败。
+核心目标：
 
-因此，赚钱并不是唯一目标，真正的玩法是在“生存”和“收益”之间做取舍。你既要利用市场价格波动寻找利润，也要避免因为贪心、误判或过度行动把自己拖入危险状态。随机事件也会不断打乱原有节奏，让每一轮决策都带有不确定性。
+> 玩家赚取到 `10000` 资金则胜利；玩家破产则失败；任一 AI 死亡或任一 AI 先达到 `10000` 都意味着玩家没有维持住目标平衡，玩家失败。
+
+玩家每回合需要关注几类决策：
+
+- **定价**：调整商品当日售价，决定利润空间与 AI 的购买压力。
+- **进货**：根据现金和市场需求补充库存，避免缺货导致 AI 无法维持生存。
+- **现金流**：进货会消耗玩家资金，销售才能回收资金，过度进货可能导致破产。
+- **AI 状态**：AI 有饱食度、水分值、精神值和资金压力，任一关键生存属性归零都会导致失败。
+- **AI 胜利压力**：AI 会通过交易、套利和策略积累资金，玩家需要控制市场节奏，不能让 AI 先达成目标。
+
+因此，AITown 当前的核心体验不是单纯的经营模拟，也不是单纯的 AI 自动对战，而是一个不对称博弈：玩家掌握商店供给与价格，AI 掌握行动选择、市场判断和决策点干预能力。
+
+## AI 决策点机制
+
+为了避免玩家完全支配市场，AI 拥有决策点机制。AI 可以在回合推进中消耗决策资源，对市场或自身判断产生额外影响，例如：
+
+- 限制玩家对特定商品的价格调整，使价格在下一日被锁定。
+- 获取或影响下一日价格情报，让自己的交易计划更接近真实市场变化。
+- 通过决策结果改变后续行动策略，使玩家无法只依赖固定定价套路。
+
+这些机制让 AI 不只是被动消费者，而是能够反制玩家经营策略的 Agent。玩家需要在利润、库存、生存供给和 AI 反制之间持续权衡。
 
 ## 系统架构
 
-AITown 采用双层架构：上层负责思考，下层负责执行。`DecisionLayer` 维护整个小镇的世界状态，并驱动每个 Agent 完成规划、行动、校验、记忆和反思；`ExecutionLayer` 则把这些动作映射到 Unity 场景中的移动、交互和可视化反馈。
+AITown 采用 `DecisionLayer + ExecutionLayer` 的双层结构。后端负责规则和推理，前端负责可视化和玩家输入。
 
 ```mermaid
 flowchart TB
 
-subgraph DecisionLayer [Decision Layer]
-    A[World State<br/>角色 / 地点 / 物品 / 事件]
-    B[Agent Runtime]
+subgraph DecisionLayer [Decision Layer / Python]
+    A[World State<br/>角色 / 地点 / 商品 / 事件 / 玩家资金]
+    B[Agent Runtime<br/>plan -> act -> execute -> reflect]
     C[Prompt Builder]
     D[LLM]
     E[Action Executor]
+    M[Market & Round Settlement]
 end
 
 subgraph Communication
     F[WebSocket RPC]
 end
 
-subgraph ExecutionLayer [Execution Layer]
-    G[Unity Simulation]
-    H[移动 / 交易 / 动画 / UI反馈]
+subgraph ExecutionLayer [Execution Layer / Unity 2D]
+    G[2D Town Simulation]
+    H[Shop Assistant UI]
+    I[Entities / Movement / Animation / HUD]
 end
 
 A --> B
 B --> C
 C --> D
 D --> E
-E --> F
+E --> M
+M --> F
 F --> G
 G --> H
-H --> B
+G --> I
+H --> F
+F --> M
 ```
 
-其中，`DecisionLayer` 可以进一步理解为 4 个核心部分：
-- `World State`：维护角色属性、背包、金钱、地点、市场库存、随机事件等全局状态。
-- `Agent Runtime`：驱动多 Agent 按回合运行，组织 plan -> act -> execute -> reflect 的主循环。
-- `Prompt Builder + LLM`：把当前观察结果整理成可执行决策输入，并生成下一步计划与动作。
-- `Action Executor`：负责动作归一化、合法性校验、失败处理和状态落地。
+`DecisionLayer` 当前负责：
 
-`ExecutionLayer` 则专注于把抽象动作变成具体表现：
-- 接收来自决策层的移动、购买、出售、使用、休息等指令。
-- 在 Unity 场景中完成角色寻路、交互动画和 HUD 展示。
-- 将执行成功或失败的结果回传给决策层，进入下一轮决策。
+- 维护全局世界状态：AI 属性、位置、资金、背包、商品目录、市场库存、玩家资金和随机事件。
+- 驱动多 Agent 回合循环：`plan -> act -> execute -> reflect`。
+- 校验并执行动作：移动、购买、出售、使用、休息、等待等。
+- 处理商店阶段：推送市场信息到 Unity，等待玩家提交价格与库存调整，再写回后端状态。
+- 处理回合结算：价格推进、库存变化、玩家收益、AI 生存消耗、随机事件和胜负判断。
+- 处理 AI 决策点：记录决策结果、锁价、情报、现金变化和私有上下文。
 
-一次完整的运行流程如下：
+`ExecutionLayer` 当前负责：
+
+- 展示 Unity 2D 小镇、商店、角色实体和交互动画。
+- 接收后端动作指令并执行角色移动、交易反馈、状态弹窗等表现。
+- 提供商店店主 UI：商品列表、价格、库存、进货、资金、回合开始/结束提示。
+- 将玩家的价格和进货计划通过 WebSocket 回传给后端。
+- 展示市场、玩家收益、AI 状态和回合变化等前端反馈。
+
+## 回合流程
+
+当前版本的回合不再只是 AI 自动推进，而是加入了玩家商店阶段：
 
 ```mermaid
 stateDiagram-v2
-    [*] --> 规划阶段
+    [*] --> 商店阶段
 
-    规划阶段 --> 行动阶段 : 生成回合计划
-
-    行动阶段 --> 动作校验 : 生成动作
+    商店阶段 --> AI规划阶段 : 玩家提交价格与进货
+    AI规划阶段 --> AI行动阶段 : 生成计划
+    AI行动阶段 --> 动作校验 : 生成动作
     动作校验 --> 执行动作 : 校验通过
     动作校验 --> 重新规划 : 非法动作 / 重复行为 / 交易震荡
-
-    执行动作 --> 行动阶段 : 执行成功
+    执行动作 --> AI行动阶段 : 执行成功
     执行动作 --> 重新规划 : 执行失败
     执行动作 --> 反思阶段 : 触发反思条件
-
-    重新规划 --> 行动阶段 : 更新计划
-    反思阶段 --> 行动阶段 : 继续执行
-
-    行动阶段 --> 结束回合 : 输出 wait
-
-    结束回合 --> 每日结算 : 所有 Agent 完成本回合
-    每日结算 --> 规划阶段 : 进入下一天
+    重新规划 --> AI行动阶段 : 更新计划
+    反思阶段 --> AI行动阶段 : 继续执行
+    AI行动阶段 --> 回合结算 : 所有 AI 输出 wait
+    回合结算 --> 商店阶段 : 下一回合开始
 ```
 
-## 技术实现
+在回合结算时，后端会处理：
 
-这个项目没有引入 Agent 框架或后端框架，而是直接基于 `asyncio`、`websockets`、OpenAI API 和 Unity 自行实现。这样做的目的不是“少用工具”，而是为了精确控制世界状态、动作边界、执行回执和失败恢复逻辑。
+- 玩家当日收入与资金变化。
+- 市场价格推进和下一日价格生成。
+- AI 生存属性消耗与每日恢复/事件效果。
+- AI 决策点产生的锁价或情报影响。
+- 随机事件触发与持续时间更新。
 
-核心实现可以概括为 6 点：
-- **Python 协程 Runtime**：每个 Agent 运行在独立异步循环中，由统一 runtime 调度 `plan -> act -> execute -> reflect`。
-- **WebSocket RPC**：决策层把 Unity 视为远端动作执行端，通过 `action_id + Future` 的方式等待动作回执。
-- **动作空间注册表**：动作由 `handler + validators` 组成，先注册、再校验、再执行，而不是直接写死在 `if/else` 中。
-- **OpenAI JSON 硬约束**：`act` 阶段使用 OpenAI API 的 JSON mode，让结构化输出约束发生在采样阶段，而不是事后修补文本。
-- **Prompt Builder**：把世界状态、市场信息、记忆和动作边界整理成结构化上下文，分别服务于 `plan / act / reflect`。
-- **行为保护机制**：包括重复动作保护、交易震荡保护、拆分动作保护和生存优先保护。
+## 市场与经营系统
 
-其中两个最关键的设计是：
+市场系统已经从原先偏 AI 自循环的价格波动模型，扩展为玩家可干预的商店经营模型。
 
-1. `Action Registry` 并不只是“登记一个函数”，而是把每个动作拆成“入口 + 校验器链 + 执行器”三层。模型提出动作后，系统会先做名称解析、参数归一化和 validator 链式检查，全部通过后才允许进入世界状态更新。
-2. `OpenAI JSON mode` 和很多框架常见的“请输出 JSON + 解析失败重试”不是一回事。前者是在采样阶段约束模型只能沿着合法 JSON 的 token 路径继续生成；后者通常是生成完普通文本后再尝试解析或修复。对 Agent 系统来说，这种差别非常关键，因为动作输出一旦失去结构化约束，整个执行链就会断掉。
-
-更完整的实现说明见：
-- [技术实现详解](docs/technical-implementation.md)
-
-## 经济系统设计
-
-市场并不是简单随机波动，而是围绕 **均值回归 + 对数噪声 + 库存恢复 + 交易摩擦** 四层机制构建的。价格更新公式定义在对数价格空间中：
+商品仍然有基础价格、分类、出售比例、默认库存和随机波动参数。价格生成使用均值回归和对数噪声：
 
 $$
-\log P_{t+1} = \log P_t + \kappa (\log P^{*} - \log P_t) + \varepsilon_t,\quad
+\log P_{t+1} = \log P_t + \kappa(\log P^{*} - \log P_t) + \varepsilon_t,\quad
 \varepsilon_t \sim \mathcal{N}(0, \sigma^2)
 $$
 
-这套设计带来了几个非常重要的性质：
-- 价格始终为正，且波动是相对比例意义上的，而不是绝对价差。
-- `KAPPA` 负责把价格持续拉回基础价值，避免长期漂移失控。
-- `SIGMA` 决定不同品类的风险强度，让消耗品和贵重品呈现不同市场性格。
-- `sellRatio` 和每日补货机制共同提供交易摩擦与供给约束，防止策略退化成无脑套利。
+但当前市场还加入了玩家操作与 AI 干预：
 
-当前参数下，消耗品是低波动、偏生存导向的商品；贵重品是高波动、偏投机导向的资产。这使得系统自然分化出“稳健生存”和“高风险投机”两条路径，而不是把这种差异写死在规则文本里。
+- 玩家可以在 Unity 商店 UI 中修改当日价格。
+- 玩家可以决定每种商品的进货数量，进货会消耗玩家现金。
+- 后端会同步玩家提交后的 `currentMoney`、`currentStock` 和 `todayPrice`。
+- 被 AI 决策点锁定的商品价格不会被玩家当日修改覆盖。
+- AI 的市场情报可以影响下一日价格预期，让 AI 对玩家策略形成反制。
 
-更完整的数学推导和参数分析见：
+这使得价格不再只是随机过程，而是“系统波动 + 玩家经营 + AI 决策点”的组合结果。
+
+## 技术实现
+
+项目没有依赖完整的 Agent 框架或后端 Web 框架，而是直接基于 Python、Unity 和 WebSocket 构建运行时。
+
+核心实现包括：
+
+- **Python 异步 Runtime**：多 Agent 以协程方式运行，由统一 runtime 调度计划、行动、执行和反思。
+- **WebSocket RPC**：后端把 Unity 视作远程执行层，通过 action id 等待动作回执，也通过消息同步市场和玩家操作。
+- **Action Registry**：动作由 handler 和 validator 组成，先注册、再校验、再执行，减少硬编码分支。
+- **结构化 LLM 输出**：`act` 阶段使用结构化 JSON 输出，降低动作解析失败对执行链的影响。
+- **商店阶段同步**：后端在回合开始向 Unity 推送市场信息，等待玩家提交库存和价格，再继续推进 AI 行动。
+- **回合结算重构**：价格推进、玩家收入、库存更新、AI 生存消耗、随机事件和决策点效果集中在日结算流程中处理。
+- **Unity UI 扩展**：前端新增商店店主界面、商品库存界面、回合开始/结束提示、资金显示、状态弹窗和商品图标映射。
+
+更完整的旧版技术说明见：
+
+- [技术实现详解](docs/technical-implementation.md)
 - [经济系统设计详解](docs/economy-system.md)
 
-## 运行方法
+> 注意：上述文档可能仍包含旧玩法说明，当前 README 以新玩法为准。
 
-DecisionLayer:
+## 项目结构
+
+```text
+AITown/
+├── DecisionLayer/          # Python 决策层与回合结算逻辑
+│   ├── actions/            # 动作注册、校验、执行
+│   ├── config/             # 模型、市场、胜负和运行配置
+│   ├── data/               # 角色、地点、商品、事件数据
+│   ├── model/              # 世界状态、定义、Agent Brain、WebSocket
+│   ├── runtime/            # 运行时加载与调度
+│   └── main.py             # 后端入口
+├── ExecutionLayer/         # Unity 2D 执行层
+│   ├── Assets/             # 场景、脚本、UI、资源
+│   ├── Packages/
+│   └── ProjectSettings/
+├── docs/                   # 旧版技术与经济系统说明
+├── README.md
+└── README-EN.md
+```
+
+## 运行方式
+
+### DecisionLayer
+
 ```bash
 cd DecisionLayer
 pip install -r requirements.txt
 python main.py
 ```
 
-API 配置：
-- 本项目的决策层依赖 OpenAI API，运行前需要配置环境变量 `OPENAI_API_KEY`,在config/config.py中指定三个阶段的模型名称
-- Windows PowerShell:
+运行前需要配置 OpenAI API Key。
+
+Windows PowerShell:
 
 ```powershell
 $env:OPENAI_API_KEY="your_api_key"
 python main.py
 ```
 
-- macOS / Linux:
+macOS / Linux:
 
 ```bash
 export OPENAI_API_KEY="your_api_key"
 python main.py
 ```
 
-依赖说明：
-- `requirements.txt` 位于 [`DecisionLayer/requirements.txt`](DecisionLayer/requirements.txt)
-- 核心依赖包括：
-  - `openai`：模型调用
-  - `websockets`：与 Unity 执行层通信
-  - `numpy`：世界状态与市场数值计算
-  - `PyQt5`：本地监控面板
+补充说明：
 
-运行细节补充：
-- 建议使用 `Python 3.11+`
-- `main.py` 需要以 `DecisionLayer` 作为工作目录运行，否则相对路径数据文件可能找不到
-- 如果只想单独运行决策层而不连接 Unity，可以将 `DecisionLayer/config/config.py` 中的 `USE_ACTION_LAYER` 改为 `False`
-- 当 `PyQt5` 不可用时，程序会自动退回到 CLI 模式运行
+- 建议使用 Python `3.11+`。
+- `main.py` 建议以 `DecisionLayer` 作为工作目录运行，否则相对路径数据文件可能无法找到。
+- 核心依赖见 [`DecisionLayer/requirements.txt`](DecisionLayer/requirements.txt)。
+- 后端默认需要连接 Unity 执行层；如需仅运行决策层，可在配置中关闭动作层连接。
 
-ExecutionLayer:
-- 以ExecutionLayer作为根目录在unity打开(暂时,后续会发布为可执行文件)
-- 打开后确保场景中的 WebSocket 客户端地址与决策层一致，默认是 `ws://127.0.0.1:9876`
-- 先启动 `DecisionLayer`，再运行 Unity 场景，等待执行层完成连接
+### ExecutionLayer
 
+1. 使用 Unity 打开 `ExecutionLayer` 目录。
+2. 确保场景中的 WebSocket 客户端地址与后端一致，默认地址为 `ws://127.0.0.1:9876`。
+3. 先启动 `DecisionLayer`，再运行 Unity 场景。
+4. 等待 Unity 连接后，商店阶段会在回合开始时显示玩家操作 UI。
+
+## 当前版本重点变化
+
+- 玩法从“AI 之间的生存交易竞赛”改为“人类店主经营商店，对抗并维持 AI Agent 生态”。
+- Unity 端新增商店店主实体、商品经营界面、库存/进货 UI、回合提示和大量状态反馈。
+- 后端回合结算重构，支持玩家商店阶段、玩家资金同步、库存更新和价格提交。
+- 市场逻辑从纯系统波动扩展为玩家定价、玩家进货、AI 决策点和价格情报共同作用。
+- AI 新增决策点相关上下文，可限制或影响玩家的市场操作。
 
 ## 素材来源
 
 本项目 Unity 场景中的部分像素瓦片素材来自以下素材包：
 
 1. Modern Exteriors - RPG Tileset [16x16]  
-作者：LimeZu  
-素材地址：https://limezu.itch.io/modernexteriors
+   作者：LimeZu  
+   地址：https://limezu.itch.io/modernexteriors
 
-2. Modern Interiors - RPG Tileset [16x16]
-作者：LimeZu
-素材地址：https://limezu.itch.io/moderninteriors
+2. Modern Interiors - RPG Tileset [16x16]  
+   作者：LimeZu  
+   地址：https://limezu.itch.io/moderninteriors
 
-上述素材依据作者提供的许可协议使用。  
-由于素材授权限制，本仓库不包含原始素材文件，仅用于项目演示。
+上述素材依据作者提供的许可协议使用。由于素材授权限制，本仓库不包含原始素材文件，仅用于项目演示。

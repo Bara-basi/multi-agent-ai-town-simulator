@@ -397,7 +397,7 @@ public class WsAgentClient : MonoBehaviour
 
     static bool TryHandleBroadcastMessage(WSMsg msg)
     {
-        if (msg.type != "information" || msg.target != "market" || !string.IsNullOrWhiteSpace(msg.agent_id))
+        if (msg.type != "information" || !string.IsNullOrWhiteSpace(msg.agent_id))
         {
             return false;
         }
@@ -407,11 +407,25 @@ public class WsAgentClient : MonoBehaviour
             if (router == null) continue;
             router.mainThreadQueue.Enqueue(() =>
             {
-                ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
+                DispatchInformationToUI(msg.target, msg.info);
             });
         }
 
         return true;
+    }
+
+    static void DispatchInformationToUI(string target, string info)
+    {
+        if (target == "market")
+        {
+            ShopAssistantDisplayUI.PushMarketInformationJson(info);
+            return;
+        }
+
+        if (target == "agents")
+        {
+            ShopAssistantDisplayUI.PushAgentInformationJson(info);
+        }
     }
 
     static WsAgentClient[] SnapshotRouters()
@@ -458,7 +472,16 @@ public class WsAgentClient : MonoBehaviour
         {
             mainThreadQueue.Enqueue(() =>
             {
-                ShopAssistantDisplayUI.PushMarketInformationJson(msg.info);
+                DispatchInformationToUI(msg.target, msg.info);
+            });
+            return;
+        }
+
+        if (msg.type == "information" && msg.target == "agents")
+        {
+            mainThreadQueue.Enqueue(() =>
+            {
+                DispatchInformationToUI(msg.target, msg.info);
             });
             return;
         }
@@ -493,20 +516,20 @@ public class WsAgentClient : MonoBehaviour
                 if (msg.cmd == "round_start")
                 {
                     ui.ShowRoundStartTransitionThenOpenInventory(Mathf.RoundToInt(msg.value), 1f);
+                    _ = SendJsonShared(new OutMsg
+                    {
+                        type = "complete",
+                        cmd = msg.cmd,
+                        agent_id = msg.agent_id,
+                        action_id = msg.action_id,
+                        status = "ok"
+                    });
                 }
                 else
                 {
                     ui.ShowRoundEndTransition(Mathf.RoundToInt(msg.value));
+                    StartCoroutine(CompleteRoundEndAfterDelay(msg, ui));
                 }
-
-                _ = SendJsonShared(new OutMsg
-                {
-                    type = "complete",
-                    cmd = msg.cmd,
-                    agent_id = msg.agent_id,
-                    action_id = msg.action_id,
-                    status = "ok"
-                });
             });
 
             return;
@@ -832,6 +855,26 @@ public class WsAgentClient : MonoBehaviour
         }
 
         animationPumpCoroutine = null;
+    }
+
+    IEnumerator CompleteRoundEndAfterDelay(WSMsg msg, ShopAssistantDisplayUI ui)
+    {
+        float waitSeconds = 2f;
+        if (ui != null)
+        {
+            waitSeconds += ui.RoundEndTransitionTotalSeconds();
+        }
+
+        yield return new WaitForSecondsRealtime(waitSeconds);
+
+        _ = SendJsonShared(new OutMsg
+        {
+            type = "complete",
+            cmd = msg.cmd,
+            agent_id = msg.agent_id,
+            action_id = msg.action_id,
+            status = "ok"
+        });
     }
 
     void Update()

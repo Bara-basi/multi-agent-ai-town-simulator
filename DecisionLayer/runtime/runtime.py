@@ -3,6 +3,7 @@ from __future__ import annotations
 """Agent 单步调度器：负责 plan -> act -> execute -> reflect 的循环。"""
 
 import asyncio
+import inspect
 import logging,random
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
@@ -415,6 +416,11 @@ class AgentRuntime:
                 catalog=self.world.catalog,
                 market=market,
             )
+            broadcast_agent_information = getattr(self.world.client, "broadcast_agent_information", None)
+            if callable(broadcast_agent_information):
+                result = broadcast_agent_information()
+                if inspect.isawaitable(result):
+                    await result
             locked_items = list((st.decision_payload or {}).get("locked_items", []) or [])
             for locked_item in locked_items:
                 locked_short = str(locked_item or "").strip()

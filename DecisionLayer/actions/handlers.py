@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Built-in action handlers registered by action name."""
 
+import inspect
 from typing import Any, Callable, Dict
 
 from actions.action_registry import register
@@ -29,6 +30,64 @@ def _norm_item_id(raw: Any) -> str:
 
 def _shop_assistant_actor(ctx: Any):
     return ctx.world.actors.get(HUMAN_SHOP_ASSISTANT_ACTOR_ID)
+
+
+async def _broadcast_market_information(ctx: Any) -> None:
+    client = getattr(ctx.world, "client", None)
+    if client is None:
+        return
+    market_information = getattr(client, "market_information", None)
+    send_information = getattr(client, "send_information", None)
+    if not callable(market_information) or not callable(send_information):
+        return
+
+    result = send_information(target="market", info=market_information())
+    if inspect.isawaitable(result):
+        await result
+
+
+async def _broadcast_agent_information(ctx: Any) -> None:
+    client = getattr(ctx.world, "client", None)
+    if client is None:
+        return
+
+    broadcast = getattr(client, "broadcast_agent_information", None)
+    if callable(broadcast):
+        result = broadcast()
+        if inspect.isawaitable(result):
+            await result
+        return
+
+    agent_information = getattr(client, "agent_information", None)
+    send_information = getattr(client, "send_information", None)
+    if not callable(agent_information) or not callable(send_information):
+        return
+
+    result = send_information(target="agents", info=agent_information())
+    if inspect.isawaitable(result):
+        await result
+
+
+def _change_attr(actor: Any, attr_name: str, delta: float) -> None:
+    attr = (getattr(actor, "attrs", None) or {}).get(attr_name)
+    if attr is None:
+        return
+
+    current = float(getattr(attr, "current", 0.0) or 0.0)
+    max_value = float(getattr(attr, "max_value", 100.0) or 100.0)
+    attr.current = max(0.0, min(max_value, current + float(delta)))
+
+
+async def _apply_action_fatigue(ctx: Any, actor: Any, *, animate: bool = False) -> None:
+    if animate:
+        client = getattr(ctx.world, "client", None)
+        show_animation = getattr(client, "show_animation", None) if client is not None else None
+        if callable(show_animation):
+            result = show_animation(actor.id, "fatigue", -FATIGUE_DECAY_PER_ACTION)
+            if inspect.isawaitable(result):
+                await result
+
+    _change_attr(actor, "fatigue", -FATIGUE_DECAY_PER_ACTION)
 
 
 def register_skill(skill_name: str):
@@ -66,16 +125,12 @@ async def handle_consume(ctx, act) -> ActionResult:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 消耗 {item.name}")
 
     actor.inventory.remove(item_id, qty)
-    fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= FATIGUE_DECAY_PER_ACTION
+    await _apply_action_fatigue(ctx, actor)
 
     for k, v in (item.effects or {}).items():
-        if k in actor.attrs:
-            actor.attrs[k].current = min(
-                actor.attrs[k].max_value,
-                actor.attrs[k].current + float(v) * qty,
-            )
+        _change_attr(actor, k, float(v) * qty)
 
+    await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你使用了 {ctx.world.catalog.item(item_id).name} x {qty}")
 
 
@@ -96,9 +151,9 @@ async def handle_move(ctx, act) -> ActionResult:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 移动到{ctx.catalog.loc(target).name}")
 
     actor.location = target
-    fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= FATIGUE_DECAY_PER_ACTION
+    await _apply_action_fatigue(ctx, actor)
     ON_ACTION_RESOLVE("on_move", ctx, act)
+    await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你来到了{ctx.catalog.loc(target).name}")
 
 
@@ -109,12 +164,10 @@ async def handle_sleep(ctx, act) -> ActionResult:
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 睡觉")
 
-    fatigue = actor.attrs.get("fatigue")
-    fatigue.current = min(fatigue.max_value, fatigue.current - FATIGUE_DECAY_PER_DAY)
-    hunger = actor.attrs.get("hunger")
-    thirst = actor.attrs.get("thirst")
-    hunger.current = min(hunger.max_value, hunger.current - HUNGER_DECAY_PER_DAY)
-    thirst.current = min(thirst.max_value, thirst.current - THIRST_DECAY_PER_DAY)
+    _change_attr(actor, "fatigue", -FATIGUE_DECAY_PER_DAY)
+    _change_attr(actor, "hunger", -HUNGER_DECAY_PER_DAY)
+    _change_attr(actor, "thirst", -THIRST_DECAY_PER_DAY)
+    await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message="你睡了一觉，感觉神清气爽")
 
 
@@ -159,8 +212,9 @@ async def handle_buy(ctx, act) -> ActionResult:
     shop_assistant = _shop_assistant_actor(ctx)
     if shop_assistant is not None:
         shop_assistant.money += total
-    fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= FATIGUE_DECAY_PER_ACTION
+    await _broadcast_market_information(ctx)
+    await _apply_action_fatigue(ctx, actor)
+    await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你购买了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 
 
@@ -191,8 +245,9 @@ async def handle_sell(ctx, act) -> ActionResult:
     market.add_stock(item_id, qty)
     if shop_assistant is not None:
         shop_assistant.money -= total
-    fatigue = actor.attrs.get("fatigue")
-    fatigue.current -= FATIGUE_DECAY_PER_ACTION
+    await _broadcast_market_information(ctx)
+    await _apply_action_fatigue(ctx, actor)
+    await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你出售了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 
 
@@ -204,18 +259,25 @@ def example_skill(ctx, act) -> ActionResult:
 
 
 @register("skill")
-def handle_skill(ctx, act) -> ActionResult:
+async def handle_skill(ctx, act) -> ActionResult:
     actor_id = getattr(act, "actor_id", None)
     if not actor_id:
         return ActionResult(status=False, code="INVALID", message="skill action requires actor_id")
 
+    actor = ctx.world.actor(actor_id)
     skill_name = getattr(act, "skill_name", None) or getattr(act, "skill", None)
     if not skill_name and ctx.catalog and hasattr(ctx.catalog, "actor"):
         try:
             actor_def = ctx.catalog.actor(actor_id)
             actor_skill = getattr(actor_def, "skill", None)
             if callable(actor_skill):
-                return actor_skill(ctx, act)
+                result = actor_skill(ctx, act)
+                if inspect.isawaitable(result):
+                    result = await result
+                if getattr(result, "status", False):
+                    await _apply_action_fatigue(ctx, actor, animate=True)
+                    await _broadcast_agent_information(ctx)
+                return result
             if isinstance(actor_skill, str) and actor_skill:
                 skill_name = actor_skill
         except Exception:
@@ -224,4 +286,10 @@ def handle_skill(ctx, act) -> ActionResult:
     if not skill_name:
         return ActionResult(status=False, code="SKILL_EMPTY", message="No skill specified")
 
-    return _invoke_skill(skill_name, ctx, act)
+    result = _invoke_skill(skill_name, ctx, act)
+    if inspect.isawaitable(result):
+        result = await result
+    if getattr(result, "status", False):
+        await _apply_action_fatigue(ctx, actor, animate=True)
+        await _broadcast_agent_information(ctx)
+    return result

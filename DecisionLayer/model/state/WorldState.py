@@ -74,6 +74,13 @@ class WorldState:
         for actor_id in self.actors.keys():
             ON_DAILY_SETTLE("on_end_of_round", event=self.events, actor=self.actor(actor_id))
 
+        if self.client is not None:
+            broadcast_agent_information = getattr(self.client, "broadcast_agent_information", None)
+            if callable(broadcast_agent_information):
+                result = broadcast_agent_information()
+                if inspect.isawaitable(result):
+                    await result
+
         logger.info("回合结算成功,进入回合%s", self.day)
 
     async def run_player_market_phase(self, *, advance_prices: bool) -> None:

@@ -164,15 +164,15 @@ def _bootstrap_world_state(world: WorldState) -> None:
         attrs = actor.attrs or {}
         attrs.setdefault(
             "hunger",
-            Attribute(name="hunger", current=50.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0),
+            Attribute(name="hunger", current=80.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0),
         )
         attrs.setdefault(
             "thirst",
-            Attribute(name="thirst", current=50.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0),
+            Attribute(name="thirst", current=80.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0),
         )
         attrs.setdefault(
             "fatigue",
-            Attribute(name="fatigue", current=50.0, decay_per_day=FATIGUE_DECAY_PER_DAY, max_value=100.0),
+            Attribute(name="fatigue", current=80.0, decay_per_day=FATIGUE_DECAY_PER_DAY, max_value=100.0),
         )
         actor.attrs = attrs
 
@@ -224,6 +224,9 @@ async def run(on_update=None) -> None:
     if callable(bind_world):
         bind_world(world)
     _bootstrap_world_state(world)
+    broadcast_agent_information = getattr(client, "broadcast_agent_information", None)
+    if callable(broadcast_agent_information):
+        await broadcast_agent_information()
     await world.run_player_market_phase(advance_prices=False)
 
     executor = ActionExecutor(

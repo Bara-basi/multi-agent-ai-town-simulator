@@ -8,6 +8,10 @@ from typing import Any, Dict, List
 class NoopActionLayerClient:
     """Action-layer stub used when Unity integration is disabled."""
 
+    def bind_world(self, world: Any) -> None:
+        _ = world
+        return None
+
     async def start(self) -> None:
         return None
 
@@ -49,6 +53,17 @@ class NoopActionLayerClient:
         ws_conn: Any | None = None,
     ) -> bool:
         _ = target, info, agent_id, ws_conn
+        return True
+
+    def agent_information(self) -> Dict[str, Any]:
+        return {"agents": []}
+
+    async def broadcast_agent_information(
+        self,
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        _ = agent_id, ws_conn
         return True
 
     async def wait_shop_stock_update(self, timeout_s: float = 120.0) -> Dict[str, Any] | None:
