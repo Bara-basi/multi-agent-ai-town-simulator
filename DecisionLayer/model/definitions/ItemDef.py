@@ -11,6 +11,7 @@ class ItemDef:
     name: str
     category:str
     description: str
+    purchase_price: float
     base_price: float
     sell_ratio: float
     effects: Dict[str, float] = field(default_factory=dict)
@@ -22,6 +23,7 @@ class ItemDef:
         snapshot = {
             "name": self.name,
             "description": self.description,
+            "purchase_price": self.purchase_price,
             "base_price": self.base_price,
             "effects": self.effects,
             "sell_ratio": self.sell_ratio

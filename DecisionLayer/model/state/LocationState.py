@@ -232,16 +232,22 @@ class MarketComponent:
             wait_update = getattr(client, "wait_shop_stock_update", None)
             if callable(wait_update):
                 update_msg = await wait_update(timeout_s=300.0)
-                self.apply_shop_stock_update(catalog, update_msg, human_actor=human_actor)
+                updated = self.apply_shop_stock_update(catalog, update_msg, human_actor=human_actor)
+                if updated:
+                    broadcast_message = getattr(client, "broadcast_message", None)
+                    if callable(broadcast_message):
+                        result = broadcast_message("商店", "商店已更新存货和价格")
+                        if inspect.isawaitable(result):
+                            await result
 
         self.generate_price(catalog)
 
-    def apply_shop_stock_update(self, catalog: Catalog, update_msg: Any, *, human_actor: Any = None) -> None:
+    def apply_shop_stock_update(self, catalog: Catalog, update_msg: Any, *, human_actor: Any = None) -> bool:
         if not update_msg:
-            return
+            return False
         payload = update_msg.get("parsed_info", update_msg) if isinstance(update_msg, dict) else update_msg
         if not isinstance(payload, dict):
-            return
+            return False
 
         if human_actor is not None and "currentMoney" in payload:
             try:
@@ -249,6 +255,7 @@ class MarketComponent:
             except Exception:
                 pass
 
+        updated = False
         for row in payload.get("items", []) or []:
             if not isinstance(row, dict):
                 continue
@@ -257,13 +264,16 @@ class MarketComponent:
                 continue
             try:
                 self._stock[item_id] = max(0, int(row.get("currentStock", self.stock(item_id))))
+                updated = True
             except Exception:
                 pass
             if item_id not in self._locked_today_items:
                 try:
                     self._price[item_id] = max(0.0, float(row.get("todayPrice", self.price(item_id))))
+                    updated = True
                 except Exception:
                     pass
+        return updated
 
     @classmethod
     def get_instance(cls) -> "MarketComponent":

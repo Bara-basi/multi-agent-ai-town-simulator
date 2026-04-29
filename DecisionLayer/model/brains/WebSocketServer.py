@@ -28,12 +28,14 @@ class WebSocketServer:
     stock_updates: asyncio.Queue = field(default_factory=asyncio.Queue)
     _market_info_cache: Dict[str, Any] | None = None
     _agent_info_cache: Dict[str, Any] | None = None
+    _system_warning_active: set[str] = field(default_factory=set)
     world: Any = None
 
     def bind_world(self, world: Any) -> None:
         self.world = world
         self._market_info_cache = None
         self._agent_info_cache = None
+        self._system_warning_active.clear()
 
     async def _handle(self, ws):
         agent_id = None
@@ -209,7 +211,7 @@ class WebSocketServer:
                         {
                             "itemId": item_id,
                             "name": item_def.name,
-                            "purchasePrice": float(item_def.base_price),
+                            "purchasePrice": float(getattr(item_def, "purchase_price", item_def.base_price)),
                             "basePrice": float(market.price(item_id)),
                             "quantity": int(market.stock(item_id)),
                             "priceLocked": bool(market.is_price_locked_today(item_id)),
@@ -407,12 +409,105 @@ class WebSocketServer:
         agent_id: str | None = None,
         ws_conn: Any | None = None,
     ) -> bool:
-        return await self.send_information(
+        sent = await self.send_information(
             target="agents",
             info=self.agent_information(),
             agent_id=agent_id,
             ws_conn=ws_conn,
         )
+        if ws_conn is None:
+            await self.broadcast_system_warnings()
+        return sent
+
+    async def broadcast_message(
+        self,
+        source: str,
+        message: str,
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        source = str(source or "").strip()
+        message = str(message or "").strip()
+        if not source or not message:
+            return False
+        return await self.send_information(
+            target="messages",
+            info={"messages": [{"source": source, "message": message}]},
+            agent_id=agent_id,
+            ws_conn=ws_conn,
+        )
+
+    async def broadcast_messages(
+        self,
+        messages: list[Dict[str, Any]],
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        cleaned = []
+        for row in messages or []:
+            if not isinstance(row, dict):
+                continue
+            source = str(row.get("source") or "").strip()
+            message = str(row.get("message") or "").strip()
+            if source and message:
+                cleaned.append({"source": source, "message": message})
+        if not cleaned:
+            return False
+        return await self.send_information(
+            target="messages",
+            info={"messages": cleaned},
+            agent_id=agent_id,
+            ws_conn=ws_conn,
+        )
+
+    async def broadcast_system_warnings(self) -> None:
+        if self.world is None:
+            return
+        messages = []
+        attr_labels = {
+            "hunger": "饥饿值",
+            "fatigue": "体力值",
+            "thirst": "水分值",
+        }
+        for actor_id, agent_code in self.actor2agent.items():
+            if actor_id == HUMAN_SHOP_ASSISTANT_ACTOR_ID:
+                continue
+            actor = self.world.actors.get(actor_id)
+            if actor is None:
+                continue
+            try:
+                actor_def = self.world.catalog.actor(actor_id)
+                actor_name = str(getattr(actor_def, "name", "") or agent_code)
+            except Exception:
+                actor_name = agent_code
+
+            for attr_name, attr_label in attr_labels.items():
+                value = self._actor_attr_value(actor, attr_name)
+                key = f"{actor_id}:attr:{attr_name}:low"
+                if value < 20:
+                    if key not in self._system_warning_active:
+                        messages.append({
+                            "source": "系统",
+                            "message": f"注意，{actor_name}的{attr_label}已低于20%",
+                        })
+                        self._system_warning_active.add(key)
+                else:
+                    self._system_warning_active.discard(key)
+
+            money = float(getattr(actor, "money", 0.0) or 0.0)
+            money_key = f"{actor_id}:money:high"
+            if money > 8000:
+                if money_key not in self._system_warning_active:
+                    messages.append({
+                        "source": "系统",
+                        "message": f"注意，{actor_name}的资金已高于8000",
+                    })
+                    self._system_warning_active.add(money_key)
+            else:
+                self._system_warning_active.discard(money_key)
+
+        if messages:
+            await self.broadcast_messages(messages)
 
     async def move(self, actor_id, source, target)->bool:
         agent_id = self.actor2agent.get(actor_id)
@@ -439,7 +534,6 @@ class WebSocketServer:
             cmd=state_name,
             value=value,
         )
-        print("sleeping")
         return self.is_success(result)
 
     async def show_animation(self, actor_id, animation, value)->bool:
@@ -455,6 +549,14 @@ class WebSocketServer:
         )
         return self.is_success(result)
 
+    @staticmethod
+    def _short_item_id(item: Any) -> str:
+        item_id = getattr(item, "id", item)
+        item_id = str(item_id or "").strip()
+        if item_id.startswith("item:"):
+            item_id = item_id.split(":", 1)[1]
+        return item_id or "item"
+
     async def round_start(self, actor_id, round_index: int) -> bool:
         agent_id = self.actor2agent.get(actor_id)
         if not agent_id:
@@ -466,7 +568,10 @@ class WebSocketServer:
             cmd="round_start",
             value=max(0, int(round_index)),
         )
-        return self.is_success(result)
+        ok = self.is_success(result)
+        if ok:
+            await self.broadcast_message("系统", f"第{max(0, int(round_index))}回合开始")
+        return ok
 
     async def round_end(self, actor_id, today_money_delta: int) -> bool:
         agent_id = self.actor2agent.get(actor_id)
@@ -479,10 +584,14 @@ class WebSocketServer:
             cmd="round_end",
             value=max(-10000, min(10000, int(today_money_delta))),
         )
-        return self.is_success(result)
+        ok = self.is_success(result)
+        if ok:
+            await self.broadcast_message("系统", f"回合结束，本回合收入{int(today_money_delta)}")
+        return ok
     
     async def consume(self, actor_id,item,value):
-        result = await self.show_animation(actor_id=actor_id, animation="item", value=-value)
+        item_animation = self._short_item_id(item)
+        result = await self.show_animation(actor_id=actor_id, animation=item_animation, value=-value)
         for attr_name,attr_value in (item.effects or {}).items():
             if attr_value != 0:
                 result &= await self.show_animation(actor_id=actor_id,animation=attr_name,value=attr_value)
@@ -499,16 +608,18 @@ class WebSocketServer:
         result &= await self.show_animation(actor_id=actor_id,animation="thirst",value=-THIRST_DECAY_PER_DAY)
         return result
 
-    async def buy(self,actor_id,qty,money,source):
-        result = await self.show_animation(actor_id=actor_id,animation="item",value=qty)
+    async def buy(self,actor_id,qty,money,source=None,item_id=None):
+        item_animation = self._short_item_id(item_id)
+        result = await self.show_animation(actor_id=actor_id,animation=item_animation,value=qty)
         result &= await self.move(actor_id=actor_id,source=source,target="收银台")
         result &= await self.show_animation(actor_id=actor_id,animation="money",value=-money)
         return result
     
-    async def sell(self,actor_id,qty,money,source):
+    async def sell(self,actor_id,qty,money,source=None,item_id=None):
+        item_animation = self._short_item_id(item_id)
         result = await self.move(actor_id=actor_id,source=source,target="收银台")
         result &= await self.show_animation(actor_id=actor_id,animation="money",value=money)
-        result &= await self.show_animation(actor_id=actor_id,animation="item",value=-qty)
+        result &= await self.show_animation(actor_id=actor_id,animation=item_animation,value=-qty)
         return result
 
 

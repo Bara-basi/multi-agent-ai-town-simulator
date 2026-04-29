@@ -66,6 +66,25 @@ class NoopActionLayerClient:
         _ = agent_id, ws_conn
         return True
 
+    async def broadcast_message(
+        self,
+        source: str,
+        message: str,
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        _ = source, message, agent_id, ws_conn
+        return True
+
+    async def broadcast_messages(
+        self,
+        messages: List[Dict[str, Any]],
+        agent_id: str | None = None,
+        ws_conn: Any | None = None,
+    ) -> bool:
+        _ = messages, agent_id, ws_conn
+        return True
+
     async def wait_shop_stock_update(self, timeout_s: float = 120.0) -> Dict[str, Any] | None:
         _ = timeout_s
         return None
@@ -81,10 +100,10 @@ class NoopActionLayerClient:
         _ = actor_id, source
         return True
 
-    async def buy(self, actor_id, qty, money, source=None) -> bool:
-        _ = actor_id, qty, money, source
+    async def buy(self, actor_id, qty, money, source=None, item_id=None) -> bool:
+        _ = actor_id, qty, money, source, item_id
         return True
 
-    async def sell(self, actor_id, qty, money, source=None) -> bool:
-        _ = actor_id, qty, money, source
+    async def sell(self, actor_id, qty, money, source=None, item_id=None) -> bool:
+        _ = actor_id, qty, money, source, item_id
         return True

@@ -68,6 +68,24 @@ async def _broadcast_agent_information(ctx: Any) -> None:
         await result
 
 
+def _actor_name(ctx: Any, actor_id: str) -> str:
+    try:
+        actor_def = ctx.world.catalog.actor(actor_id)
+        return str(getattr(actor_def, "name", "") or actor_id)
+    except Exception:
+        return str(actor_id)
+
+
+async def _broadcast_message(ctx: Any, source: str, message: str) -> None:
+    client = getattr(ctx.world, "client", None)
+    broadcast_message = getattr(client, "broadcast_message", None) if client is not None else None
+    if not callable(broadcast_message):
+        return
+    result = broadcast_message(source, message)
+    if inspect.isawaitable(result):
+        await result
+
+
 def _change_attr(actor: Any, attr_name: str, delta: float) -> None:
     attr = (getattr(actor, "attrs", None) or {}).get(attr_name)
     if attr is None:
@@ -130,6 +148,7 @@ async def handle_consume(ctx, act) -> ActionResult:
     for k, v in (item.effects or {}).items():
         _change_attr(actor, k, float(v) * qty)
 
+    await _broadcast_message(ctx, _actor_name(ctx, actor.id), f"使用了{item.name} x {qty}")
     await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你使用了 {ctx.world.catalog.item(item_id).name} x {qty}")
 
@@ -153,6 +172,7 @@ async def handle_move(ctx, act) -> ActionResult:
     actor.location = target
     await _apply_action_fatigue(ctx, actor)
     ON_ACTION_RESOLVE("on_move", ctx, act)
+    await _broadcast_message(ctx, _actor_name(ctx, actor.id), f"来到了{ctx.catalog.loc(target).name}")
     await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你来到了{ctx.catalog.loc(target).name}")
 
@@ -201,7 +221,7 @@ async def handle_buy(ctx, act) -> ActionResult:
     unit_price = market.price(item_id)
     total = unit_price * qty
 
-    result = await ctx.world.client.buy(actor.id, qty, total,ctx.catalog.loc(actor.location).name)
+    result = await ctx.world.client.buy(actor.id, qty, total, ctx.catalog.loc(actor.location).name, item_id=item_id)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 购买{ctx.world.catalog.item(item_id).name}")
 
@@ -214,6 +234,9 @@ async def handle_buy(ctx, act) -> ActionResult:
         shop_assistant.money += total
     await _broadcast_market_information(ctx)
     await _apply_action_fatigue(ctx, actor)
+    await _broadcast_message(ctx, _actor_name(ctx, actor.id), f"购买了{ctx.world.catalog.item(item_id).name} x {qty}")
+    if market.stock(item_id) <= 0:
+        await _broadcast_message(ctx, "商店", f"物品{ctx.world.catalog.item(item_id).name}已售罄")
     await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你购买了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 
@@ -236,7 +259,7 @@ async def handle_sell(ctx, act) -> ActionResult:
             message=f"动作sell执行失败,商店资金不足，无法收购 `{ctx.world.catalog.item(item_id).name}` x {qty}",
         )
 
-    result = await ctx.world.client.sell(actor.id, qty, total, ctx.catalog.loc(actor.location).name)
+    result = await ctx.world.client.sell(actor.id, qty, total, ctx.catalog.loc(actor.location).name, item_id=item_id)
     if not result:
         return ActionResult(status=False, code="INVALID", message=f"Unity 动画出错: 出售{ctx.world.catalog.item(item_id).name}")
 
@@ -247,6 +270,7 @@ async def handle_sell(ctx, act) -> ActionResult:
         shop_assistant.money -= total
     await _broadcast_market_information(ctx)
     await _apply_action_fatigue(ctx, actor)
+    await _broadcast_message(ctx, _actor_name(ctx, actor.id), f"出售了{ctx.world.catalog.item(item_id).name} x {qty}")
     await _broadcast_agent_information(ctx)
     return ActionResult(status=True, message=f"你出售了 {ctx.world.catalog.item(item_id).name} x {qty}，单价 {unit_price:.2f}元/件")
 

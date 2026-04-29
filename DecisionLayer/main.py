@@ -164,11 +164,11 @@ def _bootstrap_world_state(world: WorldState) -> None:
         attrs = actor.attrs or {}
         attrs.setdefault(
             "hunger",
-            Attribute(name="hunger", current=80.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0),
+            Attribute(name="hunger", current=40.0, decay_per_day=HUNGER_DECAY_PER_DAY, max_value=100.0),
         )
         attrs.setdefault(
             "thirst",
-            Attribute(name="thirst", current=80.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0),
+            Attribute(name="thirst", current=40.0, decay_per_day=THIRST_DECAY_PER_DAY, max_value=100.0),
         )
         attrs.setdefault(
             "fatigue",

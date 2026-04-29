@@ -69,7 +69,21 @@ class WorldState:
         for actor in self.actors.values():
             actor.update_day()
 
-        self.determine_random_event()
+        new_random_events = self.determine_random_event()
+        if new_random_events and self.client is not None:
+            broadcast_messages = getattr(self.client, "broadcast_messages", None)
+            if callable(broadcast_messages):
+                rows = []
+                for event in new_random_events:
+                    event_name = str((event or {}).get("name") or "随机事件")
+                    event_desp = str((event or {}).get("desp") or "")
+                    rows.append({
+                        "source": "随机事件",
+                        "message": f"{event_name}：{event_desp}" if event_desp else event_name,
+                    })
+                result = broadcast_messages(rows)
+                if inspect.isawaitable(result):
+                    await result
 
         for actor_id in self.actors.keys():
             ON_DAILY_SETTLE("on_end_of_round", event=self.events, actor=self.actor(actor_id))
@@ -213,7 +227,7 @@ class WorldState:
             "decision_private_context": decision_private_context,
         }
 
-    def determine_random_event(self) -> None:
+    def determine_random_event(self) -> List[Dict[str, Any]]:
         # 1) 更新当前事件持续时间
         for hook, events in list(self.events.items()):
             alive: List[Dict[str, Any]] = []
@@ -234,7 +248,7 @@ class WorldState:
         # 2) 判定是否触发新随机事件
         random_event_pool = list((self.catalog.random_events or {}).values())
         if not random_event_pool:
-            return
+            return []
 
         if np.random.rand() < RANDOM_EVENT_PORB:
             template = np.random.choice(random_event_pool)
@@ -243,3 +257,6 @@ class WorldState:
             for hook in hooks:
                 self.events.setdefault(hook, []).append(event)
             logger.info("随机事件触发：%s", event.get("name", "<unknown>"))
+            return [event]
+
+        return []
