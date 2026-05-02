@@ -365,6 +365,65 @@ class AgentRuntime:
             memory_previous_plans=s.get("memory_previous_plans", ""),
             decision_private_context=s.get("decision_private_context", {}),
         )
+
+    def _item_display_name(self, item: Any) -> str:
+        item_id = self._normalize_item_short(item)
+        normalized = f"item:{item_id}" if item_id and not item_id.startswith("item:") else item_id
+        try:
+            return str(getattr(self.world.catalog.item(normalized), "name", "") or item_id)
+        except Exception:
+            return item_id or "未知商品"
+
+    def _actor_display_name(self, actor_id: Any) -> str:
+        try:
+            actor_def = self.world.catalog.actor(actor_id)
+            return str(getattr(actor_def, "name", "") or actor_id)
+        except Exception:
+            return str(actor_id)
+
+    @staticmethod
+    def _format_accuracy(value: Any) -> str:
+        try:
+            acc = float(value)
+        except Exception:
+            return "未知"
+        if acc <= 1.0:
+            acc *= 100.0
+        return f"{round(acc):.0f}%"
+
+    def _decision_broadcast_messages(self, actor_id: Any) -> List[Dict[str, str]]:
+        actor = self.world.actor(actor_id)
+        actor_name = self._actor_display_name(actor_id)
+        rows: List[Dict[str, str]] = []
+
+        for action in list(getattr(actor, "decision_action_log", []) or []):
+            if not isinstance(action, dict):
+                continue
+            if int(action.get("dp_cost", 0) or 0) <= 0:
+                continue
+
+            decision = str(action.get("decision") or "").strip()
+            if decision == "lock_price":
+                item_name = self._item_display_name(action.get("locked_item") or action.get("item"))
+                rows.append({
+                    "source": "广播",
+                    "message": f"{actor_name}锁定了{item_name}的价格一回合",
+                })
+                continue
+
+            if decision == "get_intel":
+                for intel in list(action.get("intel", []) or []):
+                    if not isinstance(intel, dict):
+                        continue
+                    item_name = self._item_display_name(intel.get("item"))
+                    accuracy = self._format_accuracy(intel.get("accuracy"))
+                    rows.append({
+                        "source": "广播",
+                        "message": f"{actor_name}获取了{item_name}的价格情报，准确率为{accuracy}",
+                    })
+
+        return rows
+
     def _should_plan(self, st: RuntimeActorState) -> bool:
         # 正常情况：每回合只计划一次。只有首轮/跨天/显式重计划 才计划。
         if not st.plan:
@@ -426,6 +485,14 @@ class AgentRuntime:
                 locked_short = str(locked_item or "").strip()
                 if locked_short:
                     self.world.invalidate_intel_for_locked_item(locked_short)
+
+            broadcast_messages = getattr(self.world.client, "broadcast_messages", None)
+            if callable(broadcast_messages):
+                messages = self._decision_broadcast_messages(actor_id)
+                if messages:
+                    result = broadcast_messages(messages)
+                    if inspect.isawaitable(result):
+                        await result
 
             st.last_decision_day = self.world.day
             obs = self._obs(actor_id)

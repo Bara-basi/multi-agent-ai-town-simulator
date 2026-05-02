@@ -16,12 +16,22 @@ MonoBehaviour:
   - key: fish
     icon: {fileID: 8966945178157639174, guid: 4efcbf5cdafe2dc4a9dfdf862f17e83b, type: 3}
   - key: money
-    icon: {fileID: 7675826601332790545, guid: e079580562817d140b67b96bda8b516a, type: 3}
+    icon: {fileID: 397749150429051650, guid: 12a218bf69959dc49a02171b2d0b227e, type: 3}
   - key: item
     icon: {fileID: 1729840402284382006, guid: 2ea4fb1700e6fe24685881de4f8ea838, type: 3}
   - key: thirst
-    icon: {fileID: 8509550459451208454, guid: 391c5e7254b7d244f9460b0e2222cad2, type: 3}
+    icon: {fileID: -8965600602048773310, guid: 12a218bf69959dc49a02171b2d0b227e, type: 3}
   - key: hunger
-    icon: {fileID: -1951656256530496896, guid: 250ac80e43d72144f93d8312d7602906, type: 3}
+    icon: {fileID: -5518894170534803949, guid: 12a218bf69959dc49a02171b2d0b227e, type: 3}
   - key: fatigue
-    icon: {fileID: 5606786551959019901, guid: 1c13f6be11513504fb91dc36d4405d3e, type: 3}
+    icon: {fileID: 7097644566357080415, guid: 12a218bf69959dc49a02171b2d0b227e, type: 3}
+  - key: water
+    icon: {fileID: 3573036208370857778, guid: 774d4e1d2cec75f478708c92f82bfe65, type: 3}
+  - key: bread
+    icon: {fileID: -4541530823775549834, guid: 774d4e1d2cec75f478708c92f82bfe65, type: 3}
+  - key: meat
+    icon: {fileID: 8413625163036839735, guid: 774d4e1d2cec75f478708c92f82bfe65, type: 3}
+  - key: silver_ring
+    icon: {fileID: 2391517041661785321, guid: 774d4e1d2cec75f478708c92f82bfe65, type: 3}
+  - key: gold
+    icon: {fileID: -3670383502922554767, guid: 774d4e1d2cec75f478708c92f82bfe65, type: 3}

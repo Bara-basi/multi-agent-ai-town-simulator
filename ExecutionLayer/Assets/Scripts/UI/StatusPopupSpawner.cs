@@ -90,7 +90,6 @@ public class StatusPopupSpawner : MonoBehaviour
         item.SetLane(lane ,snap: true);
 
         _active.Add(item);
-        print("before_play");
         item.Play(icon, text, color, OnItemComplete);
     }
 

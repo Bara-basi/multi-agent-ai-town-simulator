@@ -213,7 +213,10 @@ class WebSocketServer:
                             "name": item_def.name,
                             "purchasePrice": float(getattr(item_def, "purchase_price", item_def.base_price)),
                             "basePrice": float(market.price(item_id)),
+                            "referenceBasePrice": float(getattr(item_def, "base_price", market.price(item_id))),
+                            "yesterdayPrice": float(market.yesterday_price(item_id)),
                             "quantity": int(market.stock(item_id)),
+                            "defaultQuantity": int(getattr(item_def, "default_quantity", market.stock(item_id))),
                             "priceLocked": bool(market.is_price_locked_today(item_id)),
                         }
                     )
@@ -270,7 +273,10 @@ class WebSocketServer:
                         "name": name,
                         "purchasePrice": purchase_price,
                         "basePrice": base_price,
+                        "referenceBasePrice": base_price,
+                        "yesterdayPrice": base_price,
                         "quantity": quantity,
+                        "defaultQuantity": quantity,
                         "priceLocked": False,
                     }
                 )

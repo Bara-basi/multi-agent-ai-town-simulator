@@ -27,6 +27,7 @@ rng = np.random.default_rng(42)
 class MarketComponent:
     _stock: Dict[ItemId, int] = field(default_factory=dict)
     _price: Dict[ItemId, float] = field(default_factory=dict)
+    _yesterday_price: Dict[ItemId, float] = field(default_factory=dict)
     # item_id -> (next_price, intel_accuracy)
     _next_price: Dict[ItemId, Tuple[float, float]] = field(default_factory=dict)
     # Locked items apply to next-day price generation and are consumed after one update_day.
@@ -39,12 +40,14 @@ class MarketComponent:
             item_id: float(catalog.item(item_id).base_price)
             for item_id in catalog.items.keys()
         }
+        self._yesterday_price = dict(self._price)
         self.generate_price(catalog)
 
     def observe(self) -> Dict[str, Any]:
         return {
             "stock": self._stock,
             "price": self._price,
+            "yesterday_price": self._yesterday_price,
             "next_price": self._next_price,
             "locked_today": list(self._locked_today_items),
         }
@@ -54,6 +57,9 @@ class MarketComponent:
 
     def price(self, item_id: ItemId) -> float:
         return float(self._price.get(item_id, 0.0))
+
+    def yesterday_price(self, item_id: ItemId) -> float:
+        return float(self._yesterday_price.get(item_id, self.price(item_id)))
 
     def next_price_info(self, item_id: ItemId) -> Tuple[float, float]:
         cur = self.price(item_id)
@@ -181,6 +187,11 @@ class MarketComponent:
         actors: Iterable[Any] | None = None,
         advance_prices: bool = True,
     ) -> None:
+        if advance_prices:
+            self._yesterday_price = dict(self._price)
+        elif not self._yesterday_price:
+            self._yesterday_price = dict(self._price)
+
         locked_items = self._apply_decision_price_effects(catalog, actors)
 
         # Old simulated daily restock/price fluctuation logic, kept for reference:
@@ -198,12 +209,14 @@ class MarketComponent:
         # self._locked_next_day_items.clear()
         # self.generate_price(catalog)
 
-        new_price: Dict[ItemId, float] = {}
         if advance_prices:
-            for item_id in self._stock.keys():
+            # Prices are player-controlled by default. Only decision-point effects
+            # are allowed to override the carried-over price at the start of a day.
+            for item_id in locked_items:
+                if item_id not in self._stock:
+                    continue
                 next_val, _acc = self._next_price.get(item_id, (self.price(item_id), 1.0))
-                new_price[item_id] = float(next_val)
-            self._price = new_price
+                self._price[item_id] = float(next_val)
 
         self._locked_today_items = {
             item_id for item_id in locked_items

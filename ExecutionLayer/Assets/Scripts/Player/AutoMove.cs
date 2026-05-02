@@ -14,6 +14,7 @@ public class ActionPair
 {
     public string cmd;
     public Vector2 target;
+    public int facingDirection;
     public Action actionCallBack;
     public float cost;
 }
@@ -43,6 +44,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
     private bool isTeleporting = false; 
     private float frozenUntil = 0f;
     private string curCmd = "";
+    private int currentFacingDirection = 0;
     private bool idleMoving = false;
     private Vector3Int idleTargetCell;
     private float nextIdleMoveAt = 0f;
@@ -150,6 +152,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
             var pair = actionList.Dequeue();
             currentCallback = pair.actionCallBack;
             curCmd = pair.cmd;
+            currentFacingDirection = pair.facingDirection;
             if (curCmd == "go_to")
             {
                 var startCell = grid.WorldToCell(transform.position);
@@ -243,6 +246,7 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
                         // 到达终点
                         frozen = true;
                         frozenUntil = Time.time + 3;
+                        ApplyFacingDirection(currentFacingDirection);
                         CancelAuto();
                         CompleteCurrent();
                         return;
@@ -333,22 +337,24 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
 
     }
 
-    public void AddCommand(float cost_time,string cmd, List<Vector2> target, Action onArrived)
+    public void AddCommand(float cost_time,string cmd, List<Vector3> target, Action onArrived)
     {
         //Vector3Int startCell = grid.WorldToCell(transform.position);
         //Vector2 temp_target = new Vector2(startCell.x+10f, startCell.y+10f);
         
         for (int i = 0; i < target.Count - 1; i++)
         {
-            actionList.Enqueue(new ActionPair { cost =  cost_time,cmd= cmd,target = target[i], actionCallBack = null});
+            var waypoint = target[i];
+            actionList.Enqueue(new ActionPair { cost =  cost_time,cmd= cmd,target = new Vector2(waypoint.x, waypoint.y), facingDirection = 0, actionCallBack = null});
         }
         if(target.Count > 0)
         {
-            actionList.Enqueue(new ActionPair { cost = cost_time, cmd = cmd, target = target[^1], actionCallBack = onArrived });
+            var finalTarget = target[^1];
+            actionList.Enqueue(new ActionPair { cost = cost_time, cmd = cmd, target = new Vector2(finalTarget.x, finalTarget.y), facingDirection = Mathf.RoundToInt(finalTarget.z), actionCallBack = onArrived });
         }
         else
         {
-            actionList.Enqueue(new ActionPair { cost = cost_time, cmd = cmd, target = Vector2.zero, actionCallBack = onArrived });
+            actionList.Enqueue(new ActionPair { cost = cost_time, cmd = cmd, target = Vector2.zero, facingDirection = 0, actionCallBack = onArrived });
         }
     }
     public void Suspend(float seconds)
@@ -380,7 +386,39 @@ public class AutoMove : MonoBehaviour, IAutoNavigator,IPortalTraveller
         var cb = currentCallback;
         currentCallback = null;
         curCmd = "";
+        currentFacingDirection = 0;
         cb?.Invoke();
+    }
+
+    void ApplyFacingDirection(int direction)
+    {
+        Vector2 facing;
+        switch (direction)
+        {
+            case 1:
+                facing = Vector2.up;
+                break;
+            case 2:
+                facing = Vector2.right;
+                break;
+            case 3:
+                facing = Vector2.down;
+                break;
+            case 4:
+                facing = Vector2.left;
+                break;
+            default:
+                return;
+        }
+
+        lastFacing = facing;
+        autoMove = Vector2.zero;
+        if (ani)
+        {
+            ani.SetFloat("Horizontal", facing.x);
+            ani.SetFloat("Vertical", facing.y);
+            ani.SetInteger("move", 0);
+        }
     }
 
     void RepathFromHere()

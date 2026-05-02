@@ -18,6 +18,9 @@ public class PopItem : MonoBehaviour
     public AnimationCurve fadeCurve = AnimationCurve.Linear(0, 1, 1, 0);
     public AnimationCurve scaleCurve = AnimationCurve.EaseInOut(0, 1.1f, 1, 1f);
 
+    [Header("Icon")]
+    [SerializeField] private Vector2 iconDisplaySize = new Vector2(2f, 2f);
+
     [Header("Lane")]
     public int laneIndex = 0;             // 0 在最上方
 
@@ -70,7 +73,7 @@ public class PopItem : MonoBehaviour
         _onComplete = onComplete;
         _playing = true;
 
-        if (icon) icon.sprite = s;
+        ApplyIcon(s);
         if (label)
         {
             label.text = text;
@@ -79,6 +82,39 @@ public class PopItem : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(CoPlay());
+    }
+
+    private void ApplyIcon(Sprite s)
+    {
+        if (icon == null)
+        {
+            return;
+        }
+
+        icon.sprite = s;
+        icon.preserveAspect = true;
+        icon.useSpriteMesh = true;
+        icon.enabled = s != null;
+
+        var iconRt = icon.rectTransform;
+        if (iconRt == null)
+        {
+            return;
+        }
+
+        Vector2 targetSize = iconDisplaySize;
+        if (targetSize.x <= 0f || targetSize.y <= 0f)
+        {
+            targetSize = iconRt.sizeDelta;
+        }
+
+        if (targetSize.x <= 0f || targetSize.y <= 0f)
+        {
+            targetSize = new Vector2(2f, 2f);
+        }
+
+        iconRt.localScale = Vector3.one;
+        iconRt.sizeDelta = targetSize;
     }
 
     IEnumerator CoPlay()

@@ -10,7 +10,7 @@ using UnityEngine;
 
 public interface IAutoNavigator
 {
-    void AddCommand(float cost_time, string cmd, List<Vector2> target, Action onArrived);
+    void AddCommand(float cost_time, string cmd, List<Vector3> target, Action onArrived);
 }
 
 public interface IAutoHUDAnimation
@@ -22,7 +22,8 @@ public interface IAutoHUDAnimation
 public class LocationPair
 {
     public string key;
-    public List<Vector2> value;
+    [Tooltip("x/y 为地图坐标，z 为到达后的朝向：北=1，东=2，南=3，西=4。")]
+    public List<Vector3> value;
 }
 
 [Serializable]
@@ -43,7 +44,7 @@ public class WsAgentClient : MonoBehaviour
     public List<LocationPath> locationPaths = new();
 
     private Dictionary<string, List<string>> locationGraph = new();
-    private Dictionary<string, List<Vector2>> locations;
+    private Dictionary<string, List<Vector3>> locations;
 
     private readonly ConcurrentQueue<Action> mainThreadQueue = new();
 
@@ -84,14 +85,14 @@ public class WsAgentClient : MonoBehaviour
     void Awake()
     {
         locationGraph = new Dictionary<string, List<string>>();
-        locations = new Dictionary<string, List<Vector2>>();
+        locations = new Dictionary<string, List<Vector3>>();
 
         if (locationsSerialized != null)
         {
             foreach (var pair in locationsSerialized)
             {
                 if (pair == null || string.IsNullOrEmpty(pair.key) || pair.value == null) continue;
-                locations[pair.key] = new List<Vector2>(pair.value);
+                locations[pair.key] = new List<Vector3>(pair.value);
             }
         }
 
@@ -402,16 +403,34 @@ public class WsAgentClient : MonoBehaviour
             return false;
         }
 
-        foreach (var router in SnapshotRouters())
+        var router = PickInformationDispatchRouter();
+        if (router == null)
         {
-            if (router == null) continue;
-            router.mainThreadQueue.Enqueue(() =>
-            {
-                DispatchInformationToUI(msg.target, msg.info);
-            });
+            Debug.LogWarning("Information broadcast skipped: no active WsAgentClient router.");
+            return true;
         }
 
+        router.mainThreadQueue.Enqueue(() =>
+        {
+            DispatchInformationToUI(msg.target, msg.info);
+        });
         return true;
+    }
+
+    static WsAgentClient PickInformationDispatchRouter()
+    {
+        lock (SharedStateLock)
+        {
+            foreach (var router in routersByAgentId.Values)
+            {
+                if (router != null)
+                {
+                    return router;
+                }
+            }
+        }
+
+        return null;
     }
 
     static void DispatchInformationToUI(string target, string info)
@@ -425,6 +444,12 @@ public class WsAgentClient : MonoBehaviour
         if (target == "agents")
         {
             ShopAssistantDisplayUI.PushAgentInformationJson(info);
+            return;
+        }
+
+        if (target == "messages")
+        {
+            ShopAssistantDisplayUI.PushBroadcastMessagesJson(info);
         }
     }
 
@@ -478,6 +503,15 @@ public class WsAgentClient : MonoBehaviour
         }
 
         if (msg.type == "information" && msg.target == "agents")
+        {
+            mainThreadQueue.Enqueue(() =>
+            {
+                DispatchInformationToUI(msg.target, msg.info);
+            });
+            return;
+        }
+
+        if (msg.type == "information" && msg.target == "messages")
         {
             mainThreadQueue.Enqueue(() =>
             {
@@ -596,7 +630,7 @@ public class WsAgentClient : MonoBehaviour
 
             mainThreadQueue.Enqueue(() =>
             {
-                navigator?.AddCommand(msg.value, msg.cmd, new List<Vector2>(), onArrived: () =>
+                navigator?.AddCommand(msg.value, msg.cmd, new List<Vector3>(), onArrived: () =>
                 {
                     _ = SendJsonShared(new OutMsg
                     {
@@ -890,7 +924,7 @@ public class WsAgentClient : MonoBehaviour
         }
     }
 
-    bool TryResolveTarget(WSMsg msg, out List<Vector2> target)
+    bool TryResolveTarget(WSMsg msg, out List<Vector3> target)
     {
         target = null;
 
@@ -902,7 +936,7 @@ public class WsAgentClient : MonoBehaviour
         var path = FindPath(start, goal, locationGraph);
         if (path == null || path.Count == 0) return false;
 
-        var result = new List<Vector2>();
+        var result = new List<Vector3>();
 
         foreach (var name in path)
         {
